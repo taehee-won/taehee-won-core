@@ -1,0 +1,44 @@
+from typing import Any, Callable, Dict, Iterable, Optional, Type
+
+
+def KWARGS(empty=True, **kwargs: Any) -> Optional[Dict[str, Any]]:
+    params = {k: v for k, v in kwargs.items() if v is not None}
+    return params if params or empty else None
+
+
+def ARGS_STR(*args: Any) -> str:
+    return f"{'/'.join(str(arg) for arg in args)}"
+
+
+def KWARGS_STR(**kwargs: Any) -> str:
+    params = {k: v for k, v in kwargs.items() if v is not None}
+    return f"{'/'.join([f'{k}:{v}' for k, v in params.items()])}"
+
+
+def ATTR(obj: object, name: str, initialize: Callable) -> Any:
+    if not hasattr(obj, name):
+        setattr(obj, name, initialize())
+
+    return getattr(obj, name)
+
+
+def LOOP(iterable: Iterable) -> None:
+    for _ in iterable:
+        pass
+
+
+def CALL(
+    func: Callable,
+    *args: Any,
+    ignore: Type[BaseException],
+    **kwargs: Any,
+) -> Optional[Any]:
+    try:
+        return func(*args, **kwargs)
+
+    except ignore:
+        return None
+
+
+def RAISE(exception: Type[BaseException], message: str):
+    raise exception(message)
