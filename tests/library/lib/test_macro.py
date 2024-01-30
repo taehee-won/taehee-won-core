@@ -28,7 +28,7 @@ class TestMacro(TestCase):
         value = ATTR(instance, "attr", lambda: "default")
         self.assertEqual(value, "default")
 
-        instance.attr = "changed"
+        setattr(instance, "attr", "changed")
         value = ATTR(instance, "attr", lambda: "default")
         self.assertEqual(value, "changed")
 
