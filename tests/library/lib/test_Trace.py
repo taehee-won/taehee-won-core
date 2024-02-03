@@ -1,0 +1,322 @@
+from unittest import TestCase
+from typing import List, Dict
+from tempfile import NamedTemporaryFile
+from os import remove
+from logging import Handler, LogRecord
+from string import ascii_letters, digits
+from random import choice
+from inspect import currentframe
+
+from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import _DEFAULT_HANDLES
+
+
+class TestTrace(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _DEFAULT_HANDLES[0] = _StreamHandler
+
+        fd = NamedTemporaryFile(delete=False)
+        cls.file = fd.name
+        Trace.set_file(cls.file)
+        fd.close()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        remove(cls.file)
+
+    def setUp(self) -> None:
+        Trace.set(stream=None, file=None)
+
+    @classmethod
+    def _stream(cls) -> str:
+        return _StreamHandler.stream()
+
+    @classmethod
+    def _file(cls) -> str:
+        with open(cls.file, "r") as f:
+            trace = f.read()
+
+        return trace
+
+    @staticmethod
+    def _levels() -> List[str]:
+        return ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
+
+    @staticmethod
+    def _format(name: str, level: str, msg: str) -> str:
+        return f"[{name:10s}][{level.upper():8s}] {msg}"
+
+    @staticmethod
+    def _prepare(test: str, stream: str, file: str):
+        name = "".join(choice(ascii_letters + digits) for _ in range(10))
+        levels = TestTrace._levels()
+        msgs = {level: f"{level} {test}" for level in levels}
+
+        expected_stream_msgs, unexpected_stream_msgs = [], []
+        expect = True if stream in levels else False
+        for level in levels:
+            if expect:
+                expected_stream_msgs.append(msgs[level])
+            else:
+                unexpected_stream_msgs.append(msgs[level])
+
+            if level == stream:
+                expect = False
+
+        expected_file_msgs, unexpected_file_msgs = [], []
+        expect = True
+        expect = True if file in levels else False
+        for level in levels:
+            if expect:
+                expected_file_msgs.append(TestTrace._format(name, level, msgs[level]))
+            else:
+                unexpected_file_msgs.append(TestTrace._format(name, level, msgs[level]))
+
+            if level == file:
+                expect = False
+
+        evaluations = [
+            expected_stream_msgs,
+            unexpected_stream_msgs,
+            expected_file_msgs,
+            unexpected_file_msgs,
+        ]
+
+        return name, msgs, evaluations
+
+    @staticmethod
+    def _trace(trace: Trace, msgs: Dict[str, str]) -> None:
+        levels = TestTrace._levels()
+        for level in levels:
+            getattr(trace, level.lower())(msgs[level])
+
+    def _evaluate(self, evaluations: List[List[str]]) -> None:
+        (
+            expected_stream_msgs,
+            unexpected_stream_msgs,
+            expected_file_msgs,
+            unexpected_file_msgs,
+        ) = evaluations
+
+        for msg in expected_stream_msgs:
+            self.assertIn(msg, self._stream())
+
+        for msg in unexpected_stream_msgs:
+            self.assertNotIn(msg, self._stream())
+
+        for msg in expected_file_msgs:
+            self.assertIn(msg, self._file())
+
+        for msg in unexpected_file_msgs:
+            self.assertNotIn(msg, self._file())
+
+    def test_primary(self):
+        name, msgs, evaluations = self._prepare(
+            frame.f_code.co_name if (frame := currentframe()) else "",
+            stream="ERROR",
+            file="INFO",
+        )
+
+        Trace.set(stream=TraceLevel.ERROR, file=TraceLevel.INFO)
+        Trace.set_trace(name, stream=TraceLevel.INFO, file=TraceLevel.DEBUG)
+        trace = Trace(name, stream=TraceLevel.DEBUG, file=TraceLevel.DEBUG)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+        name, msgs, evaluations = self._prepare(
+            (frame.f_code.co_name if (frame := currentframe()) else "") + "+1",
+            stream="NOTSET",
+            file="DEBUG",
+        )
+
+        Trace.set(stream=TraceLevel.NOTSET, file=TraceLevel.DEBUG)
+        Trace.set_trace(name, stream=TraceLevel.INFO, file=TraceLevel.DEBUG)
+        trace = Trace(name, stream=TraceLevel.DEBUG, file=TraceLevel.DEBUG)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+    def test_dedicated(self):
+        name, msgs, evaluations = self._prepare(
+            frame.f_code.co_name if (frame := currentframe()) else "",
+            stream="INFO",
+            file="DEBUG",
+        )
+
+        Trace.set_trace(name, stream=TraceLevel.INFO, file=TraceLevel.DEBUG)
+        trace = Trace(name, stream=TraceLevel.ERROR, file=TraceLevel.WARNING)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+        name, msgs, evaluations = self._prepare(
+            (frame.f_code.co_name if (frame := currentframe()) else "") + "+1",
+            stream="DEBUG",
+            file="INFO",
+        )
+
+        Trace.set_trace(name, stream=TraceLevel.DEBUG, file=TraceLevel.INFO)
+        trace = Trace(name, stream=TraceLevel.ERROR, file=TraceLevel.WARNING)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+    def test_instance(self):
+        name, msgs, evaluations = self._prepare(
+            frame.f_code.co_name if (frame := currentframe()) else "",
+            stream="ERROR",
+            file="WARNING",
+        )
+
+        trace = Trace(name, stream=TraceLevel.ERROR, file=TraceLevel.WARNING)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+        name, msgs, evaluations = self._prepare(
+            (frame.f_code.co_name if (frame := currentframe()) else "") + "+1",
+            stream="DEBUG",
+            file="NOTSET",
+        )
+
+        trace = Trace(name, stream=TraceLevel.DEBUG, file=TraceLevel.NOTSET)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+    def test_default(self):
+        name, msgs, evaluations = self._prepare(
+            frame.f_code.co_name if (frame := currentframe()) else "",
+            stream="INFO",
+            file="NONE",
+        )
+
+        trace = Trace(name)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+        name, msgs, evaluations = self._prepare(
+            (frame.f_code.co_name if (frame := currentframe()) else "") + "+1",
+            stream="INFO",
+            file="NONE",
+        )
+
+        trace = Trace(name)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+    def test_primary_str(self):
+        name, msgs, evaluations = self._prepare(
+            frame.f_code.co_name if (frame := currentframe()) else "",
+            stream="ERROR",
+            file="INFO",
+        )
+
+        Trace.set(stream="ERROR", file="INFO")
+        Trace.set_trace(name, stream="INFO", file="DEBUG")
+        trace = Trace(name, stream="DEBUG", file="DEBUG")
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+        name, msgs, evaluations = self._prepare(
+            (frame.f_code.co_name if (frame := currentframe()) else "") + "+1",
+            stream="NOTSET",
+            file="DEBUG",
+        )
+
+        Trace.set(stream="NOTSET", file="DEBUG")
+        Trace.set_trace(name, stream="INFO", file="DEBUG")
+        trace = Trace(name, stream="DEBUG", file="DEBUG")
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+    def test_dedicated_str(self):
+        name, msgs, evaluations = self._prepare(
+            frame.f_code.co_name if (frame := currentframe()) else "",
+            stream="INFO",
+            file="DEBUG",
+        )
+
+        Trace.set_trace(name, stream="INFO", file="DEBUG")
+        trace = Trace(name, stream="ERROR", file="WARNING")
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+        name, msgs, evaluations = self._prepare(
+            (frame.f_code.co_name if (frame := currentframe()) else "") + "+1",
+            stream="DEBUG",
+            file="INFO",
+        )
+
+        Trace.set_trace(name, stream="DEBUG", file="INFO")
+        trace = Trace(name, stream="ERROR", file="WARNING")
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+    def test_instance_str(self):
+        name, msgs, evaluations = self._prepare(
+            frame.f_code.co_name if (frame := currentframe()) else "",
+            stream="ERROR",
+            file="WARNING",
+        )
+
+        trace = Trace(name, stream="ERROR", file="WARNING")
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+        name, msgs, evaluations = self._prepare(
+            (frame.f_code.co_name if (frame := currentframe()) else "") + "+1",
+            stream="DEBUG",
+            file="NOTSET",
+        )
+
+        trace = Trace(name, stream="DEBUG", file="NOTSET")
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+    def test_default_str(self):
+        name, msgs, evaluations = self._prepare(
+            frame.f_code.co_name if (frame := currentframe()) else "",
+            stream="INFO",
+            file="NONE",
+        )
+
+        trace = Trace(name)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+        name, msgs, evaluations = self._prepare(
+            (frame.f_code.co_name if (frame := currentframe()) else "") + "+1",
+            stream="INFO",
+            file="NONE",
+        )
+
+        trace = Trace(name)
+
+        self._trace(trace, msgs)
+        self._evaluate(evaluations)
+
+
+class _StreamHandler(Handler):
+    msgs = []
+
+    def __init__(self, level: int = 0) -> None:
+        super().__init__(level)
+
+    def emit(self, record: LogRecord) -> None:
+        self.msgs.append(record.getMessage())
+
+    @classmethod
+    def stream(cls) -> str:
+        return "\n".join(_StreamHandler.msgs)
