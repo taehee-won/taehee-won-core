@@ -38,6 +38,10 @@ class Datetime:
     def from_str(cls, string: str, fmt: str) -> "Datetime":
         return cls(datetime.strptime(string, fmt))
 
+    @classmethod
+    def from_timestamp(cls, timestamp: float) -> "Datetime":
+        return cls(datetime.fromtimestamp(timestamp))
+
     def get_datetime(self) -> datetime:
         return self._dt
 

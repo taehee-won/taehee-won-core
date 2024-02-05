@@ -28,6 +28,15 @@ class TestDatetime(TestCase):
             datetime(2023, 12, 11),
         )
 
+    def test_from_timestamp(self):
+        self.assertAlmostEqual(
+            Datetime.from_timestamp(datetime.now().timestamp())
+            .get_datetime()
+            .timestamp(),
+            datetime.now().timestamp(),
+            places=5,
+        )
+
     def test_get_datetime(self):
         dt = datetime(2008, 8, 16)
         self.assertEqual(
