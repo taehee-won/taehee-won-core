@@ -3,6 +3,7 @@ from .src.library.lib.OS import OS
 from .src.library.lib.Trace import TraceLevel, Trace
 from .src.library.lib.macro import KWARGS, ARGS_STR, KWARGS_STR, ATTR, LOOP, CALL, RAISE
 from .src.library.lib.Cache import Cache
+from .src.library.lib.Math import Math
 
 __all__ = []
 __all__.extend(["Period", "Datetime"])
@@ -10,6 +11,7 @@ __all__.extend(["OS"])
 __all__.extend(["TraceLevel", "Trace"])
 __all__.extend(["KWARGS", "ARGS_STR", "KWARGS_STR", "ATTR", "LOOP", "CALL", "RAISE"])
 __all__.extend(["Cache"])
+__all__.extend(["Math"])
 
 
 __author__ = "Taehee Won(taehee.won@gmail.com)"
