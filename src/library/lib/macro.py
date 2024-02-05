@@ -1,9 +1,12 @@
 from typing import Any, Callable, Dict, Iterable, Optional, Type
 
 
-def KWARGS(empty=True, **kwargs: Any) -> Optional[Dict[str, Any]]:
-    params = {k: v for k, v in kwargs.items() if v is not None}
-    return params if params or empty else None
+def KWARGS(**kwargs: Any) -> Dict[str, Any]:
+    return {k: v for k, v in kwargs.items() if v is not None}
+
+
+def PARAMS(**kwargs: Any) -> Optional[Dict[str, Any]]:
+    return params if (params := KWARGS(**kwargs)) else None
 
 
 def ARGS_STR(*args: Any) -> str:

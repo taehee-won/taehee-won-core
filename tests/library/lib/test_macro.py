@@ -1,13 +1,18 @@
 from unittest import TestCase
 
-from src.library.lib.macro import KWARGS, ARGS_STR, KWARGS_STR, ATTR, LOOP, CALL, RAISE
+from src.library.lib.macro import KWARGS, PARAMS, ATTR, LOOP, CALL, RAISE
+from src.library.lib.macro import ARGS_STR, KWARGS_STR
+from src.library.lib.macro import ATTR, LOOP, CALL, RAISE
 
 
 class TestMacro(TestCase):
     def test_KWARGS(self):
         self.assertEqual(KWARGS(a=1, b=None, c=3), {"a": 1, "c": 3})
-        self.assertEqual(KWARGS(a=None, b=None, empty=True), {})
-        self.assertEqual(KWARGS(a=None, b=None, empty=False), None)
+        self.assertEqual(KWARGS(a=None, b=None), {})
+
+    def test_PARAMS(self):
+        self.assertEqual(PARAMS(a=1, b=None, c=3), {"a": 1, "c": 3})
+        self.assertEqual(PARAMS(a=None, b=None), None)
 
     def test_ARGS_STR(self):
         self.assertEqual(ARGS_STR("apple", "banana", 123), "apple/banana/123")
