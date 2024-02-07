@@ -5,9 +5,9 @@ from .Trace import Trace
 from .OS import OS
 
 
-class Cache:
+class Lib:
     @staticmethod
-    def clear(
+    def clear_cache(
         root: str = OS.get_cwd(),
         words: List[str] = [
             "__pycache__",  # python cache
@@ -30,7 +30,7 @@ class Cache:
                 if any(word in file for word in words)
             ]
 
-        debug = ATTR(Cache, "trace", lambda: Trace("core")).debug
+        debug = ATTR(Lib, "trace", lambda: Trace("core")).debug
         debug(f"clear caches from {len(words)} words")
 
         debug(f"{len(cache_dirs)} cache dirs:")
