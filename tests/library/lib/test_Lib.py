@@ -6,12 +6,15 @@ from shutil import rmtree
 from string import ascii_letters, digits
 from random import choice
 
+from src.library.lib.Trace import Trace
 from src.library.lib.Lib import Lib
 
 
 class TestLib(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
+        Trace.set("NOTSET")
+
         cls.cache_dir_words = [
             "__pycache__",  # python cache
         ]
@@ -128,3 +131,16 @@ class TestLib(TestCase):
 
         self.assertFalse(any(exists(dir) for dir in custom_dirs))
         self.assertFalse(any(exists(file) for file in custom_files))
+
+    def test_trace_exception(self):
+        divide_zero = lambda: 1 / 0
+
+        try:
+            divide_zero()
+
+        except Exception:
+            Lib.trace_exception()
+
+    def test_trace_exception_none(self):
+        with self.assertRaises(ValueError):
+            Lib.trace_exception()

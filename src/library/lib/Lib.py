@@ -1,6 +1,7 @@
 from typing import List
+from sys import exc_info
 
-from .macro import LOOP, ATTR
+from .macro import LOOP, ATTR, RAISE
 from .Trace import Trace
 from .OS import OS
 
@@ -40,3 +41,45 @@ class Lib:
         debug(f"{len(cache_files)} cache files:")
         LOOP(debug(f"  {file}") for file in cache_files)
         LOOP(OS.remove_file(file) for file in cache_files)
+
+    @staticmethod
+    def trace_exception() -> None:
+        exc_type, exc_value, exc_traceback = exc_info()
+
+        if exc_type is None or exc_value is None:
+            RAISE(ValueError, "Invalid exception")
+
+        traces = []
+        while exc_traceback is not None:
+            traces.append(exc_traceback)
+            exc_traceback = exc_traceback.tb_next
+
+        traces = [
+            [
+                str(t.tb_frame.f_code.co_name),
+                OS.get_file(t.tb_frame.f_code.co_filename),
+                str(t.tb_lineno),
+            ]
+            for t in reversed(traces)
+        ]
+        widths = (
+            max([len(traceback[0]) for traceback in traces]) + 2,
+            max([len(traceback[1]) for traceback in traces]),
+            max([len(traceback[2]) for traceback in traces]),
+        )
+
+        critical = ATTR(Lib, "trace", lambda: Trace("core")).critical
+        critical(f"exception {exc_type.__name__} raised for {exc_value}")
+
+        critical("call stack:")
+        LOOP(
+            critical(
+                ("    --" if not index else "      "),
+                (traceback[0] + "()").ljust(widths[0]),
+                "from",
+                traceback[1].ljust(widths[1]) + ",",
+                traceback[2].ljust(widths[2]) + " line",
+                ("--" if not index else ""),
+            )
+            for index, traceback in enumerate(traces)
+        )
