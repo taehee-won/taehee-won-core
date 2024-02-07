@@ -29,12 +29,10 @@ class TestDatetime(TestCase):
         )
 
     def test_from_timestamp(self):
-        self.assertAlmostEqual(
-            Datetime.from_timestamp(datetime.now().timestamp())
-            .get_datetime()
-            .timestamp(),
-            datetime.now().timestamp(),
-            places=5,
+        timestamp = datetime.now().timestamp()
+        self.assertEqual(
+            Datetime.from_timestamp(timestamp).get_datetime().timestamp(),
+            timestamp,
         )
 
     def test_get_datetime(self):
