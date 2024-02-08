@@ -38,7 +38,7 @@ class TestDictList(TestCase):
         for index, element in enumerate(data):
             self.assertEqual(element, self.source[index])
 
-        data = DictList(F_DICTLIST_CSV, type=DictListFile.DICTLIST)
+        data = DictList(F_DICTLIST_CSV, DictListFile.DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source[index])
 

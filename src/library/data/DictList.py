@@ -53,7 +53,7 @@ class DictList:
         )
 
     def __str__(self) -> str:
-        attrs = KWARGS_STR(name=self._name, len=len(self._data))
+        attrs = KWARGS_STR(len=len(self._data), name=self._name)
         return f"{self.__class__.__name__}({attrs})"
 
     def print(self, shorten: bool = True) -> None:

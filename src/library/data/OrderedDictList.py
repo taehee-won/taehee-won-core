@@ -43,7 +43,7 @@ class OrderedDictList(DictList):
         )
 
     def __str__(self) -> str:
-        attrs = KWARGS_STR(name=self._name, key=self._key, len=len(self._data))
+        attrs = KWARGS_STR(key=self._key, len=len(self._data), name=self._name)
         return f"{self.__class__.__name__}({attrs})"
 
     def print(self, shorten: Optional[bool] = None) -> None:
