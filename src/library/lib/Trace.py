@@ -3,7 +3,7 @@ from enum import IntEnum
 from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
 from logging import getLogger, StreamHandler, FileHandler, NullHandler, Formatter
 
-from ..data.Datetime import Datetime
+from .Datetime import Datetime
 from .macro import LOOP
 from .OS import OS
 
