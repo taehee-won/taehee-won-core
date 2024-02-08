@@ -9,15 +9,15 @@ class OrderedDictList(DictList):
         self,
         key: str,
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
-        name: Optional[str] = None,
         type: Optional[Union[DictListFile, str]] = None,
         encoding: Optional[str] = None,
+        name: Optional[str] = None,
     ):
         self._key = key
         self._sorted = False
 
         super().__init__(
-            **KWARGS(default=default, name=name, type=type, encoding=encoding)
+            **KWARGS(default=default, type=type, encoding=encoding, name=name)
         )
 
     def _sort(self) -> None:

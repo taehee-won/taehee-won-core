@@ -21,9 +21,9 @@ class DictList:
     def __init__(
         self,
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
-        name: Optional[str] = None,
         type: Optional[Union[DictListFile, str]] = None,
         encoding: Optional[str] = None,
+        name: Optional[str] = None,
     ) -> None:
         self._name = name
         self._trace: Trace = ATTR(DictList, "trace", lambda: Trace("core"))
