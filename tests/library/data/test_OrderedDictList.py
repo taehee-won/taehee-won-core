@@ -49,6 +49,9 @@ class TestOrderedDictList(TestCase):
     #     self.data_name_sorted.write(F_CSV_CSV_NAME_SORTED, DictListFile.CSV)
     #     self.data_name_sorted.write(F_JSON_JSON_NAME_SORTED, DictListFile.JSON)
 
+    def test_init(self):
+        self.assertIsInstance(self.data_name_sorted, OrderedDictList)
+
     def test_init_read(self):
         data = OrderedDictList("name", F_DICTLIST_DICTLIST)
         for index, element in enumerate(data):
@@ -103,6 +106,20 @@ class TestOrderedDictList(TestCase):
             data._data,  # type: ignore
             self.source_name_sorted[min(index1, index2) : max(index1, index2)],
         )
+
+    def test_str(self):
+        self.assertIsInstance(str(self.data_name_sorted), str)
+        self.assertIn("OrderedDictList", str(self.data_name_sorted))
+        self.assertIn("key:name", str(self.data_name_sorted))
+        self.assertIn(f"len:{len(self.source)}", str(self.data_name_sorted))
+        self.assertNotIn("name:", str(self.data_name_sorted))
+
+        data = OrderedDictList("name", name="TestOrderedDictList")
+        self.assertIsInstance(str(data), str)
+        self.assertIn("OrderedDictList", str(data))
+        self.assertIn("key:name", str(data))
+        self.assertIn(f"len:0", str(data))
+        self.assertIn("name:TestOrderedDictList", str(data))
 
     def test_get_value(self):
         index = randint(0, len(self.source) - 1)

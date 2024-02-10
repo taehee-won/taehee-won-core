@@ -45,6 +45,9 @@ class TestHandledDictList(TestCase):
     #     self.data.write(F_CSV_CSV_HANDLED, DictListFile.CSV)
     #     self.data.write(F_JSON_JSON_HANDLED, DictListFile.JSON)
 
+    def test_init(self):
+        self.assertIsInstance(self.data, HandledDictList)
+
     @staticmethod
     def _name_handle(element: Dict, pipe: Dict):
         element["name"] += "_handled"
@@ -101,6 +104,20 @@ class TestHandledDictList(TestCase):
             data._data,  # type: ignore
             self.source_handled[min(index1, index2) : max(index1, index2)],
         )
+
+    def test_str(self):
+        self.assertIsInstance(str(self.data), str)
+        self.assertIn("HandledDictList", str(self.data))
+        self.assertIn("handles:2", str(self.data))
+        self.assertIn(f"len:{len(self.source)}", str(self.data))
+        self.assertNotIn("name:", str(self.data))
+
+        data = HandledDictList([], name="TestHandledDictList")
+        self.assertIsInstance(str(data), str)
+        self.assertIn("HandledDictList", str(data))
+        self.assertIn("handles:0", str(data))
+        self.assertIn(f"len:0", str(data))
+        self.assertIn("name:TestHandledDictList", str(data))
 
     def test_get_key_value(self):
         index = randint(0, len(self.source_handled) - 1)

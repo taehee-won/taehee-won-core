@@ -33,6 +33,9 @@ class TestDictList(TestCase):
     #     self.data.write(F_DICTLIST_CSV, DictListFile.DICTLIST)
     #     self.data.write(F_DICTLIST, DictListFile.DICTLIST)
 
+    def test_init(self):
+        self.assertIsInstance(self.data, DictList)
+
     def test_init_read(self):
         data = DictList(F_DICTLIST_DICTLIST)
         for index, element in enumerate(data):
@@ -75,6 +78,18 @@ class TestDictList(TestCase):
             data._data,  # type: ignore
             self.source[min(index1, index2) : max(index1, index2)],
         )
+
+    def test_str(self):
+        self.assertIsInstance(str(self.data), str)
+        self.assertIn("DictList", str(self.data))
+        self.assertIn(f"len:{len(self.source)}", str(self.data))
+        self.assertNotIn("name:", str(self.data))
+
+        data = DictList(name="TestDictList")
+        self.assertIsInstance(str(data), str)
+        self.assertIn("DictList", str(data))
+        self.assertIn(f"len:0", str(data))
+        self.assertIn("name:TestDictList", str(data))
 
     def test_get_key_value(self):
         index = randint(0, len(self.source) - 1)
