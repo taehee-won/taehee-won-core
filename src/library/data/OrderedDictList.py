@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union, Iterable, Iterator
+from typing import Any, Dict, List, Optional, Union, Iterable, Iterator, overload
 
 from ..lib.macro import KWARGS, KWARGS_STR, RAISE
 from .DictList import DictListFile, DictList
@@ -29,6 +29,12 @@ class OrderedDictList(DictList):
         self._sort()
         for element in self._data:
             yield element
+
+    @overload
+    def __getitem__(self, attr: slice, /) -> "OrderedDictList": ...
+
+    @overload
+    def __getitem__(self, attr: int, /) -> Dict[str, Any]: ...
 
     def __getitem__(
         self,

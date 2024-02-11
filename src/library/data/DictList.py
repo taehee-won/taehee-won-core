@@ -1,4 +1,4 @@
-from typing import Optional, Union, List, Dict, Any, Iterable, Iterator
+from typing import Optional, Union, List, Dict, Any, Iterable, Iterator, overload
 from enum import Enum
 from collections import OrderedDict
 from functools import reduce
@@ -42,6 +42,12 @@ class DictList:
     def __iter__(self) -> Iterator[Dict[str, Any]]:
         for element in self._data:
             yield element
+
+    @overload
+    def __getitem__(self, attr: slice, /) -> "DictList": ...
+
+    @overload
+    def __getitem__(self, attr: int, /) -> Dict[str, Any]: ...
 
     def __getitem__(
         self,
