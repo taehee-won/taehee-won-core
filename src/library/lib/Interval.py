@@ -1,29 +1,50 @@
-from typing import Final, Optional, Union
+from typing import Optional, Union, Dict
 from time import time, sleep
 
-from .macro import ATTR, KWARGS_STR
+from .macro import ATTR, KWARGS_STR, LOOP, KWARGS
 from .Trace import Trace
 
-
-_SECONDS_PER_DAY: Final[int] = 86400
+from ..data.DictList import DictListFile, DictList
 
 
 class Interval:
     def __init__(
         self,
-        value: Union[int, float],
+        values: Dict[Union[int, float], int],
+        file: Optional[str] = None,
         name: Optional[str] = None,
     ):
-        self._value: Union[int, float] = value
+        self._file: Union[str, None] = file
         self._name: Union[str, None] = name
         self._trace: Trace = ATTR(Interval, "trace", lambda: Trace("core"))
-        self._record = time() - _SECONDS_PER_DAY
+
+        attrs = KWARGS_STR(file=self._file, name=self._name)
+        self._values: DictList = DictList(name=f"{self.__class__.__name__}({attrs})")
+
+        if self._file is not None:
+            self._values.read(self._file, DictListFile.DICTLIST)
+
+        if not self._values:
+            self._values.extend(
+                [{"value": v, "count": c, "records": []} for v, c in values.items()]
+            )
 
     def _moment(self) -> Union[int, float]:
-        return self._value - (time() - self._record)
+        now = time()
+        moments = [0] + [
+            moment
+            for v in self._values
+            if v["count"] == len(v["records"])
+            and (moment := v["value"] - (now - v["records"][0])) > 0
+        ]
+        return max(moments)
 
     def __str__(self) -> str:
-        attrs = KWARGS_STR(value=f"{self._value}s", name=self._name)
+        attrs = KWARGS_STR(
+            values=len(self._values),
+            file=self._file,
+            name=self._name,
+        )
         return f"{self.__class__.__name__}({attrs})"
 
     def print(self) -> None:
@@ -36,11 +57,34 @@ class Interval:
             info(f"{self}: no interval")
 
     def wait(self) -> Union[int, float]:
-        moment = self._moment()
+        now = time()
+        for v in self._values:
+            v["records"] = [r for r in v["records"] if v["value"] - (now - r) > 0]
+
+        moments = [0] + [
+            v["value"] - (now - v["records"].pop(0))
+            for v in self._values
+            if v["count"] == len(v["records"])
+        ]
+
+        moment = max(moments)
         if moment > 0:
             self._trace.debug(f"wait {moment:.5f} seconds by {self}")
             sleep(moment)
 
-        self._record = time()
+        now = time()
+        LOOP(v["records"].append(now) for v in self._values)
+
+        if self._file is not None:
+            self._values.write(self._file, DictListFile.DICTLIST)
 
         return max(moment, 0)
+
+
+class SimplifiedInterval(Interval):
+    def __init__(
+        self,
+        value: Union[int, float],
+        name: Optional[str] = None,
+    ):
+        super().__init__({value: 1}, **KWARGS(name=name))
