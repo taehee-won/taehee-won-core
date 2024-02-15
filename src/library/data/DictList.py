@@ -27,14 +27,16 @@ class DictList:
     ) -> None:
         self._name = name
         self._trace: Trace = ATTR(DictList, "trace", lambda: Trace("core"))
-        self._data = []
 
-        if default is not None:
-            if isinstance(default, str):
-                self.read(default, **KWARGS(type=type, encoding=encoding))
+        if default is None:
+            self._data = []
 
-            else:
-                self.extend(default)
+        elif isinstance(default, str):
+            self._data = []
+            self.read(default, **KWARGS(type=type, encoding=encoding))
+
+        else:
+            self._data = default
 
     def __len__(self) -> int:
         return len(self._data)

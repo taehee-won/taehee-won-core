@@ -1,4 +1,5 @@
 from unittest import TestCase
+from copy import deepcopy
 from random import randint
 from os import remove
 from os.path import join, abspath, dirname
@@ -24,7 +25,7 @@ class TestDictList(TestCase):
             {"name": "Jane", "age": 25},
             {"name": "Doe", "age": 22},
         ]
-        self.data = DictList(self.source)
+        self.data = DictList(deepcopy(self.source))
 
     # def test_prepare_TestDictList(self):
     #     self.data.write(F_DICTLIST_DICTLIST, DictListFile.DICTLIST)

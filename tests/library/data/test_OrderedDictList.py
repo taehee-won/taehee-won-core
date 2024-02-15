@@ -1,4 +1,5 @@
 from unittest import TestCase
+from copy import deepcopy
 from random import randint
 from os import remove
 from os.path import join, abspath, dirname
@@ -39,8 +40,8 @@ class TestOrderedDictList(TestCase):
             {"name": "Jane", "age": 25},
             {"name": "John", "age": 30},
         ]
-        self.data_name_sorted = OrderedDictList("name", self.source)
-        self.data_age_sorted = OrderedDictList("age", self.source)
+        self.data_name_sorted = OrderedDictList("name", deepcopy(self.source))
+        self.data_age_sorted = OrderedDictList("age", deepcopy(self.source))
 
     # def test_prepare_TestOrderedDictList(self):
     #     self.data_name_sorted.write(
