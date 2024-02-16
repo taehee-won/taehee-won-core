@@ -80,25 +80,25 @@ class Datetime:
 
     def get_quarter_end(self, index: int = 0) -> "Datetime":
         dt = self.get_quarter_start(index + 1)
-        dt.before(Period.DAY, 1)
+        dt.set_before(Period.DAY, 1)
 
         return dt
 
-    def before(
+    def set_before(
         self,
         period: Union[Period, str] = Period.DAY,
         interval: int = 1,
     ) -> None:
         self._dt -= self._get_delta(period, interval)
 
-    def after(
+    def set_after(
         self,
         period: Union[Period, str] = Period.DAY,
         interval: int = 1,
     ) -> None:
         self._dt += self._get_delta(period, interval)
 
-    def quarter_start(self, index: int = 0) -> None:
+    def set_quarter_start(self, index: int = 0) -> None:
         self._dt = self._get_quarter_start(self._dt)
 
         while index:
@@ -112,8 +112,8 @@ class Datetime:
 
             self._dt = self._get_quarter_start(self._dt)
 
-    def quarter_end(self, index: int = 0) -> None:
-        self.quarter_start(index + 1)
+    def set_quarter_end(self, index: int = 0) -> None:
+        self.set_quarter_start(index + 1)
         self._dt -= timedelta(days=1)
 
     def extract(self, fmt: str) -> None:

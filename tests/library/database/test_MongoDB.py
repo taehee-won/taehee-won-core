@@ -3,7 +3,7 @@ from os import environ
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import DuplicateKeyError
 
-from src.library.database.MongoDB import SortOrder, MongoDB, DictList
+from src.library.database.MongoDB import SortOrder, MongoDB
 
 
 TEST_DATABASE = "TEST-DATABASE"
@@ -112,7 +112,7 @@ class TestMongoDB(TestCase):
 
     def test_select(self):
         data = self.db.select(TEST_DATABASE, TEST_COLLECTION)
-        self.assertIsInstance(data, DictList)
+        self.assertIsInstance(data, list)
         self.assertEqual(data[0], {"name": "Doe", "age": 22})
         self.assertEqual(data[1], {"name": "Jane", "age": 25})
         self.assertEqual(data[2], {"name": "John", "age": 30})

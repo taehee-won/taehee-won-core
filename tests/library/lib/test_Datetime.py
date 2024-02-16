@@ -96,32 +96,32 @@ class TestDatetime(TestCase):
             datetime(2011, 6, 30),
         )
 
-    def test_before(self):
+    def test_set_before(self):
         dt = Datetime.from_values(2020, 1, 15)
-        dt.before(Period.DAY, 10)
+        dt.set_before(Period.DAY, 10)
         self.assertEqual(dt.get_datetime(), datetime(2020, 1, 5))
 
         dt = Datetime.from_values(2020, 1, 15)
-        dt.before(Period.MONTH, 1)
+        dt.set_before(Period.MONTH, 1)
         self.assertEqual(dt.get_datetime(), datetime(2019, 12, 15))
 
-    def test_after(self):
+    def test_set_after(self):
         dt = Datetime.from_values(2020, 1, 15)
-        dt.after(Period.DAY, 10)
+        dt.set_after(Period.DAY, 10)
         self.assertEqual(dt.get_datetime(), datetime(2020, 1, 25))
 
         dt = Datetime.from_values(2020, 1, 15)
-        dt.after(Period.MONTH, 1)
+        dt.set_after(Period.MONTH, 1)
         self.assertEqual(dt.get_datetime(), datetime(2020, 2, 15))
 
-    def test_quarter_start(self):
+    def test_set_quarter_start(self):
         dt = Datetime.from_values(2020, 5, 15)
-        dt.quarter_start()
+        dt.set_quarter_start()
         self.assertEqual(dt.get_datetime(), datetime(2020, 4, 1))
 
-    def test_quarter_end(self):
+    def test_set_quarter_end(self):
         dt = Datetime.from_values(2020, 5, 15)
-        dt.quarter_end()
+        dt.set_quarter_end()
         self.assertEqual(dt.get_datetime(), datetime(2020, 6, 30))
 
     def test_extract(self):

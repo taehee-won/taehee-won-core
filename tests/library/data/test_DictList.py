@@ -74,9 +74,9 @@ class TestDictList(TestCase):
         index2 = randint(0, len(self.source) - 1)
 
         data = self.data[min(index1, index2) : max(index1, index2)]
-        self.assertIsInstance(data, DictList)
+        self.assertIsInstance(data, list)
         self.assertListEqual(
-            data._data,  # type: ignore
+            data,
             self.source[min(index1, index2) : max(index1, index2)],
         )
 
@@ -92,54 +92,91 @@ class TestDictList(TestCase):
         self.assertIn(f"len:0", str(data))
         self.assertIn("name:TestDictList", str(data))
 
-    def test_get_key_value(self):
+    def test_get_element_key_value(self):
         index = randint(0, len(self.source) - 1)
         self.assertEqual(
-            self.data.get("name", self.source[index]["name"]),
+            self.data.get_element("name", self.source[index]["name"]),
             self.source[index],
         )
 
         index = randint(0, len(self.source) - 1)
         self.assertEqual(
-            self.data.get("age", self.source[index]["age"]),
+            self.data.get_element("age", self.source[index]["age"]),
             self.source[index],
         )
 
-        self.assertIsNone(self.data.get("name", "Theodore"))
+        self.assertIsNone(self.data.get_element("name", "Theodore"))
 
-    def test_get_query(self):
+    def test_get_element_query(self):
         index = randint(0, len(self.source) - 1)
         self.assertEqual(
-            self.data.get({"name": self.source[index]["name"]}),
+            self.data.get_element({"name": self.source[index]["name"]}),
             self.source[index],
         )
 
         index = randint(0, len(self.source) - 1)
         self.assertEqual(
-            self.data.get({"age": self.source[index]["age"]}),
+            self.data.get_element({"age": self.source[index]["age"]}),
             self.source[index],
         )
 
-        self.assertIsNone(self.data.get({"name": "Theodore"}))
-        self.assertIsNone(self.data.get({"name": "Jane", "age": 10}))
+        self.assertIsNone(self.data.get_element({"name": "Theodore"}))
+        self.assertIsNone(self.data.get_element({"name": "Jane", "age": 10}))
 
-    def test_items_key_value(self):
-        data = self.data.items("name", "John")
-        self.assertIsInstance(data, DictList)
+    def test_get_data_key_value(self):
+        data = self.data.get_data("name", "John")
+        self.assertIsInstance(data, list)
         self.assertEqual(len(data), 1)
 
-    def test_items_query(self):
-        data = self.data.items({"name": "John"})
-        self.assertIsInstance(data, DictList)
+    def test_get_data_query(self):
+        data = self.data.get_data({"name": "John"})
+        self.assertIsInstance(data, list)
         self.assertEqual(len(data), 1)
 
-    def test_items(self):
-        data = self.data.items()
-        self.assertIsInstance(data, DictList)
+    def test_get_data(self):
+        data = self.data.get_data()
+        self.assertIsInstance(data, list)
         self.assertEqual(len(data), 3)
 
-    def test_values(self):
-        names = self.data.values("name")
+    def test_get_filtered_data_start(self):
+        data = self.data.get_filtered_data("age", start=25)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 2)
+
+        data = self.data.get_filtered_data("age", start=26)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 1)
+
+    def test_get_filtered_data_end(self):
+        data = self.data.get_filtered_data("age", end=25)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 2)
+
+        data = self.data.get_filtered_data("age", end=26)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 2)
+
+    def test_get_filtered_data_include(self):
+        data = self.data.get_filtered_data("age", include=[22, 25, 35])
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 2)
+
+    def test_get_filtered_data_exclude(self):
+        data = self.data.get_filtered_data("name", exclude=["John", "Theodore"])
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 2)
+
+    def test_get_filtered_data(self):
+        data = self.data.get_filtered_data("age", start=22, end=26)
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 2)
+
+        data = self.data.get_filtered_data("age", start=27, exclude=[30])
+        self.assertIsInstance(data, list)
+        self.assertEqual(len(data), 0)
+
+    def test_get_values(self):
+        names = self.data.get_values("name")
         self.assertIn("John", names)
         self.assertEqual(len(names), 3)
 
@@ -171,16 +208,6 @@ class TestDictList(TestCase):
     def test_clear(self):
         self.data.clear()
         self.assertEqual(len(self.data._data), 0)
-
-    def test_include(self):
-        data = self.data.include("age", [22, 25, 35])
-        self.assertIsInstance(data, DictList)
-        self.assertEqual(len(data._data), 2)
-
-    def test_exclude(self):
-        data = self.data.exclude("name", ["John", "Theodore"])
-        self.assertIsInstance(data, DictList)
-        self.assertEqual(len(data._data), 2)
 
     def test_read(self):
         data = DictList()

@@ -46,7 +46,7 @@ class DictList:
             yield element
 
     @overload
-    def __getitem__(self, attr: slice, /) -> "DictList": ...
+    def __getitem__(self, attr: slice, /) -> List[Dict[str, Any]]: ...
 
     @overload
     def __getitem__(self, attr: int, /) -> Dict[str, Any]: ...
@@ -55,10 +55,8 @@ class DictList:
         self,
         attr: Union[slice, int],
         /,
-    ) -> Union["DictList", Dict[str, Any]]:
-        return (
-            DictList(self._data[attr]) if isinstance(attr, slice) else self._data[attr]
-        )
+    ) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
+        return self._data[attr]
 
     def __str__(self) -> str:
         attrs = KWARGS_STR(len=len(self._data), name=self._name)
@@ -79,7 +77,7 @@ class DictList:
                 info(f"  {len(self._data) + i}: {self._data[i]}") for i in (-3, -2, -1)
             )
 
-    def get(
+    def get_element(
         self,
         attr1: Union[str, Dict[str, Any]],
         attr2: Optional[Any] = None,
@@ -95,34 +93,46 @@ class DictList:
                 if all(k in e and e[k] == v for k, v in attr1.items()):
                     return e
 
-    def items(
+    def get_data(
         self,
         attr1: Optional[Union[str, Dict[str, Any]]] = None,
         attr2: Optional[Any] = None,
         /,
-    ) -> "DictList":
+    ) -> List[Dict[str, Any]]:
         if isinstance(attr1, str):  # attr1: key, attr2: value
-            return DictList([e for e in self._data if attr1 in e and e[attr1] == attr2])
+            return [e for e in self._data if attr1 in e and e[attr1] == attr2]
 
         elif isinstance(attr1, dict):  # attr1: queries: Dict[str, Any]
-            return DictList(
-                [
-                    e
-                    for e in self._data
-                    if all(k in e and e[k] == v for k, v in attr1.items())
-                ]
-            )
+            return [
+                e
+                for e in self._data
+                if all(k in e and e[k] == v for k, v in attr1.items())
+            ]
 
         else:
-            return DictList(self._data)
+            return self._data
 
-    def include(self, key: str, values: Iterable) -> "DictList":
-        return DictList([e for e in self._data if e[key] in values])
+    def get_filtered_data(
+        self,
+        key: str,
+        *,
+        start: Optional[Any] = None,
+        end: Optional[Any] = None,
+        include: Optional[Iterable] = None,
+        exclude: Optional[Iterable] = None,
+    ) -> List[Dict[str, Any]]:
+        return [
+            e
+            for e in self._data
+            if (
+                (start is None or e[key] >= start)
+                and (end is None or e[key] <= end)
+                and (include is None or e[key] in include)
+                and (exclude is None or e[key] not in exclude)
+            )
+        ]
 
-    def exclude(self, key: str, values: Iterable) -> "DictList":
-        return DictList([e for e in self._data if e[key] not in values])
-
-    def values(
+    def get_values(
         self,
         key: str,
         overlap: bool = True,

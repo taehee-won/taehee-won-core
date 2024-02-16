@@ -1,8 +1,7 @@
 from typing import Any, Final, List, Optional, Dict
 from pymongo import MongoClient, ASCENDING, DESCENDING
 
-from ..lib.macro import KWARGS, KWARGS_STR
-from ..data.DictList import DictList
+from ..lib.macro import KWARGS
 
 
 _SYSTEM_DATABASES: Final[List[str]] = ["admin", "config", "local"]
@@ -100,7 +99,7 @@ class MongoDB:
         start: Optional[Any] = None,
         end: Optional[Any] = None,
         count: Optional[int] = None,
-    ) -> DictList:
+    ) -> List:
         cursor = self._client[database][collection].find(
             projection={"_id": False},
             filter=(
@@ -125,16 +124,7 @@ class MongoDB:
         ]:
             cursor = cursor.sort(indexes)
 
-        attrs = KWARGS_STR(
-            database=database,
-            collection=collection,
-            key=key,
-            value=value,
-            start=start,
-            end=end,
-            count=count,
-        )
-        return DictList(list(cursor), name=f"{self.__class__.__name__}({attrs})")
+        return list(cursor)
 
     def update(
         self,

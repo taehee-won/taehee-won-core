@@ -13,7 +13,7 @@ class OrderedDictList(DictList):
         encoding: Optional[str] = None,
         name: Optional[str] = None,
     ):
-        self._key = key
+        self._key: str = key
         self._sorted = False
 
         super().__init__(
@@ -31,7 +31,7 @@ class OrderedDictList(DictList):
             yield element
 
     @overload
-    def __getitem__(self, attr: slice, /) -> "OrderedDictList": ...
+    def __getitem__(self, attr: slice, /) -> List[Dict[str, Any]]: ...
 
     @overload
     def __getitem__(self, attr: int, /) -> Dict[str, Any]: ...
@@ -40,13 +40,9 @@ class OrderedDictList(DictList):
         self,
         attr: Union[slice, int],
         /,
-    ) -> Union["OrderedDictList", Dict[str, Any]]:
+    ) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
         self._sort()
-        return (
-            OrderedDictList(self._key, self._data[attr])
-            if isinstance(attr, slice)
-            else self._data[attr]
-        )
+        return super().__getitem__(attr)
 
     def __str__(self) -> str:
         attrs = KWARGS_STR(key=self._key, len=len(self._data), name=self._name)
@@ -56,7 +52,7 @@ class OrderedDictList(DictList):
         self._sort()
         super().print(**KWARGS(shorten=shorten))
 
-    def get(
+    def get_element(
         self,
         attr1: Union[Any, str, Dict[str, Any]],
         attr2: Optional[Any] = None,
@@ -77,62 +73,42 @@ class OrderedDictList(DictList):
                     return self._data[i]
 
         else:
-            return super().get(attr1, attr2)
+            return super().get_element(attr1, attr2)
 
-    def items(
+    def get_data(
         self,
         attr1: Optional[Union[Any, str, Dict[str, Any]]] = None,
         attr2: Optional[Any] = None,
         /,
-    ) -> "OrderedDictList":
+    ) -> List[Dict[str, Any]]:
         if attr2 is None and attr1 is not None and not isinstance(attr1, dict):
-            return OrderedDictList(
-                self._key, [e for e in self._data if e[self._key] == attr1]
-            )
+            attr2 = attr1
+            attr1 = self._key
 
-        else:
-            return OrderedDictList(self._key, super().items(attr1, attr2)._data)
+        return super().get_data(attr1, attr2)
 
-    def include(
+    def get_filtered_data(
         self,
-        attr1: Union[str, Iterable],
-        attr2: Optional[Iterable] = None,
-    ) -> "OrderedDictList":  # type: ignore
-        if attr2 is None:  # attr1: values
-            return OrderedDictList(self._key, super().include(self._key, attr1)._data)
-
-        elif isinstance(attr1, str):  # attr1: key, attr2: values
-            return OrderedDictList(self._key, super().include(attr1, attr2)._data)
-
-        RAISE(
-            TypeError,
-            f"Invalid OrderedDictList.include parameter({type(attr1)}, {type(attr2)})",
+        key: Optional[str] = None,
+        *,
+        start: Optional[Any] = None,
+        end: Optional[Any] = None,
+        include: Optional[Iterable] = None,
+        exclude: Optional[Iterable] = None,
+    ) -> List[Dict[str, Any]]:
+        return super().get_filtered_data(
+            self._key if key is None else key,
+            **KWARGS(start=start, end=end, include=include, exclude=exclude),
         )
 
-    def exclude(
-        self,
-        attr1: Union[str, Iterable],
-        attr2: Optional[Iterable] = None,
-    ) -> "OrderedDictList":  # type: ignore
-        if attr2 is None:  # attr1: values
-            return OrderedDictList(self._key, super().exclude(self._key, attr1)._data)
-
-        elif isinstance(attr1, str):  # attr1: key, attr2: values
-            return OrderedDictList(self._key, super().exclude(attr1, attr2)._data)
-
-        RAISE(
-            TypeError,
-            f"Invalid OrderedDictList.exclude parameter({type(attr1)}, {type(attr2)})",
-        )
-
-    def values(
+    def get_values(
         self,
         key: Optional[str] = None,
         overlap: Optional[bool] = None,
         sort: Optional[bool] = None,
     ) -> List:
         self._sort()
-        return super().values(
+        return super().get_values(
             self._key if key is None else key,
             **KWARGS(overlap=overlap, sort=sort),
         )
