@@ -3,6 +3,7 @@ from os import environ
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import DuplicateKeyError
 
+from src.library.lib.Trace import TraceLevel, Trace
 from src.library.database.MongoDB import SortOrder, MongoDB
 
 
@@ -12,6 +13,10 @@ TEST_COLLECTION = "TEST-COLLECTION"
 
 @skipIf(environ.get("TEST_MONGODB") != "1", "MongoDB connects local DB server")
 class TestMongoDB(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        Trace.set(TraceLevel.NOTSET)
+
     def setUp(self):
         self.client = MongoClient(serverSelectionTimeoutMS=1000)
         self.client[TEST_DATABASE][TEST_COLLECTION].insert_many(

@@ -6,14 +6,14 @@ from shutil import rmtree
 from string import ascii_letters, digits
 from random import choice
 
-from src.library.lib.Trace import Trace
+from src.library.lib.Trace import TraceLevel, Trace
 from src.library.lib.Lib import Lib
 
 
 class TestLib(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set("NOTSET")
+        Trace.set(TraceLevel.NOTSET)
 
         cls.cache_dir_words = [
             "__pycache__",  # python cache
@@ -23,6 +23,10 @@ class TestLib(TestCase):
             ".pytest_cache",  # pytest cache
             "tempCodeRunnerFile.py",  # vscode code-runner cache
         ]
+
+    @classmethod
+    def tearDownClass(cls):
+        Trace.set()
 
     def setUp(self) -> None:
         self.dir = mkdtemp()

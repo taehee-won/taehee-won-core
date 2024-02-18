@@ -6,7 +6,8 @@ from os import remove
 from os.path import join, abspath, dirname
 from tempfile import mktemp
 
-from src.library.data.HandledDictList import DictListFile, HandledDictList, DictList
+from src.library.lib.Trace import TraceLevel, Trace
+from src.library.data.HandledDictList import DictListFile, HandledDictList
 from .test_DictList import (
     F_DICTLIST_DICTLIST,
     F_JSON_JSON,
@@ -24,6 +25,10 @@ F_JSON_JSON_HANDLED = join(D_TEST_FILE_DIR, "json_handled.json")
 
 
 class TestHandledDictList(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        Trace.set(TraceLevel.NOTSET)
+
     def setUp(self):
         self.source = [
             {"name": "John", "age": 30},

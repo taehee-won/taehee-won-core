@@ -1,6 +1,6 @@
 from typing import Any, Callable, Iterator, Dict, Optional
 
-from .macro import ATTR, KWARGS_STR, LOOP, RAISE
+from .macro import ATTR, KWARGS_STR, LOOP
 from .Trace import Trace
 from ..data.OrderedDictList import OrderedDictList
 
@@ -79,4 +79,6 @@ class Interface:
         if interface := self._interfaces.get_element(command):
             return interface["func"](*args, **kwargs)
 
-        RAISE(TypeError, f"Invalid command: {command}")
+        err = f"Invalid command: {command}"
+        self._trace.critical(err)
+        raise TypeError(err)

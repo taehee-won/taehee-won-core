@@ -1,7 +1,7 @@
 from typing import List
 from sys import exc_info
 
-from .macro import LOOP, ATTR, RAISE
+from .macro import LOOP, ATTR
 from .Trace import Trace
 from .OS import OS
 
@@ -44,10 +44,14 @@ class Lib:
 
     @staticmethod
     def trace_exception() -> None:
+        critical = ATTR(Lib, "trace", lambda: Trace("core")).critical
+
         exc_type, exc_value, exc_traceback = exc_info()
 
         if exc_type is None or exc_value is None:
-            RAISE(ValueError, "Invalid exception")
+            err = "Invalid exception"
+            critical(err)
+            raise ValueError(err)
 
         traces = []
         while exc_traceback is not None:
@@ -68,7 +72,6 @@ class Lib:
             max([len(traceback[2]) for traceback in traces]),
         )
 
-        critical = ATTR(Lib, "trace", lambda: Trace("core")).critical
         critical(f"exception {exc_type.__name__} raised for {exc_value}")
 
         critical("call stack:")

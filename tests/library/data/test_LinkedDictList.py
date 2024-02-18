@@ -1,11 +1,15 @@
 from unittest import TestCase
 from datetime import datetime
 
-
+from src.library.lib.Trace import TraceLevel, Trace
 from src.library.data.LinkedDictList import LinkedDictList, DictList
 
 
 class TestLinkedDictList(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        Trace.set(TraceLevel.NOTSET)
+
     def test_init(self):
         data = LinkedDictList("datetime", {})
         self.assertIsInstance(data, LinkedDictList)

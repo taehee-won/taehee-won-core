@@ -1,9 +1,14 @@
 from unittest import TestCase
 
+from src.library.lib.Trace import TraceLevel, Trace
 from src.library.lib.Interface import Interface
 
 
 class TestInterface(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        Trace.set(TraceLevel.NOTSET)
+
     def setUp(self) -> None:
         self.interface = Interface(name="TestInterface")
 

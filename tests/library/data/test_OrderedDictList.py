@@ -5,6 +5,7 @@ from os import remove
 from os.path import join, abspath, dirname
 from tempfile import mktemp
 
+from src.library.lib.Trace import TraceLevel, Trace
 from src.library.data.OrderedDictList import DictListFile, OrderedDictList
 from .test_DictList import (
     F_DICTLIST_DICTLIST,
@@ -24,6 +25,10 @@ F_JSON_JSON_NAME_SORTED = join(D_TEST_FILE_DIR, "json_name_sorted.json")
 
 
 class TestOrderedDictList(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        Trace.set(TraceLevel.NOTSET)
+
     def setUp(self):
         self.source = [
             {"name": "John", "age": 30},

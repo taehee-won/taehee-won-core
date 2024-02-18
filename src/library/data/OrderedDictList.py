@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, Union, Iterable, Iterator, overload
 
-from ..lib.macro import KWARGS, KWARGS_STR, RAISE
+from ..lib.macro import KWARGS, KWARGS_STR
 from .DictList import DictListFile, DictList
 
 
@@ -122,7 +122,9 @@ class OrderedDictList(DictList):
         self._sorted = False
 
     def insert(self, element: Dict[str, Any], *, index: int = 0) -> None:
-        RAISE(TypeError, "OrderedDictList does not support insert operation")
+        err = "OrderedDictList does not support insert operation"
+        self._trace.critical(err)
+        raise TypeError(err)
 
     def pop(self, index: Optional[int] = None) -> Dict[str, Any]:
         self._sort()
