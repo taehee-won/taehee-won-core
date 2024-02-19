@@ -16,10 +16,6 @@ class Interface:
     def __len__(self) -> int:
         return len(self._interfaces)
 
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
-        for interface in self._interfaces:
-            yield interface
-
     def __str__(self) -> str:
         attrs = KWARGS_STR(len=len(self._interfaces), name=self._name)
         return f"{self.__class__.__name__}({attrs})"

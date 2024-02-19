@@ -36,6 +36,9 @@ class TestInterface(TestCase):
         interface = Interface()
         self.assertIsInstance(interface, Interface)
 
+    def test_len(self):
+        self.assertEqual(len(self.interface), 4)
+
     def test_str(self):
         self.assertIsInstance(str(self.interface), str)
         self.assertIn("Interface", str(self.interface))
@@ -50,9 +53,6 @@ class TestInterface(TestCase):
 
         interface.register("test", TestInterface.test_str)
         self.assertIn("len:1", str(interface))
-
-    def test_len(self):
-        self.assertEqual(len(self.interface), 4)
 
     def test_register(self):
         interface = Interface()
