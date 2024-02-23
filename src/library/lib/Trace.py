@@ -17,11 +17,6 @@ class TraceLevel:
     NOTSET = NOTSET
 
 
-class _Index(IntEnum):
-    STREAM = 0
-    FILE = 1
-
-
 _FORMAT: Final[str] = "[%(asctime)s][%(name)-10s][%(levelname)-8s] %(message)s"
 _DEFAULT_PATH: Final[str] = OS.get_path(
     "files",
@@ -57,8 +52,8 @@ class Trace:
         stream: Union[int, str, None] = None,
         file: Union[int, str, None] = None,
     ) -> None:
-        cls._config[_Index.STREAM] = stream
-        cls._config[_Index.FILE] = file
+        cls._config[_I_Trace.STREAM] = stream
+        cls._config[_I_Trace.FILE] = file
 
         LOOP(trace._set_handler() for trace in Trace._traces)
 
@@ -71,8 +66,8 @@ class Trace:
     ) -> None:
         cls._configs.setdefault(name, [None, None])
 
-        cls._configs[name][_Index.STREAM] = stream
-        cls._configs[name][_Index.FILE] = file
+        cls._configs[name][_I_Trace.STREAM] = stream
+        cls._configs[name][_I_Trace.FILE] = file
 
         LOOP(trace._set_handler() for trace in cls._traces if trace._name == name)
 
@@ -130,11 +125,11 @@ class Trace:
         return path if (path := Trace._path) is not None else _DEFAULT_PATH
 
     def _set_handler(self) -> None:
-        for index in (_Index.STREAM, _Index.FILE):
+        for index in (_I_Trace.STREAM, _I_Trace.FILE):
             level = self._get_level(index)
             if level != TraceLevel.NOTSET and level != "NOTSET":
                 if self._handlers[index] is None:
-                    if index == _Index.STREAM:
+                    if index == _I_Trace.STREAM:
                         self._handlers[index] = _DEFAULT_HANDLES[index]()
                     else:
                         path = self._get_path()
@@ -165,3 +160,8 @@ class Trace:
 
     def debug(self, *msgs: Any, sep: str = " ") -> None:
         self._logger.debug(sep.join((str(msg) for msg in msgs)))
+
+
+class _I_Trace(IntEnum):
+    STREAM = 0
+    FILE = 1

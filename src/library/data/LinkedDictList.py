@@ -7,13 +7,6 @@ from ..lib.Trace import Trace
 from .DictList import DictList
 
 
-class _Index(IntEnum):
-    NODE = 0
-    HANDLES = 1
-    HANDLED = 2
-    PIPE = 3
-
-
 class LinkedDictList:
     def __init__(
         self,
@@ -32,7 +25,7 @@ class LinkedDictList:
         return len(self._nodes)
 
     def __getitem__(self, index: int) -> DictList:
-        return self._nodes[index][_Index.NODE]
+        return self._nodes[index][_I_Node.NODE]
 
     def __str__(self) -> str:
         attrs = KWARGS_STR(
@@ -50,9 +43,9 @@ class LinkedDictList:
 
         LOOP(
             info(
-                f"  {i}: {node[_Index.NODE]}"
-                + f"/handles:{len(node[_Index.HANDLES])}"
-                + f"/handled:{node[_Index.HANDLED]}"
+                f"  {i}: {node[_I_Node.NODE]}"
+                + f"/handles:{len(node[_I_Node.HANDLES])}"
+                + f"/handled:{node[_I_Node.HANDLED]}"
             )
             for i, node in enumerate(self._nodes)
         )
@@ -60,23 +53,30 @@ class LinkedDictList:
     def handle(self) -> None:
         for n, e, _ in sorted(
             [
-                [n, node[_Index.HANDLED] + e, element[self._key]]
+                [n, node[_I_Node.HANDLED] + e, element[self._key]]
                 for n, node in enumerate(self._nodes)
-                for e, element in enumerate(node[_Index.NODE][node[_Index.HANDLED] :])
-                if element[self._key] <= self._nodes[-1][_Index.NODE][-1][self._key]
+                for e, element in enumerate(node[_I_Node.NODE][node[_I_Node.HANDLED] :])
+                if element[self._key] <= self._nodes[-1][_I_Node.NODE][-1][self._key]
             ],
             key=lambda target: (target[2], target[0]),
         ):
-            self._nodes[n][_Index.PIPE] = reduce(
-                lambda pipe, handle: handle(self._nodes[n][_Index.NODE][e], pipe),
-                self._nodes[n][_Index.HANDLES],
-                self._nodes[n - 1][_Index.PIPE] if n else {},
+            self._nodes[n][_I_Node.PIPE] = reduce(
+                lambda pipe, handle: handle(self._nodes[n][_I_Node.NODE][e], pipe),
+                self._nodes[n][_I_Node.HANDLES],
+                self._nodes[n - 1][_I_Node.PIPE] if n else {},
             )
-            self._nodes[n][_Index.HANDLED] += 1
+            self._nodes[n][_I_Node.HANDLED] += 1
 
             if n == len(self._nodes) - 1 and self._handles:
                 reduce(
-                    lambda pipe, handle: handle(self._nodes[n][_Index.NODE][e], pipe),
+                    lambda pipe, handle: handle(self._nodes[n][_I_Node.NODE][e], pipe),
                     self._handles,
-                    self._nodes[n][_Index.PIPE],
+                    self._nodes[n][_I_Node.PIPE],
                 )
+
+
+class _I_Node(IntEnum):
+    NODE = 0
+    HANDLES = 1
+    HANDLED = 2
+    PIPE = 3

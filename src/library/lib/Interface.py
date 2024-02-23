@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterator, Dict, Optional
+from typing import Any, Callable, Optional
 
 from .macro import ATTR, KWARGS_STR, LOOP
 from .Trace import Trace
