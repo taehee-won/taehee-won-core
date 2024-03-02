@@ -8,7 +8,7 @@ from .src.library.lib.OS import OS
 from .src.library.lib.Interface import Interface
 from .src.library.lib.Datetime import Period, Datetime
 from .src.library.lib.Trace import TraceLevel, Trace
-from .src.library.lib.Interval import Interval, SimplifiedInterval
+from .src.library.lib.Interval import Interval
 from .src.library.lib.macro import KWARGS, ARGS_STR, KWARGS_STR, ATTR, LOOP, CALL, RAISE
 
 __all__ = []
@@ -17,7 +17,7 @@ __all__.extend(["SortOrder", "MongoDB"])
 __all__.extend(["Lib", "Math", "OS", "Interface"])
 __all__.extend(["Period", "Datetime"])
 __all__.extend(["TraceLevel", "Trace"])
-__all__.extend(["Interval", "SimplifiedInterval"])
+__all__.extend(["Interval"])
 __all__.extend(["KWARGS", "ARGS_STR", "KWARGS_STR", "ATTR", "LOOP", "CALL", "RAISE"])
 
 

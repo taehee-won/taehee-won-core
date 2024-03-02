@@ -10,7 +10,8 @@ from ..data.DictList import DictListFile, DictList
 class Interval:
     def __init__(
         self,
-        values: Dict[Union[int, float], int],
+        attr: Union[int, float, Dict[Union[int, float], int]],
+        /,
         file: Optional[str] = None,
         name: Optional[str] = None,
     ):
@@ -26,7 +27,14 @@ class Interval:
 
         if not self._values:
             self._values.extend(
-                [{"value": v, "count": c, "records": []} for v, c in values.items()]
+                [
+                    {"value": value, "count": count, "records": []}
+                    for value, count in (
+                        {attr: 1}
+                        if isinstance(attr, int) or isinstance(attr, float)
+                        else attr
+                    ).items()
+                ]
             )
 
     def _moment(self) -> Union[int, float]:
@@ -79,12 +87,3 @@ class Interval:
             self._values.write(self._file, DictListFile.DICTLIST)
 
         return max(moment, 0)
-
-
-class SimplifiedInterval(Interval):
-    def __init__(
-        self,
-        value: Union[int, float],
-        name: Optional[str] = None,
-    ):
-        super().__init__({value: 1}, **KWARGS(name=name))

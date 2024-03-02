@@ -3,7 +3,7 @@ from time import time, sleep
 from tempfile import mktemp
 from os import remove
 
-from src.library.lib.Interval import Interval, SimplifiedInterval
+from src.library.lib.Interval import Interval
 
 
 class TestInterval(TestCase):
@@ -72,22 +72,22 @@ class TestInterval(TestCase):
         remove(file)
 
     def test_simplified_init(self):
-        interval = SimplifiedInterval(1.00)
-        self.assertIsInstance(interval, SimplifiedInterval)
+        interval = Interval(1.00)
+        self.assertIsInstance(interval, Interval)
 
     def test_simplified_str(self):
-        interval = SimplifiedInterval(1)
+        interval = Interval(1)
         self.assertIsInstance(str(interval), str)
-        self.assertIn("SimplifiedInterval", str(interval))
+        self.assertIn("Interval", str(interval))
         self.assertNotIn("name:", str(interval))
 
-        interval = SimplifiedInterval(1.00, name="TestSimplifiedInterval")
+        interval = Interval(1.00, name="TestInterval")
         self.assertIsInstance(str(interval), str)
-        self.assertIn("SimplifiedInterval", str(interval))
-        self.assertIn("name:TestSimplifiedInterval", str(interval))
+        self.assertIn("Interval", str(interval))
+        self.assertIn("name:TestInterval", str(interval))
 
     def test_simplified_wait(self):
-        interval = SimplifiedInterval(0.1)
+        interval = Interval(0.1)
         start = time()
         wait = interval.wait()
         self.assertTrue(0 < time() - start < 0.02)
