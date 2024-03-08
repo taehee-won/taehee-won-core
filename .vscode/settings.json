@@ -3,8 +3,10 @@
         "dateutil",
         "DictList",
         "levelname",
+        "ncols",
         "pymongo",
         "relativedelta",
-        "Taehee"
+        "Taehee",
+        "tqdm"
     ]
 }

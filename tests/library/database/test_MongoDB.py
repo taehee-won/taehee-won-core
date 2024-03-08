@@ -44,7 +44,8 @@ class TestMongoDB(TestCase):
         self.assertIsInstance(db, MongoDB)
 
     def test_init_with(self):
-        self.assertIsInstance(self.db, MongoDB)
+        with MongoDB() as db:
+            self.assertIsInstance(db, MongoDB)
 
     def test_get_databases(self):
         self.assertIn(TEST_DATABASE, self.db.get_databases())
