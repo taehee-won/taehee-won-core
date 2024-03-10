@@ -2,7 +2,8 @@ from unittest import TestCase
 from datetime import datetime
 
 from src.library.lib.Trace import TraceLevel, Trace
-from src.library.data.LinkedDictList import LinkedDictList, DictList
+from src.library.data.DictList import DictList
+from src.library.data.LinkedDictList import Node, LinkedDictList
 
 
 class TestLinkedDictList(TestCase):
@@ -17,35 +18,35 @@ class TestLinkedDictList(TestCase):
     def test_len(self):
         data = LinkedDictList(
             "datetime",
-            {
-                DictList(): [],
-                DictList(): [],
-                DictList(): [],
-            },
+            [
+                Node(DictList(), []),
+                Node(DictList(), []),
+                Node(DictList(), []),
+            ],
         )
         self.assertEqual(len(data), 3)
 
     def test_index(self):
         data = LinkedDictList(
             "datetime",
-            {
-                DictList(name="first"): [],
-                DictList(name="second"): [],
-                DictList(name="third"): [],
-            },
+            [
+                Node(DictList(name="first"), []),
+                Node(DictList(name="second"), []),
+                Node(DictList(name="third"), []),
+            ],
         )
-        self.assertIn("name:first", str(data[0]))
-        self.assertIn("name:second", str(data[1]))
-        self.assertIn("name:third", str(data[2]))
+        self.assertIn("name:first", str(data[0].data))
+        self.assertIn("name:second", str(data[1].data))
+        self.assertIn("name:third", str(data[2].data))
 
     def test_str(self):
         data = LinkedDictList(
             "datetime",
-            {
-                DictList(name="first"): [],
-                DictList(name="second"): [],
-                DictList(name="third"): [],
-            },
+            [
+                Node(DictList(name="first"), []),
+                Node(DictList(name="second"), []),
+                Node(DictList(name="third"), []),
+            ],
         )
         self.assertIsInstance(str(data), str)
         self.assertIn("LinkedDictList", str(data))
@@ -56,10 +57,10 @@ class TestLinkedDictList(TestCase):
 
         data = LinkedDictList(
             "datetime",
-            {
-                DictList(name="first"): [],
-                DictList(name="second"): [],
-            },
+            [
+                Node(DictList(name="first"), []),
+                Node(DictList(name="second"), []),
+            ],
             [lambda e, p: p],
             name="TestLinkedDictList",
         )
@@ -82,7 +83,7 @@ class TestLinkedDictList(TestCase):
         TestLinkedDictList.count = 0
 
         first = DictList(name="first")
-        data = LinkedDictList("datetime", {first: [TestLinkedDictList._count]})
+        data = LinkedDictList("datetime", [Node(first, [TestLinkedDictList._count])])
 
         first.append({"datetime": datetime(2021, 1, 1)})
         first.append({"datetime": datetime(2021, 1, 2)})
@@ -99,10 +100,10 @@ class TestLinkedDictList(TestCase):
         second = DictList(name="second")
         data = LinkedDictList(
             "datetime",
-            {
-                first: [TestLinkedDictList._count],
-                second: [TestLinkedDictList._count],
-            },
+            [
+                Node(first, [TestLinkedDictList._count]),
+                Node(second, [TestLinkedDictList._count]),
+            ],
         )
 
         first.append({"datetime": datetime(2021, 1, 1)})
@@ -125,11 +126,11 @@ class TestLinkedDictList(TestCase):
         third = DictList(name="third")
         data = LinkedDictList(
             "datetime",
-            {
-                first: [TestLinkedDictList._count],
-                second: [TestLinkedDictList._count],
-                third: [TestLinkedDictList._count],
-            },
+            [
+                Node(first, [TestLinkedDictList._count]),
+                Node(second, [TestLinkedDictList._count]),
+                Node(third, [TestLinkedDictList._count]),
+            ],
         )
 
         third.append({"datetime": datetime(2021, 1, 1)})
