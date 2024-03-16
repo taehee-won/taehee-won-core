@@ -13,7 +13,7 @@ from src.library.lib.Lib import Lib
 class TestLib(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set(TraceLevel.NOTSET)
+        Trace.set_levels(TraceLevel.NOTSET)
 
         cls.cache_dir_words = [
             "__pycache__",  # python cache
@@ -25,8 +25,8 @@ class TestLib(TestCase):
         ]
 
     @classmethod
-    def tearDownClass(cls):
-        Trace.set()
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
 
     def setUp(self) -> None:
         self.dir = mkdtemp()

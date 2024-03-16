@@ -11,7 +11,11 @@ D_FILES = join(dirname(abspath(__file__)), "Files")
 class TestFiles(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set(TraceLevel.NOTSET)
+        Trace.set_levels(TraceLevel.NOTSET)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
 
     def setUp(self) -> None:
         self.files = Files([D_FILES])

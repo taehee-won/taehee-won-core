@@ -26,8 +26,12 @@ F_JSON_JSON_HANDLED = join(D_TEST_FILE_DIR, "json_handled.json")
 
 class TestHandledDictList(TestCase):
     @classmethod
-    def setUpClass(cls):
-        Trace.set(TraceLevel.NOTSET)
+    def setUpClass(cls) -> None:
+        Trace.set_levels(TraceLevel.NOTSET)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
 
     def setUp(self):
         self.source = [

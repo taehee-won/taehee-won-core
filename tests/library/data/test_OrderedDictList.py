@@ -26,8 +26,12 @@ F_JSON_JSON_NAME_SORTED = join(D_TEST_FILE_DIR, "json_name_sorted.json")
 
 class TestOrderedDictList(TestCase):
     @classmethod
-    def setUpClass(cls):
-        Trace.set(TraceLevel.NOTSET)
+    def setUpClass(cls) -> None:
+        Trace.set_levels(TraceLevel.NOTSET)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
 
     def setUp(self):
         self.source = [

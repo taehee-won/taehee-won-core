@@ -14,8 +14,12 @@ TEST_COLLECTION = "TEST-COLLECTION"
 @skipIf(environ.get("TEST_MONGODB") != "1", "MongoDB connects local DB server")
 class TestMongoDB(TestCase):
     @classmethod
-    def setUpClass(cls):
-        Trace.set(TraceLevel.NOTSET)
+    def setUpClass(cls) -> None:
+        Trace.set_levels(TraceLevel.NOTSET)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
 
     def setUp(self):
         self.client = MongoClient(serverSelectionTimeoutMS=1000)

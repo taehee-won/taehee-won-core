@@ -8,11 +8,15 @@ from src.library.data.LinkedDictList import Node, LinkedDictList
 
 class TestLinkedDictList(TestCase):
     @classmethod
-    def setUpClass(cls):
-        Trace.set(TraceLevel.NOTSET)
+    def setUpClass(cls) -> None:
+        Trace.set_levels(TraceLevel.NOTSET)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
 
     def test_init(self):
-        data = LinkedDictList("datetime", {})
+        data = LinkedDictList("datetime", [])
         self.assertIsInstance(data, LinkedDictList)
 
     def test_len(self):

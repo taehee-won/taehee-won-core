@@ -31,7 +31,9 @@ class HandledDictList(DictList):
 
     def __str__(self) -> str:
         attrs = KWARGS_STR(
-            handles=len(self._handles), len=len(self._data), name=self._name
+            handles=len(self._handles),
+            len=len(self._data),
+            name=self._name,
         )
         return f"{self.__class__.__name__}({attrs})"
 

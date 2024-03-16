@@ -1,10 +1,10 @@
-from typing import Final, Any, Dict, List, Union
-from enum import IntEnum
+from typing import Any, Dict, Union, Optional
+from enum import Enum
 from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
 from logging import getLogger, StreamHandler, FileHandler, NullHandler, Formatter
 
 from .Datetime import Datetime
-from .macro import LOOP
+from .macro import ATTR
 from .OS import OS
 
 
@@ -17,63 +17,53 @@ class TraceLevel:
     NOTSET = NOTSET
 
 
-_FORMAT: Final[str] = "[%(asctime)s][%(name)-10s][%(levelname)-8s] %(message)s"
-_DEFAULT_PATH: Final[str] = OS.get_path(
-    "files",
-    "traces",
-    Datetime.from_now().get_str("%Y-%m-%d"),
-    Datetime.from_now().get_str("%H-%M-%S.trace"),
-)
-_DEFAULT_CONFIG: Final[List[int]] = [TraceLevel.INFO, TraceLevel.NOTSET]
-_DEFAULT_HANDLES: List = [StreamHandler, FileHandler]
-
-
 class Trace:
-    """
-    Configuration Order:
-        Primary  : Trace._config  : Trace.set(stream, file)
-        Dedicated: Trace._configs : Trace.set_trace(name, stream, file)
-        Instance : self._config_  : obj = Trace(stream, file)
-        Default  : _DEFAULT_CONFIG
-
-    File order:
-        Primary: Trace._path  : Trace.set_path(path)
-        Default: _DEFAULT_PATH
-    """
-
-    _config: List[Union[int, str, None]] = [None, None]
-    _configs: Dict[str, List[Union[int, str, None]]] = {}
-    _path: Union[str, None] = None
-    _traces: List["Trace"] = []
-
     @classmethod
-    def set(
-        cls,
+    def _get_attrs(cls) -> Dict:
+        return ATTR(
+            cls,
+            "attrs",
+            lambda: {
+                "traces": [],
+                "configs": {
+                    _ConfigLevel.PRIMARY: _Config(),
+                    _ConfigLevel.DEDICATED: {},
+                    _ConfigLevel.INSTANCE: {},
+                    _ConfigLevel.DEFAULT: _Config(TraceLevel.INFO, TraceLevel.NOTSET),
+                },
+                "formatter": Formatter(
+                    "[%(asctime)s][%(name)-10s][%(levelname)-8s] %(message)s"
+                ),
+                "stream": StreamHandler,
+                "file": FileHandler,
+                "path": OS.get_path(
+                    "files",
+                    "traces",
+                    Datetime.from_now().get_str("%Y-%m-%d"),
+                    Datetime.from_now().get_str("%H-%M-%S.trace"),
+                ),
+            },
+        )
+
+    @staticmethod
+    def set_levels(
         stream: Union[int, str, None] = None,
         file: Union[int, str, None] = None,
+        name: Optional[str] = None,
     ) -> None:
-        cls._config[_I_Trace.STREAM] = stream
-        cls._config[_I_Trace.FILE] = file
+        configs = Trace._get_attrs()["configs"]
 
-        LOOP(trace._set_handler() for trace in Trace._traces)
+        if name is None:
+            configs[_ConfigLevel.PRIMARY] = _Config(stream, file)
 
-    @classmethod
-    def set_trace(
-        cls,
-        name: str,
-        stream: Union[int, str, None] = None,
-        file: Union[int, str, None] = None,
-    ) -> None:
-        cls._configs.setdefault(name, [None, None])
+        else:
+            configs[_ConfigLevel.DEDICATED][name] = _Config(stream, file)
 
-        cls._configs[name][_I_Trace.STREAM] = stream
-        cls._configs[name][_I_Trace.FILE] = file
+        Trace._set_traces()
 
-        LOOP(trace._set_handler() for trace in cls._traces if trace._name == name)
-
-    @classmethod
-    def set_file(cls, path: Union[str, None]) -> None:
-        cls._path = path
+    @staticmethod
+    def set_path(path: str) -> None:
+        Trace._get_attrs()["path"] = path
 
     def __new__(
         cls,
@@ -81,7 +71,7 @@ class Trace:
         stream: Union[int, str, None] = None,
         file: Union[int, str, None] = None,
     ):
-        for trace in Trace._traces:
+        for trace in Trace._get_attrs()["traces"]:
             if trace._name == name:
                 return trace
 
@@ -94,57 +84,20 @@ class Trace:
         file: Union[int, str, None] = None,
     ):
         if not hasattr(self, "_name"):
-            self._name: str = name
-            self._config_: List[Union[int, str, None]] = [stream, file]
+            self._name = name
+
+            configs = Trace._get_attrs()["configs"]
+            configs[_ConfigLevel.INSTANCE][self._name] = _Config(stream, file)
 
             self._logger = getLogger(name)
             self._logger.addHandler(NullHandler())
             self._logger.setLevel(TraceLevel.DEBUG)
 
-            self._handlers: List = [None, None]
-            self._set_handler()
+            self._stream = None
+            self._file = None
 
-            Trace._traces.append(self)
-
-    def _get_level(self, index: int) -> int:
-        return next(
-            (
-                level
-                for level in [
-                    Trace._config[index],
-                    Trace._configs.get(self._name, [None, None])[index],
-                    self._config_[index],
-                    _DEFAULT_CONFIG[index],
-                ]
-                if level is not None
-            ),
-            _DEFAULT_CONFIG[index],
-        )
-
-    def _get_path(self) -> str:
-        return path if (path := Trace._path) is not None else _DEFAULT_PATH
-
-    def _set_handler(self) -> None:
-        for index in (_I_Trace.STREAM, _I_Trace.FILE):
-            level = self._get_level(index)
-            if level != TraceLevel.NOTSET and level != "NOTSET":
-                if self._handlers[index] is None:
-                    if index == _I_Trace.STREAM:
-                        self._handlers[index] = _DEFAULT_HANDLES[index]()
-                    else:
-                        path = self._get_path()
-                        OS.make_dir(OS.get_dir(path))
-                        self._handlers[index] = _DEFAULT_HANDLES[index](path)
-
-                    self._handlers[index].setFormatter(Formatter(_FORMAT))
-                    self._logger.addHandler(self._handlers[index])
-
-                self._handlers[index].setLevel(level)
-
-            elif self._handlers[index] is not None:
-                self._handlers[index].close()
-                self._logger.removeHandler(self._handlers[index])
-                self._handlers[index] = None
+            Trace._get_attrs()["traces"].append(self)
+            Trace._set_traces()
 
     def critical(self, *msgs: Any, sep: str = " ") -> None:
         self._logger.critical(sep.join((str(msg) for msg in msgs)))
@@ -161,7 +114,87 @@ class Trace:
     def debug(self, *msgs: Any, sep: str = " ") -> None:
         self._logger.debug(sep.join((str(msg) for msg in msgs)))
 
+    @staticmethod
+    def _set_traces() -> None:
+        attrs = Trace._get_attrs()
 
-class _I_Trace(IntEnum):
-    STREAM = 0
-    FILE = 1
+        configs = attrs["configs"]
+        is_trace = lambda level: level != TraceLevel.NOTSET and level != "NOTSET"
+
+        for trace in attrs["traces"]:
+            stream = next(
+                level
+                for level in [
+                    configs[_ConfigLevel.PRIMARY].stream,
+                    configs[_ConfigLevel.DEDICATED].get(trace._name, _Config()).stream,
+                    configs[_ConfigLevel.INSTANCE][trace._name].stream,
+                    configs[_ConfigLevel.DEFAULT].stream,
+                ]
+                if level is not None
+            )
+
+            if is_trace(stream):
+                if trace._stream is None:
+                    trace._stream = attrs["stream"]()
+                    trace._stream.setFormatter(attrs["formatter"])
+                    trace._logger.addHandler(trace._stream)
+
+                trace._stream.setLevel(stream)
+
+            elif trace._stream is not None:
+                trace._stream.close()
+                trace._logger.removeHandler(trace._stream)
+                trace._stream = None
+
+            file = next(
+                level
+                for level in [
+                    configs[_ConfigLevel.PRIMARY].file,
+                    configs[_ConfigLevel.DEDICATED].get(trace._name, _Config()).file,
+                    configs[_ConfigLevel.INSTANCE][trace._name].file,
+                    configs[_ConfigLevel.DEFAULT].file,
+                ]
+                if level is not None
+            )
+
+            if is_trace(file):
+                if trace._file is None:
+                    OS.make_dir(OS.get_dir(attrs["path"]))
+                    trace._file = attrs["file"](attrs["path"])
+                    trace._file.setFormatter(attrs["formatter"])
+                    trace._logger.addHandler(trace._file)
+
+                trace._file.setLevel(file)
+
+            elif trace._file is not None:
+                trace._file.close()
+                trace._logger.removeHandler(trace._file)
+                trace._file = None
+
+
+class _ConfigLevel(Enum):
+    PRIMARY = "primary"
+    DEDICATED = "dedicated"
+    INSTANCE = "instance"
+    DEFAULT = "default"
+
+
+class _Config:
+    def __init__(
+        self,
+        stream: Union[int, str, None] = None,
+        file: Union[int, str, None] = None,
+    ) -> None:
+        self._stream = stream
+        self._file = file
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}(stream:{self._stream}/file:{self._file})"
+
+    @property
+    def stream(self) -> Union[int, str, None]:
+        return self._stream
+
+    @property
+    def file(self) -> Union[int, str, None]:
+        return self._file

@@ -8,17 +8,16 @@ from random import choice
 from inspect import currentframe
 
 from src.library.lib.Trace import TraceLevel, Trace
-from src.library.lib.Trace import _DEFAULT_HANDLES
 
 
 class TestTrace(TestCase):
     @classmethod
     def setUpClass(cls):
-        _DEFAULT_HANDLES[0] = _StreamHandler
+        Trace._get_attrs()["stream"] = _StreamHandler
 
         fd = NamedTemporaryFile(delete=False)
         cls.file = fd.name
-        Trace.set_file(cls.file)
+        Trace.set_path(cls.file)
         fd.close()
 
     @classmethod
@@ -26,7 +25,10 @@ class TestTrace(TestCase):
         remove(cls.file)
 
     def setUp(self) -> None:
-        Trace.set(stream=None, file=None)
+        Trace.set_levels()
+
+    def tearDown(self) -> None:
+        Trace.set_levels()
 
     @classmethod
     def _stream(cls) -> str:
@@ -113,14 +115,12 @@ class TestTrace(TestCase):
 
     def test_primary(self):
         name, msgs, evaluations = self._prepare(
-            frame.f_code.co_name if (frame := currentframe()) else "",
-            stream="ERROR",
-            file="INFO",
+            frame.f_code.co_name if (frame := currentframe()) else "", "ERROR", "INFO"
         )
 
-        Trace.set(stream=TraceLevel.ERROR, file=TraceLevel.INFO)
-        Trace.set_trace(name, stream=TraceLevel.INFO, file=TraceLevel.DEBUG)
-        trace = Trace(name, stream=TraceLevel.DEBUG, file=TraceLevel.DEBUG)
+        Trace.set_levels(TraceLevel.ERROR, TraceLevel.INFO)
+        Trace.set_levels(TraceLevel.INFO, TraceLevel.DEBUG, name)
+        trace = Trace(name, TraceLevel.DEBUG, TraceLevel.DEBUG)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -131,9 +131,9 @@ class TestTrace(TestCase):
             file="DEBUG",
         )
 
-        Trace.set(stream=TraceLevel.NOTSET, file=TraceLevel.DEBUG)
-        Trace.set_trace(name, stream=TraceLevel.INFO, file=TraceLevel.DEBUG)
-        trace = Trace(name, stream=TraceLevel.DEBUG, file=TraceLevel.DEBUG)
+        Trace.set_levels(TraceLevel.NOTSET, TraceLevel.DEBUG)
+        Trace.set_levels(TraceLevel.INFO, TraceLevel.DEBUG, name)
+        trace = Trace(name, TraceLevel.DEBUG, TraceLevel.DEBUG)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -145,8 +145,8 @@ class TestTrace(TestCase):
             file="DEBUG",
         )
 
-        Trace.set_trace(name, stream=TraceLevel.INFO, file=TraceLevel.DEBUG)
-        trace = Trace(name, stream=TraceLevel.ERROR, file=TraceLevel.WARNING)
+        Trace.set_levels(TraceLevel.INFO, TraceLevel.DEBUG, name)
+        trace = Trace(name, TraceLevel.ERROR, TraceLevel.WARNING)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -157,8 +157,8 @@ class TestTrace(TestCase):
             file="INFO",
         )
 
-        Trace.set_trace(name, stream=TraceLevel.DEBUG, file=TraceLevel.INFO)
-        trace = Trace(name, stream=TraceLevel.ERROR, file=TraceLevel.WARNING)
+        Trace.set_levels(TraceLevel.DEBUG, TraceLevel.INFO, name)
+        trace = Trace(name, TraceLevel.ERROR, TraceLevel.WARNING)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -170,7 +170,7 @@ class TestTrace(TestCase):
             file="WARNING",
         )
 
-        trace = Trace(name, stream=TraceLevel.ERROR, file=TraceLevel.WARNING)
+        trace = Trace(name, TraceLevel.ERROR, TraceLevel.WARNING)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -216,8 +216,8 @@ class TestTrace(TestCase):
             file="INFO",
         )
 
-        Trace.set(stream="ERROR", file="INFO")
-        Trace.set_trace(name, stream="INFO", file="DEBUG")
+        Trace.set_levels("ERROR", "INFO")
+        Trace.set_levels("INFO", "DEBUG", name)
         trace = Trace(name, stream="DEBUG", file="DEBUG")
 
         self._trace(trace, msgs)
@@ -229,8 +229,8 @@ class TestTrace(TestCase):
             file="DEBUG",
         )
 
-        Trace.set(stream="NOTSET", file="DEBUG")
-        Trace.set_trace(name, stream="INFO", file="DEBUG")
+        Trace.set_levels("NOTSET", "DEBUG")
+        Trace.set_levels("INFO", "DEBUG", name)
         trace = Trace(name, stream="DEBUG", file="DEBUG")
 
         self._trace(trace, msgs)
@@ -243,7 +243,7 @@ class TestTrace(TestCase):
             file="DEBUG",
         )
 
-        Trace.set_trace(name, stream="INFO", file="DEBUG")
+        Trace.set_levels("INFO", "DEBUG", name)
         trace = Trace(name, stream="ERROR", file="WARNING")
 
         self._trace(trace, msgs)
@@ -255,7 +255,7 @@ class TestTrace(TestCase):
             file="INFO",
         )
 
-        Trace.set_trace(name, stream="DEBUG", file="INFO")
+        Trace.set_levels("DEBUG", "INFO", name)
         trace = Trace(name, stream="ERROR", file="WARNING")
 
         self._trace(trace, msgs)

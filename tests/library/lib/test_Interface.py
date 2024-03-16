@@ -6,8 +6,12 @@ from src.library.lib.Interface import Interface
 
 class TestInterface(TestCase):
     @classmethod
-    def setUpClass(cls):
-        Trace.set(TraceLevel.NOTSET)
+    def setUpClass(cls) -> None:
+        Trace.set_levels(TraceLevel.NOTSET)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
 
     def setUp(self) -> None:
         self.interface = Interface(name="TestInterface")

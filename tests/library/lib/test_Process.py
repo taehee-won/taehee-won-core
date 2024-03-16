@@ -8,8 +8,12 @@ from src.library.lib.Process import Bundle, Process
 
 class TestProcess(TestCase):
     @classmethod
-    def setUpClass(cls):
-        Trace.set(TraceLevel.NOTSET)
+    def setUpClass(cls) -> None:
+        Trace.set_levels(TraceLevel.NOTSET)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
 
     def setUp(self) -> None:
         self.process = Process(name="TestProcess")
