@@ -26,7 +26,7 @@ class Bundle:
 class Process:
     def __init__(self, count: int = cpu_count(), name: Optional[str] = None):
         self._name = name
-        self._trace: Trace = ATTR(Process, "trace", lambda: Trace("core"))
+        self._trace = ATTR(Process, "trace", lambda: Trace("core"))
 
         self._processes = [_Process() for _ in range(count)]
 

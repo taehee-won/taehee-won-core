@@ -8,7 +8,7 @@ from ..data.OrderedDictList import OrderedDictList
 class Interface:
     def __init__(self, name: Optional[str] = None):
         self._name = name
-        self._trace: Trace = ATTR(Interface, "trace", lambda: Trace("core"))
+        self._trace = ATTR(Interface, "trace", lambda: Trace("core"))
 
         attrs = KWARGS_STR(name=self._name)
         self._interfaces = OrderedDictList("command", name=f"Interface({attrs})")

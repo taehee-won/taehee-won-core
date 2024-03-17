@@ -26,7 +26,7 @@ class DictList:
         name: Optional[str] = None,
     ) -> None:
         self._name = name
-        self._trace: Trace = ATTR(DictList, "trace", lambda: Trace("core"))
+        self._trace = ATTR(DictList, "trace", lambda: Trace("core"))
 
         if default is None:
             self._data = []

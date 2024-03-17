@@ -11,7 +11,7 @@ from ..data.OrderedDictList import OrderedDictList
 class Files:
     def __init__(self, dirs: Optional[List[str]] = None, name: Optional[str] = None):
         self._name = name
-        self._trace: Trace = ATTR(Files, "trace", lambda: Trace("core"))
+        self._trace = ATTR(Files, "trace", lambda: Trace("core"))
 
         self._dirs = []
         self._files = OrderedDictList(

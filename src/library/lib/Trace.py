@@ -21,7 +21,7 @@ class Trace:
     @classmethod
     def _get_attrs(cls) -> Dict:
         return ATTR(
-            cls,
+            Trace,
             "attrs",
             lambda: {
                 "traces": [],

@@ -17,7 +17,7 @@ class Interval:
     ):
         self._file: Union[str, None] = file
         self._name: Union[str, None] = name
-        self._trace: Trace = ATTR(Interval, "trace", lambda: Trace("core"))
+        self._trace = ATTR(Interval, "trace", lambda: Trace("core"))
 
         attrs = KWARGS_STR(file=self._file, name=self._name)
         self._values: DictList = DictList(name=f"{self.__class__.__name__}({attrs})")

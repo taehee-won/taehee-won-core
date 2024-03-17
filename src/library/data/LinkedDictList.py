@@ -63,7 +63,7 @@ class LinkedDictList:
         self._nodes = nodes
         self._handles = handles
         self._name = name
-        self._trace: Trace = ATTR(DictList, "trace", lambda: Trace("core"))
+        self._trace = ATTR(DictList, "trace", lambda: Trace("core"))
 
     def __len__(self) -> int:
         return len(self._nodes)
