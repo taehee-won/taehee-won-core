@@ -1,14 +1,13 @@
 from typing import Dict, List, Optional, Union, Any, Callable
-from functools import reduce
 
-from ..lib.macro import KWARGS, KWARGS_STR, LOOP
+from ..lib.macro import KWARGS, KWARGS_STR
 from .DictList import DictListFile, DictList
 
 
 class HandledDictList(DictList):
     def __init__(
         self,
-        handles: List[Callable[[Dict, Dict], Dict]],
+        handles: List[Callable[[Dict, Dict], Optional[Dict]]],
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
         type: Optional[Union[DictListFile, str]] = None,
         encoding: Optional[str] = None,
@@ -23,10 +22,12 @@ class HandledDictList(DictList):
         self._handle()
 
     def _handle(self) -> None:
-        LOOP(
-            reduce(lambda pipe, handle: handle(self._data[i], pipe), self._handles, {})
-            for i in range(self._handled, len(self._data))
-        )
+        for element in self._data[self._handled :]:
+            pipe = {}
+            for handle in self._handles:
+                if result := handle(element, pipe):
+                    pipe.update(result)
+
         self._handled = len(self._data)
 
     def __str__(self) -> str:

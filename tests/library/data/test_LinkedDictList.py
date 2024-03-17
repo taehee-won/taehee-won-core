@@ -78,10 +78,9 @@ class TestLinkedDictList(TestCase):
     count = 0
 
     @staticmethod
-    def _count(element, pipe):
+    def _count(element, pipe) -> None:
         element["count"] = TestLinkedDictList.count
         TestLinkedDictList.count += 1
-        return pipe
 
     def test_handle_single(self):
         TestLinkedDictList.count = 0

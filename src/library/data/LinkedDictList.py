@@ -1,6 +1,4 @@
 from typing import Callable, Dict, Optional, List
-from enum import IntEnum
-from functools import reduce
 
 from ..lib.macro import ATTR, KWARGS_STR, LOOP
 from ..lib.Trace import Trace
@@ -11,7 +9,7 @@ class Node:
     def __init__(
         self,
         data: DictList,
-        handles: List[Callable[[Dict, Dict], Dict]],
+        handles: List[Callable[[Dict, Dict], Optional[Dict]]],
     ) -> None:
         self._data = data
         self._handles = handles
@@ -39,7 +37,7 @@ class Node:
     def handled(self):
         return self._handled
 
-    def update(self, count: int = 1):
+    def count(self, count: int = 1):
         self._handled += count
 
     @property
@@ -56,7 +54,7 @@ class LinkedDictList:
         self,
         key: str,
         nodes: List[Node],
-        handles: Optional[List[Callable[[Dict, Dict], Dict]]] = None,
+        handles: Optional[List[Callable[[Dict, Dict], Optional[Dict]]]] = None,
         name: Optional[str] = None,
     ):
         self._key = key
@@ -97,16 +95,14 @@ class LinkedDictList:
             ],
             key=lambda target: (target[2], target[0]),
         ):
-            self._nodes[n].pipe = reduce(
-                lambda pipe, handle: handle(self._nodes[n].data[e], pipe),
-                self._nodes[n].handles,
-                self._nodes[n - 1].pipe if n else {},
-            )
-            self._nodes[n].update()
+            for handle in self._nodes[n].handles:
+                pipe = self._nodes[n - 1].pipe if n else {}
+                if result := handle(self._nodes[n].data[e], pipe):
+                    pipe.update(result)
+
+            self._nodes[n].count()
 
             if n == len(self._nodes) - 1 and self._handles:
-                reduce(
-                    lambda pipe, handle: handle(self._nodes[n].data[e], pipe),
-                    self._handles,
-                    self._nodes[n].pipe,
-                )
+                for handle in self._handles:
+                    if result := handle(self._nodes[n].data[e], self._nodes[n].pipe):
+                        self._nodes[n].pipe.update(result)

@@ -58,14 +58,12 @@ class TestHandledDictList(TestCase):
         self.assertIsInstance(self.data, HandledDictList)
 
     @staticmethod
-    def _name_handle(element: Dict, pipe: Dict):
+    def _name_handle(element: Dict, pipe: Dict) -> None:
         element["name"] += "_handled"
-        return pipe
 
     @staticmethod
-    def _age_handle(element: Dict, pipe: Dict):
+    def _age_handle(element: Dict, pipe: Dict) -> None:
         element["age"] += 1
-        return pipe
 
     def test_init_read(self):
         data = HandledDictList(
@@ -308,13 +306,12 @@ class TestHandledDictList(TestCase):
         remove(file)
 
     def test_pipe(self):
-        def _handle_1(element, pipe):
-            pipe["age"] = 4
-            return pipe
+        def _handle_1(element, pipe) -> Dict:
+            # pipe["age"] = 4
+            return {"age": 4}
 
-        def _handle_2(element, pipe):
+        def _handle_2(element, pipe) -> None:
             element["age"] += pipe["age"]
-            return pipe
 
         data = HandledDictList([_handle_1, _handle_2], deepcopy(self.source))
         source_handled = [
