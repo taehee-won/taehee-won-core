@@ -17,7 +17,7 @@ class TestInterface(TestCase):
         self.interface = Interface(name="TestInterface")
 
         self.assertTrue(self.interface.register("add", self._add, description="a + b"))
-        self.assertTrue(self.interface.register("sub", self._sub, internal=True))
+        self.assertTrue(self.interface.register("sub", self._sub, api=False))
 
         self.assertTrue(self.interface.register("set", self._set))
         self.assertTrue(self.interface.register("get", self._get))
