@@ -61,7 +61,7 @@ class Process:
 
         trace(f"{self}")
 
-        LOOP(trace(f"  {process}") for process in self._processes)
+        LOOP(trace(f"    {process}") for process in self._processes)
 
     def execute(
         self,

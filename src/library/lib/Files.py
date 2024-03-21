@@ -39,12 +39,12 @@ class Files:
         info(f"{self}")
 
         if self._dirs:
-            info(f"  dirs:")
-            LOOP(info(f"    {dir}") for dir in self._dirs)
+            info(f"    dirs:")
+            LOOP(info(f"        {dir}") for dir in self._dirs)
 
         if self._files:
-            info(f"  files:")
-            LOOP(info(f"    {file['file']}") for file in self._files)
+            info(f"    files:")
+            LOOP(info(f"        {file['file']}") for file in self._files)
 
     def register(self, dir: str) -> bool:
         if dir in self._dirs:

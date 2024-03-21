@@ -83,7 +83,7 @@ class LinkedDictList:
 
         info(f"{self}")
 
-        LOOP(info(f"  {node}") for node in self._nodes)
+        LOOP(info(f"    {node}") for node in self._nodes)
 
     def handle(self) -> None:
         for n, e, _ in sorted(

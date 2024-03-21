@@ -40,7 +40,7 @@ class Interface:
         length = max(len(interface["command"]) for interface in interfaces)
         LOOP(
             info(
-                f"  {interface['command'].ljust(length)}",
+                f"    {interface['command'].ljust(length)}",
                 (
                     f"    - {interface['description']}"
                     if description and interface["description"]

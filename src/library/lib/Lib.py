@@ -35,11 +35,11 @@ class Lib:
         debug(f"clear caches from {len(words)} words")
 
         debug(f"{len(cache_dirs)} cache dirs:")
-        LOOP(debug(f"  {dir}") for dir in cache_dirs)
+        LOOP(debug(f"    {dir}") for dir in cache_dirs)
         LOOP(OS.remove_dir(dir) for dir in cache_dirs)
 
         debug(f"{len(cache_files)} cache files:")
-        LOOP(debug(f"  {file}") for file in cache_files)
+        LOOP(debug(f"    {file}") for file in cache_files)
         LOOP(OS.remove_file(file) for file in cache_files)
 
     @staticmethod
@@ -72,7 +72,8 @@ class Lib:
             max([len(traceback[2]) for traceback in traces]),
         )
 
-        critical(f"exception {exc_type.__name__} raised for {exc_value}")
+        critical(f"exception {exc_type.__name__} raised for")
+        critical(f"    {exc_value}")
 
         critical("call stack:")
         LOOP(

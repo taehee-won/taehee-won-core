@@ -68,13 +68,14 @@ class DictList:
         info(f"{self}")
 
         if len(self._data) <= 6 or not shorten:
-            LOOP(info(f"  {i}: {e}") for i, e in enumerate(self._data))
+            LOOP(info(f"    {i}: {e}") for i, e in enumerate(self._data))
 
         else:
-            LOOP(info(f"  {i}: {self._data[i]}") for i in (0, 1, 2))
-            info("  ...")
+            LOOP(info(f"    {i}: {self._data[i]}") for i in (0, 1, 2))
+            info("    ...")
             LOOP(
-                info(f"  {len(self._data) + i}: {self._data[i]}") for i in (-3, -2, -1)
+                info(f"    {len(self._data) + i}: {self._data[i]}")
+                for i in (-3, -2, -1)
             )
 
     def get_element(
