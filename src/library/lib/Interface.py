@@ -1,4 +1,4 @@
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, List
 
 from ..data.OrderedDictList import OrderedDictList
 from .macro import ATTR, KWARGS_STR, LOOP
@@ -29,11 +29,11 @@ class Interface:
 
         info(f"{self}")
 
-        interfaces = [
-            interface
-            for interface in self._interfaces
-            if api is None or interface["api"] == api
-        ]
+        interfaces = (
+            self._interfaces.get_data()
+            if api is None
+            else self._interfaces.get_data("api", api)
+        )
         if not interfaces:
             return
 
@@ -84,3 +84,13 @@ class Interface:
         err = f"Invalid command: {command}"
         self._trace.critical(err)
         raise TypeError(err)
+
+    def get_commands(self, api: Optional[bool] = None) -> List[str]:
+        return [
+            interface["command"]
+            for interface in (
+                self._interfaces.get_data()
+                if api is None
+                else self._interfaces.get_data("api", api)
+            )
+        ]

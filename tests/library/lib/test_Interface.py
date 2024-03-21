@@ -94,3 +94,8 @@ class TestInterface(TestCase):
 
         self.interface.execute("set", 3)
         self.assertEqual(self.interface.execute("get"), 3)
+
+    def test_get_commands(self):
+        self.assertEqual(len(self.interface.get_commands()), 4)
+        self.assertEqual(len(self.interface.get_commands(api=True)), 3)
+        self.assertEqual(len(self.interface.get_commands(api=False)), 1)
