@@ -1,10 +1,9 @@
 from typing import Optional, Union, Dict
 from time import time, sleep
 
-from .macro import ATTR, KWARGS_STR, LOOP, KWARGS
-from .Trace import Trace
-
 from ..data.DictList import DictListFile, DictList
+from .macro import ATTR, KWARGS_STR, LOOP
+from .Trace import Trace
 
 
 class Interval:

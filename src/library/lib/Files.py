@@ -2,10 +2,10 @@ from typing import Any, List, Optional, Union
 from importlib import import_module
 from json5 import load as load_json
 
+from ..data.OrderedDictList import OrderedDictList
 from .macro import ATTR, KWARGS_STR, LOOP
 from .Trace import Trace
 from .OS import OS
-from ..data.OrderedDictList import OrderedDictList
 
 
 class Files:
