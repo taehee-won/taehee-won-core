@@ -17,7 +17,7 @@ class TestInterface(TestCase):
         self.interface = Interface(name="TestInterface")
 
         self.assertTrue(self.interface.register("add", self._add, description="a + b"))
-        self.assertTrue(self.interface.register("sub", self._sub, api=False))
+        self.assertTrue(self.interface.register("sub", self._sub, public=False))
 
         self.assertTrue(self.interface.register("set", self._set))
         self.assertTrue(self.interface.register("get", self._get))
@@ -97,5 +97,5 @@ class TestInterface(TestCase):
 
     def test_get_commands(self):
         self.assertEqual(len(self.interface.get_commands()), 4)
-        self.assertEqual(len(self.interface.get_commands(api=True)), 3)
-        self.assertEqual(len(self.interface.get_commands(api=False)), 1)
+        self.assertEqual(len(self.interface.get_commands(public=True)), 3)
+        self.assertEqual(len(self.interface.get_commands(public=False)), 1)

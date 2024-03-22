@@ -19,20 +19,20 @@ class Interface:
     def __str__(self) -> str:
         attrs = KWARGS_STR(
             len=len(self._interfaces),
-            api=sum(1 for interface in self._interfaces if interface["api"]),
+            public=sum(1 for interface in self._interfaces if interface["public"]),
             name=self._name,
         )
         return f"{self.__class__.__name__}({attrs})"
 
-    def print(self, api: Optional[bool] = None, description: bool = True) -> None:
+    def print(self, public: Optional[bool] = None, description: bool = True) -> None:
         info = self._trace.info
 
         info(f"{self}")
 
         interfaces = (
             self._interfaces.get_data()
-            if api is None
-            else self._interfaces.get_data("api", api)
+            if public is None
+            else self._interfaces.get_data("public", public)
         )
         if not interfaces:
             return
@@ -54,7 +54,7 @@ class Interface:
         self,
         command: str,
         func: Callable,
-        api: bool = True,
+        public: bool = True,
         description: Optional[str] = None,
     ) -> bool:
         if self._interfaces.get_element(command):
@@ -64,7 +64,7 @@ class Interface:
             {
                 "command": command,
                 "func": func,
-                "api": api,
+                "public": public,
                 "description": description,
             }
         )
@@ -85,12 +85,12 @@ class Interface:
         self._trace.critical(err)
         raise TypeError(err)
 
-    def get_commands(self, api: Optional[bool] = None) -> List[str]:
+    def get_commands(self, public: Optional[bool] = None) -> List[str]:
         return [
             interface["command"]
             for interface in (
                 self._interfaces.get_data()
-                if api is None
-                else self._interfaces.get_data("api", api)
+                if public is None
+                else self._interfaces.get_data("public", public)
             )
         ]
