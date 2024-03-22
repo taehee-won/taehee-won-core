@@ -45,7 +45,7 @@ class TestHandledDictList(TestCase):
             {"name": "Doe_handled", "age": 23},
         ]
         self.data = HandledDictList(
-            [self._name_handle, self._age_handle],
+            [_name_handle, _age_handle],
             deepcopy(self.source),
         )
 
@@ -57,23 +57,13 @@ class TestHandledDictList(TestCase):
     def test_init(self):
         self.assertIsInstance(self.data, HandledDictList)
 
-    @staticmethod
-    def _name_handle(element: Dict, pipe: Dict) -> None:
-        element["name"] += "_handled"
-
-    @staticmethod
-    def _age_handle(element: Dict, pipe: Dict) -> None:
-        element["age"] += 1
-
     def test_init_read(self):
-        data = HandledDictList(
-            [self._name_handle, self._age_handle], F_DICTLIST_DICTLIST
-        )
+        data = HandledDictList([_name_handle, _age_handle], F_DICTLIST_DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_handled[index])
 
         data = HandledDictList(
-            [self._name_handle, self._age_handle], F_DICTLIST_CSV, DictListFile.DICTLIST
+            [_name_handle, _age_handle], F_DICTLIST_CSV, DictListFile.DICTLIST
         )
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_handled[index])
@@ -253,56 +243,51 @@ class TestHandledDictList(TestCase):
             self.data.clear()
 
     def test_read(self):
-        data = HandledDictList([self._name_handle, self._age_handle])
+        data = HandledDictList([_name_handle, _age_handle])
         data.read(F_DICTLIST_DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_handled[index])
 
-        data = HandledDictList([self._name_handle, self._age_handle])
+        data = HandledDictList([_name_handle, _age_handle])
         data.read(F_JSON_JSON)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_handled[index])
 
-        data = HandledDictList([self._name_handle, self._age_handle])
+        data = HandledDictList([_name_handle, _age_handle])
         data.read(F_DICTLIST_CSV, DictListFile.DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_handled[index])
 
-        data = HandledDictList([self._name_handle, self._age_handle])
+        data = HandledDictList([_name_handle, _age_handle])
         data.read(F_DICTLIST, DictListFile.DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_handled[index])
 
     def test_read_str(self):
-        data = HandledDictList([self._name_handle, self._age_handle])
+        data = HandledDictList([_name_handle, _age_handle])
         data.read(F_DICTLIST_CSV, "DictList")
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_handled[index])
 
-        data = HandledDictList([self._name_handle, self._age_handle])
+        data = HandledDictList([_name_handle, _age_handle])
         data.read(F_DICTLIST, "DictList")
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_handled[index])
 
-    @staticmethod
-    def compare(file1, file2):
-        with open(file1, "rb") as f1, open(file2, "rb") as f2:
-            return f1.read() == f2.read()
-
     def test_write(self):
         file = mktemp()
         self.data.write(file, DictListFile.DICTLIST)
-        self.assertTrue(TestHandledDictList.compare(file, F_DICTLIST_DICTLIST_HANDLED))
+        self.assertTrue(_compare(file, F_DICTLIST_DICTLIST_HANDLED))
         remove(file)
 
         file = mktemp()
         self.data.write(file, DictListFile.CSV)
-        self.assertTrue(TestHandledDictList.compare(file, F_CSV_CSV_HANDLED))
+        self.assertTrue(_compare(file, F_CSV_CSV_HANDLED))
         remove(file)
 
         file = mktemp()
         self.data.write(file, DictListFile.JSON)
-        self.assertTrue(TestHandledDictList.compare(file, F_JSON_JSON_HANDLED))
+        self.assertTrue(_compare(file, F_JSON_JSON_HANDLED))
         remove(file)
 
     def test_pipe(self):
@@ -321,3 +306,16 @@ class TestHandledDictList(TestCase):
         ]
         for index, element in enumerate(data):
             self.assertEqual(element, source_handled[index])
+
+
+def _compare(file1, file2):
+    with open(file1, "rb") as f1, open(file2, "rb") as f2:
+        return f1.read() == f2.read()
+
+
+def _name_handle(element: Dict, pipe: Dict) -> None:
+    element["name"] += "_handled"
+
+
+def _age_handle(element: Dict, pipe: Dict) -> None:
+    element["age"] += 1

@@ -49,10 +49,10 @@ class TestTrace(TestCase):
     def _format(name: str, level: str, msg: str) -> str:
         return f"[{name:10s}][{level.upper():8s}] {msg}"
 
-    @staticmethod
-    def _prepare(test: str, stream: str, file: str):
+    @classmethod
+    def _prepare(cls, test: str, stream: str, file: str):
         name = "".join(choice(ascii_letters + digits) for _ in range(10))
-        levels = TestTrace._levels()
+        levels = cls._levels()
         msgs = {level: f"{level} {test}" for level in levels}
 
         expected_stream_msgs, unexpected_stream_msgs = [], []
@@ -71,9 +71,9 @@ class TestTrace(TestCase):
         expect = True if file in levels else False
         for level in levels:
             if expect:
-                expected_file_msgs.append(TestTrace._format(name, level, msgs[level]))
+                expected_file_msgs.append(cls._format(name, level, msgs[level]))
             else:
-                unexpected_file_msgs.append(TestTrace._format(name, level, msgs[level]))
+                unexpected_file_msgs.append(cls._format(name, level, msgs[level]))
 
             if level == file:
                 expect = False
@@ -87,9 +87,9 @@ class TestTrace(TestCase):
 
         return name, msgs, evaluations
 
-    @staticmethod
-    def _trace(trace: Trace, msgs: Dict[str, str]) -> None:
-        levels = TestTrace._levels()
+    @classmethod
+    def _trace(cls, trace: Trace, msgs: Dict[str, str]) -> None:
+        levels = cls._levels()
         for level in levels:
             getattr(trace, level.lower())(msgs[level])
 

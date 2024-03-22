@@ -16,19 +16,11 @@ class TestInterface(TestCase):
     def setUp(self) -> None:
         self.interface = Interface(name="TestInterface")
 
-        self.assertTrue(self.interface.register("add", self._add, description="a + b"))
-        self.assertTrue(self.interface.register("sub", self._sub, public=False))
+        self.assertTrue(self.interface.register("add", _add, description="a + b"))
+        self.assertTrue(self.interface.register("sub", _sub, public=False))
 
         self.assertTrue(self.interface.register("set", self._set))
         self.assertTrue(self.interface.register("get", self._get))
-
-    @staticmethod
-    def _add(a, b):
-        return a + b
-
-    @staticmethod
-    def _sub(a, b):
-        return a - b
 
     def _set(self, value):
         self.value = value
@@ -61,20 +53,20 @@ class TestInterface(TestCase):
     def test_register(self):
         interface = Interface()
 
-        self.assertTrue(interface.register("add", self._add))
-        self.assertTrue(interface.register("sub", self._sub))
+        self.assertTrue(interface.register("add", _add))
+        self.assertTrue(interface.register("sub", _sub))
 
-        self.assertFalse(interface.register("add", self._add))
-        self.assertFalse(interface.register("sub", self._sub))
+        self.assertFalse(interface.register("add", _add))
+        self.assertFalse(interface.register("sub", _sub))
 
     def test_remove(self):
         interface = Interface()
 
-        self.assertTrue(interface.register("add", self._add))
-        self.assertTrue(interface.register("sub", self._sub))
+        self.assertTrue(interface.register("add", _add))
+        self.assertTrue(interface.register("sub", _sub))
 
-        self.assertFalse(interface.register("add", self._add))
-        self.assertFalse(interface.register("sub", self._sub))
+        self.assertFalse(interface.register("add", _add))
+        self.assertFalse(interface.register("sub", _sub))
 
         self.assertTrue(interface.remove("add"))
         self.assertTrue(interface.remove("sub"))
@@ -99,3 +91,11 @@ class TestInterface(TestCase):
         self.assertEqual(len(self.interface.get_commands()), 4)
         self.assertEqual(len(self.interface.get_commands(public=True)), 3)
         self.assertEqual(len(self.interface.get_commands(public=False)), 1)
+
+
+def _add(a, b):
+    return a + b
+
+
+def _sub(a, b):
+    return a - b

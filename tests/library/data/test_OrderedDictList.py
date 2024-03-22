@@ -361,25 +361,23 @@ class TestOrderedDictList(TestCase):
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_age_sorted[index])
 
-    @staticmethod
-    def compare(file1, file2):
-        with open(file1, "rb") as f1, open(file2, "rb") as f2:
-            return f1.read() == f2.read()
-
     def test_write(self):
         file = mktemp()
         self.data_name_sorted.write(file, DictListFile.DICTLIST)
-        self.assertTrue(
-            TestOrderedDictList.compare(file, F_DICTLIST_DICTLIST_NAME_SORTED)
-        )
+        self.assertTrue(_compare(file, F_DICTLIST_DICTLIST_NAME_SORTED))
         remove(file)
 
         file = mktemp()
         self.data_name_sorted.write(file, DictListFile.CSV)
-        self.assertTrue(TestOrderedDictList.compare(file, F_CSV_CSV_NAME_SORTED))
+        self.assertTrue(_compare(file, F_CSV_CSV_NAME_SORTED))
         remove(file)
 
         file = mktemp()
         self.data_name_sorted.write(file, DictListFile.JSON)
-        self.assertTrue(TestOrderedDictList.compare(file, F_JSON_JSON_NAME_SORTED))
+        self.assertTrue(_compare(file, F_JSON_JSON_NAME_SORTED))
         remove(file)
+
+
+def _compare(file1, file2):
+    with open(file1, "rb") as f1, open(file2, "rb") as f2:
+        return f1.read() == f2.read()

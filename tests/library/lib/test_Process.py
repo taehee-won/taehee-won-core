@@ -49,10 +49,6 @@ class TestProcess(TestCase):
         self.assertIn("len:5", str(process))
         self.assertNotIn("name:", str(process))
 
-    @staticmethod
-    def _add(a: int, b: int, c: int, d: int) -> int:
-        return a + b + c + d
-
     def test_execute(self):
         bundles = [
             Bundle(
@@ -63,10 +59,14 @@ class TestProcess(TestCase):
             )
             for _ in range(10000)
         ]
-        outputs = [self._add(*bundle.args, **bundle.kwargs) for bundle in bundles]
+        outputs = [_add(*bundle.args, **bundle.kwargs) for bundle in bundles]
 
-        results = self.process.execute(self._add, bundles, silent=True)
+        results = self.process.execute(_add, bundles, silent=True)
         for result in results:
             outputs.remove(result)
 
         self.assertListEqual(outputs, [])
+
+
+def _add(a: int, b: int, c: int, d: int) -> int:
+    return a + b + c + d

@@ -7,8 +7,9 @@ from .OS import OS
 
 
 class Lib:
-    @staticmethod
+    @classmethod
     def clear_cache(
+        cls,
         root: str = OS.get_cwd(),
         words: List[str] = [
             "__pycache__",  # python cache
@@ -31,7 +32,7 @@ class Lib:
                 if any(word in file for word in words)
             ]
 
-        debug = ATTR(Lib, "trace", lambda: Trace("core")).debug
+        debug = ATTR(cls, "trace", lambda: Trace("core")).debug
         debug(f"clear caches from {len(words)} words")
 
         debug(f"{len(cache_dirs)} cache dirs:")
@@ -42,9 +43,9 @@ class Lib:
         LOOP(debug(f"    {file}") for file in cache_files)
         LOOP(OS.remove_file(file) for file in cache_files)
 
-    @staticmethod
-    def trace_exception() -> None:
-        critical = ATTR(Lib, "trace", lambda: Trace("core")).critical
+    @classmethod
+    def trace_exception(cls) -> None:
+        critical = ATTR(cls, "trace", lambda: Trace("core")).critical
 
         exc_type, exc_value, exc_traceback = exc_info()
 

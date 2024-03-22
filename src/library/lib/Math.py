@@ -38,18 +38,18 @@ class Math:
     def average(data: List[Union[int, float]]) -> float:
         return (sum(data) / len(data)) if data else float("NaN")
 
-    @staticmethod
-    def variance(data: List[Union[int, float]]) -> float:
-        average = Math.average(data)
+    @classmethod
+    def variance(cls, data: List[Union[int, float]]) -> float:
+        average = cls.average(data)
         return (
             (sum((x - average) ** 2 for x in data) / len(data))
             if data
             else float("NaN")
         )
 
-    @staticmethod
-    def standard_deviation(data: List[Union[int, float]]) -> float:
-        return sqrt(Math.variance(data)) if data else float("NaN")
+    @classmethod
+    def standard_deviation(cls, data: List[Union[int, float]]) -> float:
+        return sqrt(cls.variance(data)) if data else float("NaN")
 
     @staticmethod
     def sum(data: List[Union[int, float]]) -> Union[int, float]:

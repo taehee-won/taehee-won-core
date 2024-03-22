@@ -21,7 +21,7 @@ class Trace:
     @classmethod
     def _get_attrs(cls) -> Dict:
         return ATTR(
-            Trace,
+            cls,
             "attrs",
             lambda: {
                 "traces": [],
@@ -45,13 +45,14 @@ class Trace:
             },
         )
 
-    @staticmethod
+    @classmethod
     def set_levels(
+        cls,
         stream: Union[int, str, None] = None,
         file: Union[int, str, None] = None,
         name: Optional[str] = None,
     ) -> None:
-        configs = Trace._get_attrs()["configs"]
+        configs = cls._get_attrs()["configs"]
 
         if name is None:
             configs[_ConfigLevel.PRIMARY] = _Config(stream, file)
@@ -59,11 +60,11 @@ class Trace:
         else:
             configs[_ConfigLevel.DEDICATED][name] = _Config(stream, file)
 
-        Trace._set_traces()
+        cls._set_traces()
 
-    @staticmethod
-    def set_path(path: str) -> None:
-        Trace._get_attrs()["path"] = path
+    @classmethod
+    def set_path(cls, path: str) -> None:
+        cls._get_attrs()["path"] = path
 
     def __new__(
         cls,
@@ -71,7 +72,7 @@ class Trace:
         stream: Union[int, str, None] = None,
         file: Union[int, str, None] = None,
     ):
-        for trace in Trace._get_attrs()["traces"]:
+        for trace in cls._get_attrs()["traces"]:
             if trace._name == name:
                 return trace
 
@@ -86,7 +87,7 @@ class Trace:
         if not hasattr(self, "_name"):
             self._name = name
 
-            configs = Trace._get_attrs()["configs"]
+            configs = self._get_attrs()["configs"]
             configs[_ConfigLevel.INSTANCE][self._name] = _Config(stream, file)
 
             self._logger = getLogger(name)
@@ -96,8 +97,8 @@ class Trace:
             self._stream = None
             self._file = None
 
-            Trace._get_attrs()["traces"].append(self)
-            Trace._set_traces()
+            self._get_attrs()["traces"].append(self)
+            self._set_traces()
 
     def critical(self, *msgs: Any, sep: str = " ") -> None:
         self._logger.critical(sep.join((str(msg) for msg in msgs)))
@@ -114,9 +115,9 @@ class Trace:
     def debug(self, *msgs: Any, sep: str = " ") -> None:
         self._logger.debug(sep.join((str(msg) for msg in msgs)))
 
-    @staticmethod
-    def _set_traces() -> None:
-        attrs = Trace._get_attrs()
+    @classmethod
+    def _set_traces(cls) -> None:
+        attrs = cls._get_attrs()
 
         configs = attrs["configs"]
         is_trace = lambda level: level != TraceLevel.NOTSET and level != "NOTSET"

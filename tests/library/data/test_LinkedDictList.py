@@ -75,18 +75,12 @@ class TestLinkedDictList(TestCase):
         self.assertIn("handles:1", str(data))
         self.assertIn("name:TestLinkedDictList", str(data))
 
-    count = 0
-
-    @staticmethod
-    def _count(element, pipe) -> None:
-        element["count"] = TestLinkedDictList.count
-        TestLinkedDictList.count += 1
-
     def test_handle_single(self):
-        TestLinkedDictList.count = 0
+        global count
+        count = 0
 
         first = DictList(name="first")
-        data = LinkedDictList("datetime", [Node(first, [TestLinkedDictList._count])])
+        data = LinkedDictList("datetime", [Node(first, [_count])])
 
         first.append({"datetime": datetime(2021, 1, 1)})
         first.append({"datetime": datetime(2021, 1, 2)})
@@ -97,15 +91,16 @@ class TestLinkedDictList(TestCase):
         self.assertEqual(first[1]["count"], 1)
 
     def test_handle_linked(self):
-        TestLinkedDictList.count = 0
+        global count
+        count = 0
 
         first = DictList(name="first")
         second = DictList(name="second")
         data = LinkedDictList(
             "datetime",
             [
-                Node(first, [TestLinkedDictList._count]),
-                Node(second, [TestLinkedDictList._count]),
+                Node(first, [_count]),
+                Node(second, [_count]),
             ],
         )
 
@@ -122,7 +117,8 @@ class TestLinkedDictList(TestCase):
         self.assertEqual(second[1]["count"], 3)
 
     def test_handle_sequential(self):
-        TestLinkedDictList.count = 0
+        global count
+        count = 0
 
         first = DictList(name="first")
         second = DictList(name="second")
@@ -130,9 +126,9 @@ class TestLinkedDictList(TestCase):
         data = LinkedDictList(
             "datetime",
             [
-                Node(first, [TestLinkedDictList._count]),
-                Node(second, [TestLinkedDictList._count]),
-                Node(third, [TestLinkedDictList._count]),
+                Node(first, [_count]),
+                Node(second, [_count]),
+                Node(third, [_count]),
             ],
         )
 
@@ -184,3 +180,13 @@ class TestLinkedDictList(TestCase):
 
         with self.assertRaises(KeyError):
             self.assertEqual(second[3]["count"], 11)
+
+
+count = 0
+
+
+def _count(element, pipe) -> None:
+    global count
+
+    element["count"] = count
+    count += 1

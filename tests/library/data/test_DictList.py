@@ -249,23 +249,23 @@ class TestDictList(TestCase):
         for index, element in enumerate(data):
             self.assertEqual(element, self.source[index])
 
-    @staticmethod
-    def compare(file1, file2):
-        with open(file1, "rb") as f1, open(file2, "rb") as f2:
-            return f1.read() == f2.read()
-
     def test_write(self):
         file = mktemp()
         self.data.write(file, DictListFile.DICTLIST)
-        self.assertTrue(TestDictList.compare(file, F_DICTLIST_DICTLIST))
+        self.assertTrue(_compare(file, F_DICTLIST_DICTLIST))
         remove(file)
 
         file = mktemp()
         self.data.write(file, DictListFile.CSV)
-        self.assertTrue(TestDictList.compare(file, F_CSV_CSV))
+        self.assertTrue(_compare(file, F_CSV_CSV))
         remove(file)
 
         file = mktemp()
         self.data.write(file, DictListFile.JSON)
-        self.assertTrue(TestDictList.compare(file, F_JSON_JSON))
+        self.assertTrue(_compare(file, F_JSON_JSON))
         remove(file)
+
+
+def _compare(file1, file2):
+    with open(file1, "rb") as f1, open(file2, "rb") as f2:
+        return f1.read() == f2.read()

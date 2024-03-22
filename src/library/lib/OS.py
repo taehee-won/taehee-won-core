@@ -85,12 +85,12 @@ class OS:
 
         return size
 
-    @staticmethod
-    def get_size(path: str) -> int:
+    @classmethod
+    def get_size(cls, path: str) -> int:
         return (
-            OS.get_file_size(path)
+            cls.get_file_size(path)
             if isfile(path)
-            else OS.get_dir_size(path) if isdir(path) else 0
+            else cls.get_dir_size(path) if isdir(path) else 0
         )
 
     @staticmethod
@@ -108,13 +108,13 @@ class OS:
         if isdir(dir):
             rmtree(dir)
 
-    @staticmethod
-    def remove(path: str) -> None:
+    @classmethod
+    def remove(cls, path: str) -> None:
         if isfile(path):
-            OS.remove_file(path)
+            cls.remove_file(path)
 
         elif isdir(path):
-            OS.remove_dir(path)
+            cls.remove_dir(path)
 
     @staticmethod
     def copy(src: str, dst: str) -> None:
