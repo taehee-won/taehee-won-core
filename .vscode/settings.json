@@ -7,6 +7,7 @@
         "pymongo",
         "relativedelta",
         "Taehee",
-        "tqdm"
+        "tqdm",
+        "Upbit"
     ]
 }
