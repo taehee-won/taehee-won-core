@@ -5,6 +5,86 @@ from src.library.lib.Datetime import Period, Datetime
 
 
 class TestDatetime(TestCase):
+    def test_eq(self):
+        dt = Datetime.from_values(2020, 1, 15)
+
+        self.assertTrue(dt == datetime(2020, 1, 15))
+        self.assertFalse(dt == datetime(2020, 1, 16))
+
+        self.assertTrue(dt == Datetime.from_values(2020, 1, 15))
+        self.assertFalse(dt == Datetime.from_values(2020, 1, 16))
+
+        with self.assertRaises(TypeError):
+            eq = dt == 1
+
+    def test_ne(self):
+        dt = Datetime.from_values(2020, 1, 15)
+
+        self.assertFalse(dt != datetime(2020, 1, 15))
+        self.assertTrue(dt != datetime(2020, 1, 16))
+
+        self.assertFalse(dt != Datetime.from_values(2020, 1, 15))
+        self.assertTrue(dt != Datetime.from_values(2020, 1, 16))
+
+        with self.assertRaises(TypeError):
+            ne = dt != 1
+
+    def test_lt(self):
+        dt = Datetime.from_values(2020, 1, 15)
+
+        self.assertFalse(dt < datetime(2020, 1, 14))
+        self.assertFalse(dt < datetime(2020, 1, 15))
+        self.assertTrue(dt < datetime(2020, 1, 16))
+
+        self.assertFalse(dt < Datetime.from_values(2020, 1, 14))
+        self.assertFalse(dt < Datetime.from_values(2020, 1, 15))
+        self.assertTrue(dt < Datetime.from_values(2020, 1, 16))
+
+        with self.assertRaises(TypeError):
+            lt = dt < 1
+
+    def test_le(self):
+        dt = Datetime.from_values(2020, 1, 15)
+
+        self.assertFalse(dt <= datetime(2020, 1, 14))
+        self.assertTrue(dt <= datetime(2020, 1, 15))
+        self.assertTrue(dt <= datetime(2020, 1, 16))
+
+        self.assertFalse(dt <= Datetime.from_values(2020, 1, 14))
+        self.assertTrue(dt <= Datetime.from_values(2020, 1, 15))
+        self.assertTrue(dt <= Datetime.from_values(2020, 1, 16))
+
+        with self.assertRaises(TypeError):
+            le = dt <= 1
+
+    def test_gt(self):
+        dt = Datetime.from_values(2020, 1, 15)
+
+        self.assertTrue(dt > datetime(2020, 1, 14))
+        self.assertFalse(dt > datetime(2020, 1, 15))
+        self.assertFalse(dt > datetime(2020, 1, 16))
+
+        self.assertTrue(dt > Datetime.from_values(2020, 1, 14))
+        self.assertFalse(dt > Datetime.from_values(2020, 1, 15))
+        self.assertFalse(dt > Datetime.from_values(2020, 1, 16))
+
+        with self.assertRaises(TypeError):
+            gt = dt > 1
+
+    def test_ge(self):
+        dt = Datetime.from_values(2020, 1, 15)
+
+        self.assertTrue(dt >= datetime(2020, 1, 14))
+        self.assertTrue(dt >= datetime(2020, 1, 15))
+        self.assertFalse(dt >= datetime(2020, 1, 16))
+
+        self.assertTrue(dt >= Datetime.from_values(2020, 1, 14))
+        self.assertTrue(dt >= Datetime.from_values(2020, 1, 15))
+        self.assertFalse(dt >= Datetime.from_values(2020, 1, 16))
+
+        with self.assertRaises(TypeError):
+            ge = dt >= 1
+
     def test_from_values(self):
         self.assertEqual(
             Datetime.from_values(2020, 1, 1).get_datetime(),

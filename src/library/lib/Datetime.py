@@ -1,6 +1,5 @@
 from typing import Union
 from enum import Enum
-
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -16,7 +15,67 @@ class Period(Enum):
 
 class Datetime:
     def __init__(self, dt: datetime) -> None:
-        self._dt: datetime = dt
+        self._dt = dt
+
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, datetime):
+            return self._dt == value
+
+        elif isinstance(value, Datetime):
+            return self._dt == value._dt
+
+        err = f"Invalid type: {type(value)}"
+        raise TypeError(err)
+
+    def __ne__(self, value: object) -> bool:
+        if isinstance(value, datetime):
+            return self._dt != value
+
+        elif isinstance(value, Datetime):
+            return self._dt != value._dt
+
+        err = f"Invalid type: {type(value)}"
+        raise TypeError(err)
+
+    def __lt__(self, value: object) -> bool:
+        if isinstance(value, datetime):
+            return self._dt < value
+
+        elif isinstance(value, Datetime):
+            return self._dt < value._dt
+
+        err = f"Invalid type: {type(value)}"
+        raise TypeError(err)
+
+    def __le__(self, value: object) -> bool:
+        if isinstance(value, datetime):
+            return self._dt <= value
+
+        elif isinstance(value, Datetime):
+            return self._dt <= value._dt
+
+        err = f"Invalid type: {type(value)}"
+        raise TypeError(err)
+
+    def __gt__(self, value: object) -> bool:
+        if isinstance(value, datetime):
+            return self._dt > value
+
+        elif isinstance(value, Datetime):
+            return self._dt > value._dt
+
+        err = f"Invalid type: {type(value)}"
+        raise TypeError(err)
+
+    def __ge__(self, value: object) -> bool:
+        if isinstance(value, datetime):
+            return self._dt >= value
+
+        elif isinstance(value, Datetime):
+            return self._dt >= value._dt
+
+        err = f"Invalid type: {type(value)}"
+        raise TypeError(err)
 
     @classmethod
     def from_values(
