@@ -130,7 +130,7 @@ class Datetime:
                 quarters -= 1
 
             else:
-                dt -= timedelta(days=1)
+                dt -= timedelta(minutes=1)
                 quarters += 1
 
             dt = self._get_quarter_start(dt)
@@ -138,7 +138,7 @@ class Datetime:
         return Datetime(dt)
 
     def get_quarter_end(self, quarters: int = 0) -> "Datetime":
-        return self.get_quarter_start(quarters + 1).get_before(Period.DAY, 1)
+        return self.get_quarter_start(quarters + 1).get_before(Period.MINUTE, 1)
 
     def set_before(
         self,
@@ -163,14 +163,14 @@ class Datetime:
                 quarters -= 1
 
             else:
-                self._dt -= timedelta(days=1)
+                self._dt -= timedelta(minutes=1)
                 quarters += 1
 
             self._dt = self._get_quarter_start(self._dt)
 
     def set_quarter_end(self, quarters: int = 0) -> None:
         self.set_quarter_start(quarters + 1)
-        self._dt -= timedelta(days=1)
+        self._dt -= timedelta(minutes=1)
 
     def truncate(self, fmt: str) -> None:
         self._dt = datetime.strptime(self._dt.strftime(fmt), fmt)

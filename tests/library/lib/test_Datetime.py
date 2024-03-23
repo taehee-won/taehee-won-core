@@ -165,15 +165,15 @@ class TestDatetime(TestCase):
     def test_get_quarter_end(self):
         self.assertEqual(
             Datetime.from_values(2020, 4, 15).get_quarter_end().get_datetime(),
-            datetime(2020, 6, 30),
+            datetime(2020, 6, 30, 23, 59),
         )
         self.assertEqual(
             Datetime.from_values(2023, 2, 15).get_quarter_end(3).get_datetime(),
-            datetime(2023, 12, 31),
+            datetime(2023, 12, 31, 23, 59),
         )
         self.assertEqual(
             Datetime.from_values(2012, 3, 7).get_quarter_end(-3).get_datetime(),
-            datetime(2011, 6, 30),
+            datetime(2011, 6, 30, 23, 59),
         )
 
     def test_set_before(self):
@@ -202,7 +202,7 @@ class TestDatetime(TestCase):
     def test_set_quarter_end(self):
         dt = Datetime.from_values(2020, 5, 15)
         dt.set_quarter_end()
-        self.assertEqual(dt.get_datetime(), datetime(2020, 6, 30))
+        self.assertEqual(dt.get_datetime(), datetime(2020, 6, 30, 23, 59))
 
     def test_truncate(self):
         dt = Datetime.from_values(2020, 1, 15, 12, 30)
