@@ -62,24 +62,24 @@ class Datetime:
     ) -> "Datetime":
         return Datetime(self._dt + self._get_delta(period, interval))
 
-    def get_quarter_start(self, index: int = 0) -> "Datetime":
+    def get_quarter_start(self, quarters: int = 0) -> "Datetime":
         dt = self._get_quarter_start(self._dt)
 
-        while index:
-            if index > 0:
+        while quarters:
+            if quarters > 0:
                 dt += relativedelta(months=3)
-                index -= 1
+                quarters -= 1
 
             else:
                 dt -= timedelta(days=1)
-                index += 1
+                quarters += 1
 
             dt = self._get_quarter_start(dt)
 
         return Datetime(dt)
 
-    def get_quarter_end(self, index: int = 0) -> "Datetime":
-        dt = self.get_quarter_start(index + 1)
+    def get_quarter_end(self, quarters: int = 0) -> "Datetime":
+        dt = self.get_quarter_start(quarters + 1)
         dt.set_before(Period.DAY, 1)
 
         return dt
@@ -97,23 +97,24 @@ class Datetime:
         interval: int = 1,
     ) -> None:
         self._dt += self._get_delta(period, interval)
+        self._dt += self._get_delta(period, interval)
 
-    def set_quarter_start(self, index: int = 0) -> None:
+    def set_quarter_start(self, quarters: int = 0) -> None:
         self._dt = self._get_quarter_start(self._dt)
 
-        while index:
-            if index > 0:
+        while quarters:
+            if quarters > 0:
                 self._dt += relativedelta(months=3)
-                index -= 1
+                quarters -= 1
 
             else:
                 self._dt -= timedelta(days=1)
-                index += 1
+                quarters += 1
 
             self._dt = self._get_quarter_start(self._dt)
 
-    def set_quarter_end(self, index: int = 0) -> None:
-        self.set_quarter_start(index + 1)
+    def set_quarter_end(self, quarters: int = 0) -> None:
+        self.set_quarter_start(quarters + 1)
         self._dt -= timedelta(days=1)
 
     def extract(self, fmt: str) -> None:
