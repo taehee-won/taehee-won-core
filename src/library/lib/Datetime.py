@@ -79,10 +79,7 @@ class Datetime:
         return Datetime(dt)
 
     def get_quarter_end(self, quarters: int = 0) -> "Datetime":
-        dt = self.get_quarter_start(quarters + 1)
-        dt.set_before(Period.DAY, 1)
-
-        return dt
+        return self.get_quarter_start(quarters + 1).get_before(Period.DAY, 1)
 
     def set_before(
         self,
@@ -96,7 +93,6 @@ class Datetime:
         period: Union[Period, str] = Period.DAY,
         interval: int = 1,
     ) -> None:
-        self._dt += self._get_delta(period, interval)
         self._dt += self._get_delta(period, interval)
 
     def set_quarter_start(self, quarters: int = 0) -> None:
@@ -117,7 +113,7 @@ class Datetime:
         self.set_quarter_start(quarters + 1)
         self._dt -= timedelta(days=1)
 
-    def extract(self, fmt: str) -> None:
+    def truncate(self, fmt: str) -> None:
         self._dt = datetime.strptime(self._dt.strftime(fmt), fmt)
 
     @staticmethod

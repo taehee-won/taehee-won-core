@@ -124,7 +124,7 @@ class TestDatetime(TestCase):
         dt.set_quarter_end()
         self.assertEqual(dt.get_datetime(), datetime(2020, 6, 30))
 
-    def test_extract(self):
+    def test_truncate(self):
         dt = Datetime.from_values(2020, 1, 15, 12, 30)
-        dt.extract("%Y-%m-%d")
+        dt.truncate("%Y-%m-%d")
         self.assertEqual(dt.get_datetime(), datetime(2020, 1, 15))
