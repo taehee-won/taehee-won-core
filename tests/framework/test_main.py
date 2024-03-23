@@ -31,7 +31,10 @@ class TestMain(TestCase):
 
         self.assertEqual(value, 120)
 
-    @skipIf(environ.get("TEST_CLI") != "1", "CLI needs user input")
+    @skipIf(
+        environ.get("TEST_CLI") != "1" and environ.get("TEST_ALL") != "1",
+        "CLI needs user input",
+    )
     def test_cli(self):
         Trace.set_levels()
 

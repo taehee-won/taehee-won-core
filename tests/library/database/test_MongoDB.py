@@ -11,7 +11,10 @@ TEST_DATABASE = "TEST-DATABASE"
 TEST_COLLECTION = "TEST-COLLECTION"
 
 
-@skipIf(environ.get("TEST_MONGODB") != "1", "MongoDB connects local DB server")
+@skipIf(
+    environ.get("TEST_MONGODB") != "1" and environ.get("TEST_ALL") != "1",
+    "MongoDB connects local DB server",
+)
 class TestMongoDB(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
