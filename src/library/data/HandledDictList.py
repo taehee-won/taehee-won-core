@@ -56,7 +56,7 @@ class HandledDictList(DictList):
         self._trace.critical(err)
         raise TypeError(err)
 
-    def pop(self, index: int = 0) -> Dict[str, Any]:  # type: ignore
+    def pop(self, index: int = 0) -> Dict[str, Any]:
         err = "HandledDictList does not support pop operation"
         self._trace.critical(err)
         raise TypeError(err)

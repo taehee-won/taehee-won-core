@@ -124,8 +124,7 @@ class Datetime:
         period: Union[Period, str],
         interval: int,
     ) -> Union[timedelta, relativedelta]:
-        if isinstance(period, str):
-            period = Period(period)
+        period = Period(period)
 
         return {
             Period.DAY: timedelta(days=interval),
