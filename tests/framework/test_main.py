@@ -36,8 +36,6 @@ class TestMain(TestCase):
         "CLI needs user input",
     )
     def test_cli(self):
-        Trace.set_levels()
-
         global cli, value, set_value, add_values
 
         cli = True
@@ -61,7 +59,7 @@ class A(Component):
         self.register("test", self.test)
 
         if cli:
-            self.info("enter 'test' and 'exit'")
+            print(f"] ".rjust(48) + "enter 'test' and 'exit'")
 
     def main(self) -> None:
         self.test()
