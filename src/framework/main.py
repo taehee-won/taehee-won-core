@@ -1,9 +1,9 @@
-from typing import List, Optional, Union, Type
+from typing import List, Union, Type
 from enum import Enum
 from threading import Thread
 from queue import Queue
 
-from ..library.lib.macro import KWARGS_STR, ARGS_STR, LOOP, RAISE
+from ..library.lib.macro import KWARGS_STR, ARGS_STR, LOOP
 from ..library.lib.Trace import Trace
 from ..library.lib.Interface import Interface
 from ..library.lib.Lib import Lib
@@ -18,7 +18,7 @@ class FrontEnd(Enum):
 
 def main(
     components: List[Type[Component]],
-    frontend: FrontEnd = FrontEnd.MAIN,
+    frontend: Union[FrontEnd, str] = FrontEnd.MAIN,
 ):
     trace = Trace("main")
     interface = Interface(name="main")
@@ -31,6 +31,8 @@ def main(
     trace.debug(f"initialize components")
     LOOP(instance.initialize() for instance in instances)
 
+    frontend = FrontEnd(frontend)
+
     if frontend == FrontEnd.MAIN:
         trace.debug(f"call main from components")
         LOOP(instance.main() for instance in instances)
@@ -40,14 +42,16 @@ def main(
         response = Queue()
         FrontEnd_.initialize(trace, interface, request, response)
 
+        if frontend == FrontEnd.CLI:
+            target = FrontEnd_.start_cli
+
+        else:
+            err = f"Invalid frontend: {frontend.value}"
+            trace.critical(err)
+            raise TypeError(err)
+
         trace.debug(f"start {frontend}")
-        Thread(
-            target=(
-                FrontEnd_.start_cli
-                if frontend == FrontEnd.CLI
-                else RAISE(TypeError, f"Invalid frontend: {frontend.value}")
-            )
-        ).start()
+        Thread(target=target).start()
 
         while True:
             command, args, kwargs = request.get()
