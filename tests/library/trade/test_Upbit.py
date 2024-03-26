@@ -19,18 +19,21 @@ class TestUpbit(TestCase):
     def tearDownClass(cls) -> None:
         Trace.set_levels()
 
-    def test_get_codes(self):
-        markets = Upbit.get_codes()
+    def test_get_assets(self):
+        assets = Upbit.get_assets()
 
-        self.assertIsInstance(markets, list)
-        self.assertGreater(len(markets), 0)
+        self.assertIsInstance(assets, list)
+        self.assertGreater(len(assets), 0)
         self.assertTrue(
-            all(
-                key in market.keys()
-                for market in markets
-                for key in ["code", "en", "ko"]
-            )
+            all(key in asset.keys() for asset in assets for key in ["code", "en", "ko"])
         )
+
+    def test_get_codes(self):
+        codes = Upbit.get_codes()
+
+        self.assertIsInstance(codes, list)
+        self.assertGreater(len(codes), 0)
+        self.assertTrue(all(isinstance(code, str) for code in codes))
 
     def test_get_candles_month(self):
         basic = Datetime.from_values(2021, 1, 1, 9)
@@ -43,13 +46,10 @@ class TestUpbit(TestCase):
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 12)
-
-        for index in range(12):
-            self.assertEqual(
-                basic.get_after(Period.MONTH, index),
-                candles[index]["datetime"],
-            )
-
+        self.assertTrue(
+            basic.get_after(Period.MONTH, index) == candles[index]["datetime"]
+            for index in range(12)
+        )
         self.assertTrue(
             all(
                 key in candle.keys()
@@ -69,13 +69,10 @@ class TestUpbit(TestCase):
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 52)
-
-        for index in range(52):
-            self.assertEqual(
-                basic.get_after(Period.WEEK, index),
-                candles[index]["datetime"],
-            )
-
+        self.assertTrue(
+            basic.get_after(Period.WEEK, index) == candles[index]["datetime"]
+            for index in range(52)
+        )
         self.assertTrue(
             all(
                 key in candle.keys()
@@ -95,13 +92,10 @@ class TestUpbit(TestCase):
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 365)
-
-        for index in range(365):
-            self.assertEqual(
-                basic.get_after(Period.DAY, index),
-                candles[index]["datetime"],
-            )
-
+        self.assertTrue(
+            basic.get_after(Period.DAY, index) == candles[index]["datetime"]
+            for index in range(365)
+        )
         self.assertTrue(
             all(
                 key in candle.keys()
@@ -121,13 +115,10 @@ class TestUpbit(TestCase):
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 200)
-
-        for index in range(200):
-            self.assertEqual(
-                basic.get_after(Period.MINUTE, index),
-                candles[index]["datetime"],
-            )
-
+        self.assertTrue(
+            basic.get_after(Period.MINUTE, index) == candles[index]["datetime"]
+            for index in range(200)
+        )
         self.assertTrue(
             all(
                 key in candle.keys()
@@ -148,13 +139,10 @@ class TestUpbit(TestCase):
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 400)
-
-        for index in range(400):
-            self.assertEqual(
-                basic.get_after(Period.MINUTE, 60 * index),
-                candles[index]["datetime"],
-            )
-
+        self.assertTrue(
+            basic.get_after(Period.MINUTE, 60 * index) == candles[index]["datetime"]
+            for index in range(400)
+        )
         self.assertTrue(
             all(
                 key in candle.keys()

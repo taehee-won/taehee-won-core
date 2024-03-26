@@ -18,26 +18,30 @@ class Upbit:
     # return   : code, en, ko
 
     @classmethod
-    def get_codes(cls) -> List[Dict[str, str]]:
+    def get_assets(cls) -> List[Dict[str, str]]:
         url = "https://api.upbit.com/v1/market/all"
         method = "GET"
         params = {"isDetails": "false"}
 
         return ATTR(
             cls,
-            "markets",
+            "assets",
             lambda: [
                 {
-                    key: market[field]
+                    key: asset[field]
                     for field, key in {
                         "market": "code",
                         "english_name": "en",
                         "korean_name": "ko",
                     }.items()
                 }
-                for market in cls._request(url, method, params).data
+                for asset in cls._request(url, method, params).data
             ],
         )
+
+    @classmethod
+    def get_codes(cls) -> List[Dict[str, str]]:
+        return ATTR(cls, "codes", lambda: [asset["code"] for asset in cls.get_assets()])
 
     # reference: https://docs.upbit.com/v1.4.0/reference/분minute-캔들-1
     # reference: https://docs.upbit.com/v1.4.0/reference/일day-캔들-1
