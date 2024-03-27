@@ -17,6 +17,26 @@ class Datetime:
     def __init__(self, dt: datetime) -> None:
         self._dt = dt
 
+    @property
+    def year(self) -> int:
+        return self._dt.year
+
+    @property
+    def month(self) -> int:
+        return self._dt.month
+
+    @property
+    def day(self) -> int:
+        return self._dt.day
+
+    @property
+    def hour(self) -> int:
+        return self._dt.hour
+
+    @property
+    def minute(self) -> int:
+        return self._dt.minute
+
     def __eq__(self, value: object) -> bool:
         if isinstance(value, datetime):
             return self._dt == value
