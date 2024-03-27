@@ -140,6 +140,9 @@ class Datetime:
     def get_quarter_end(self, quarters: int = 0) -> "Datetime":
         return self.get_quarter_start(quarters + 1).get_before(Period.MINUTE, 1)
 
+    def get_slice(self, period: Union[Period, str] = Period.DAY) -> "Datetime":
+        return Datetime(self._get_slice(self._dt, period))
+
     def set_before(
         self,
         period: Union[Period, str] = Period.DAY,
@@ -172,8 +175,8 @@ class Datetime:
         self.set_quarter_start(quarters + 1)
         self._dt -= timedelta(minutes=1)
 
-    def truncate(self, fmt: str) -> None:
-        self._dt = datetime.strptime(self._dt.strftime(fmt), fmt)
+    def set_slice(self, period: Union[Period, str] = Period.DAY) -> None:
+        self._dt = self._get_slice(self._dt, period)
 
     @staticmethod
     def _get_delta(
@@ -194,3 +197,23 @@ class Datetime:
     @staticmethod
     def _get_quarter_start(dt: datetime) -> datetime:
         return datetime(dt.year, (dt.month - 1) // 3 * 3 + 1, 1)
+
+    @staticmethod
+    def _get_slice(dt: datetime, period: Union[Period, str] = Period.DAY) -> datetime:
+        period = Period(period)
+
+        if period == Period.WEEK:
+            err = f"Invalid period: {period}"
+            raise TypeError(err)
+
+        fmt = "%Y%m%d%H%M"[
+            : {
+                Period.YEAR: 2,
+                Period.MONTH: 4,
+                Period.DAY: 6,
+                Period.HOUR: 8,
+                Period.MINUTE: 10,
+            }[period]
+        ]
+
+        return datetime.strptime(dt.strftime(fmt), fmt)
