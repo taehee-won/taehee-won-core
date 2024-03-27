@@ -49,7 +49,17 @@ class KRX:
 
     @classmethod
     def get_business_days(cls) -> List[datetime]:
-        # TODO: split start to end
+        if not hasattr(cls, "business_days"):
+            periods = cls._split_period(
+                cls._get_attrs()["start"],
+                cls._get_attrs()["end"],
+            )
+
+            days = []
+
+            setattr(cls, "business_days", days)
+
+        return getattr(cls, "business_days")
 
         return ATTR(
             cls,
@@ -124,7 +134,10 @@ class KRX:
         response = request(method, url, data=kwargs)
 
         if response.status_code != 200:
-            err = f"Request failed: {response.status_code} for {method}({url})"
+            err = (
+                f"Request failed: {response.status_code}"
+                + f" for {method}({url})({kwargs})"
+            )
             trace.critical(err)
             raise ValueError(err)
 
@@ -140,20 +153,20 @@ class KRX:
     @classmethod
     def _split_period(cls, start: Datetime, end: Datetime) -> List[Datetime]:
         if not start <= end:
-            pass
+            err = f"Invaild period: start({start}), end({end})"
+            ATTR(cls, "trace", lambda: Trace("core")).critical(err)
+            raise ValueError(err)
 
-        # TODO:
-
-        periods = []
+        periods = [start]
 
         while start < end:
-            limit = start.get_after(Period.YEAR, 2).get_before(Period.DAY, 1)
-            periods.append(
-                {
-                    "strtDd": start.get_str("%Y%m%d"),
-                    "endDd": (limit if limit <= end else end).get_str("%Y%m%d"),
-                }
-            )
-            start.set_after(Period.YEAR, 2)
+            step = start.get_after(Period.YEAR, 2).get_before(Period.DAY, 1)
+            if end <= step:
+                break
+
+            periods.append(step)
+            start = step.get_after()
+
+        periods.append(end)
 
         return periods
