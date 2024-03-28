@@ -121,10 +121,10 @@ class Datetime:
     def from_timestamp(cls, timestamp: float) -> "Datetime":
         return cls(datetime.fromtimestamp(timestamp))
 
-    def get_datetime(self) -> datetime:
+    def to_datetime(self) -> datetime:
         return self._dt
 
-    def get_str(self, fmt: str) -> str:
+    def to_str(self, fmt: str) -> str:
         return self._dt.strftime(fmt)
 
     def get_before(

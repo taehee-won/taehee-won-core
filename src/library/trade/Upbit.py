@@ -100,7 +100,7 @@ class Upbit:
                 (Datetime(end) if isinstance(end, datetime) else end)
                 .get_before(Period.HOUR, 9)
                 .get_after(Period.MINUTE, 1)
-                .get_str("%Y-%m-%d %H:%M:%S")
+                .to_str("%Y-%m-%d %H:%M:%S")
                 if end
                 else None
             ),
@@ -115,7 +115,7 @@ class Upbit:
                     "datetime": Datetime.from_str(
                         candle["candle_date_time_kst"],
                         "%Y-%m-%dT%H:%M:%S",
-                    ).get_datetime(),
+                    ).to_datetime(),
                     **{
                         key: candle[field]
                         for field, key in {
@@ -139,7 +139,7 @@ class Upbit:
             params["to"] = (
                 Datetime(candles[-1]["datetime"])
                 .get_before(Period.HOUR, 9)
-                .get_str("%Y-%m-%d %H:%M:%S")
+                .to_str("%Y-%m-%d %H:%M:%S")
             )
             response = cls._request(url, method, params)
 
@@ -196,7 +196,7 @@ class _Response:
     def __str__(self) -> str:
         return (
             f"{len(self._data)} data"
-            + f" at {self._datetime.get_str('%Y/%m/%d %H:%M:%S')}"
+            + f" at {self._datetime.to_str('%Y/%m/%d %H:%M:%S')}"
         )
 
     @property

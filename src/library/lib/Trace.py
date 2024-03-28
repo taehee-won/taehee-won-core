@@ -39,8 +39,8 @@ class Trace:
                 "path": OS.get_path(
                     "files",
                     "traces",
-                    Datetime.from_now().get_str("%Y-%m-%d"),
-                    Datetime.from_now().get_str("%H-%M-%S.trace"),
+                    Datetime.from_now().to_str("%Y-%m-%d"),
+                    Datetime.from_now().to_str("%H-%M-%S.trace"),
                 ),
             },
         )
