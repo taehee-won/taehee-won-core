@@ -37,6 +37,9 @@ class Datetime:
     def minute(self) -> int:
         return self._dt.minute
 
+    def __str__(self) -> str:
+        return self.to_str("%Y/%m/%d %H:%M:%S")
+
     def __eq__(self, value: object) -> bool:
         if isinstance(value, datetime):
             return self._dt == value

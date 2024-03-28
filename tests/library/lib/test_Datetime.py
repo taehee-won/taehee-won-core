@@ -5,6 +5,12 @@ from src.library.lib.Datetime import Period, Datetime
 
 
 class TestDatetime(TestCase):
+    def test_str(self):
+        dt = Datetime.from_values(2020, 1, 15, 12, 30, 16)
+
+        self.assertIsInstance(str(dt), str)
+        self.assertEqual("2020/01/15 12:30:16", str(dt))
+
     def test_eq(self):
         dt = Datetime.from_values(2020, 1, 15)
 

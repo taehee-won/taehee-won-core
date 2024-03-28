@@ -194,10 +194,7 @@ class _Response:
         self._data = data
 
     def __str__(self) -> str:
-        return (
-            f"{len(self._data)} data"
-            + f" at {self._datetime.to_str('%Y/%m/%d %H:%M:%S')}"
-        )
+        return f"{len(self._data)} data at {self._datetime}"
 
     @property
     def datetime(self) -> Datetime:
