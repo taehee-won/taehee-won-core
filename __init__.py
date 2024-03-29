@@ -11,6 +11,7 @@ from .src.library.lib.Interval import Interval
 from .src.library.lib.Process import Bundle, Process
 from .src.library.lib.Datetime import Period, Datetime
 from .src.library.lib.Trace import TraceLevel, Trace
+from .src.library.trade.KRX import KRX
 from .src.library.trade.Upbit import Upbit
 from .src.library.lib.macro import KWARGS, ARGS_STR, KWARGS_STR, ATTR, LOOP, CALL, RAISE
 from .src.framework.Component import Component
@@ -24,7 +25,7 @@ __all__.extend(["Lib", "Math", "OS", "Interface", "Interval"])
 __all__.extend(["Bundle", "Process"])
 __all__.extend(["Period", "Datetime"])
 __all__.extend(["TraceLevel", "Trace"])
-__all__.extend(["Upbit"])
+__all__.extend(["KRX", "Upbit"])
 __all__.extend(["KWARGS", "ARGS_STR", "KWARGS_STR", "ATTR", "LOOP", "CALL", "RAISE"])
 __all__.extend(["Component", "FrontEnd", "main"])
 

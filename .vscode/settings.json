@@ -1,13 +1,27 @@
 {
     "cSpell.words": [
+        "CLSPRC",
         "dateutil",
         "DictList",
+        "HGPRC",
+        "KOSDAQ",
+        "KOSPI",
         "levelname",
+        "listdelisu",
+        "LWPRC",
+        "MDCSTAT",
+        "MKTCAP",
+        "mktsel",
         "ncols",
+        "OPNPRC",
         "pymongo",
         "relativedelta",
+        "stkisu",
+        "strt",
         "Taehee",
         "tqdm",
+        "TRDVAL",
+        "TRDVOL",
         "Upbit"
     ]
 }
