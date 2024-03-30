@@ -9,7 +9,7 @@ from .Trace import Trace
 class Interval:
     def __init__(
         self,
-        attr: Union[int, float, Dict[Union[int, float], int]],
+        arg: Union[int, float, Dict[Union[int, float], int]],
         /,
         file: Optional[str] = None,
         name: Optional[str] = None,
@@ -29,9 +29,9 @@ class Interval:
                 [
                     {"value": value, "count": count, "records": []}
                     for value, count in (
-                        {attr: 1}
-                        if isinstance(attr, int) or isinstance(attr, float)
-                        else attr
+                        {arg: 1}
+                        if isinstance(arg, int) or isinstance(arg, float)
+                        else arg
                     ).items()
                 ]
             )

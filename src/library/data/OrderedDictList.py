@@ -31,18 +31,18 @@ class OrderedDictList(DictList):
             yield element
 
     @overload
-    def __getitem__(self, attr: slice, /) -> List[Dict[str, Any]]: ...
+    def __getitem__(self, arg: slice, /) -> List[Dict[str, Any]]: ...
 
     @overload
-    def __getitem__(self, attr: int, /) -> Dict[str, Any]: ...
+    def __getitem__(self, arg: int, /) -> Dict[str, Any]: ...
 
     def __getitem__(
         self,
-        attr: Union[slice, int],
+        arg: Union[slice, int],
         /,
     ) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
         self._sort()
-        return super().__getitem__(attr)
+        return super().__getitem__(arg)
 
     def __str__(self) -> str:
         attrs = KWARGS_STR(key=self._key, len=len(self._data), name=self._name)
@@ -54,38 +54,38 @@ class OrderedDictList(DictList):
 
     def get_element(
         self,
-        attr1: Union[Any, str, Dict[str, Any]],
-        attr2: Optional[Any] = None,
+        arg1: Union[Any, str, Dict[str, Any]],
+        arg2: Optional[Any] = None,
         /,
     ) -> Union[Dict[str, Any], None]:
-        if attr2 is None and not isinstance(attr1, dict):  # attr1: Any
+        if arg2 is None and not isinstance(arg1, dict):  # arg1: Any
             self._sort()
 
             l, r = 0, len(self._data) - 1
             while l <= r:
-                if self._data[(i := (l + r) // 2)][self._key] > attr1:
+                if self._data[(i := (l + r) // 2)][self._key] > arg1:
                     r = i - 1
 
-                elif self._data[i][self._key] < attr1:
+                elif self._data[i][self._key] < arg1:
                     l = i + 1
 
                 else:
                     return self._data[i]
 
         else:
-            return super().get_element(attr1, attr2)
+            return super().get_element(arg1, arg2)
 
     def get_data(
         self,
-        attr1: Optional[Union[Any, str, Dict[str, Any]]] = None,
-        attr2: Optional[Any] = None,
+        arg1: Optional[Union[Any, str, Dict[str, Any]]] = None,
+        arg2: Optional[Any] = None,
         /,
     ) -> List[Dict[str, Any]]:
-        if attr2 is None and attr1 is not None and not isinstance(attr1, dict):
-            attr2 = attr1
-            attr1 = self._key
+        if arg2 is None and arg1 is not None and not isinstance(arg1, dict):
+            arg2 = arg1
+            arg1 = self._key
 
-        return super().get_data(attr1, attr2)
+        return super().get_data(arg1, arg2)
 
     def get_filtered_data(
         self,

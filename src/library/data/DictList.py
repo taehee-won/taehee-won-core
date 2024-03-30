@@ -46,17 +46,17 @@ class DictList:
             yield element
 
     @overload
-    def __getitem__(self, attr: slice, /) -> List[Dict[str, Any]]: ...
+    def __getitem__(self, arg: slice, /) -> List[Dict[str, Any]]: ...
 
     @overload
-    def __getitem__(self, attr: int, /) -> Dict[str, Any]: ...
+    def __getitem__(self, arg: int, /) -> Dict[str, Any]: ...
 
     def __getitem__(
         self,
-        attr: Union[slice, int],
+        arg: Union[slice, int],
         /,
     ) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
-        return self._data[attr]
+        return self._data[arg]
 
     def __str__(self) -> str:
         attrs = KWARGS_STR(len=len(self._data), name=self._name)
@@ -80,34 +80,34 @@ class DictList:
 
     def get_element(
         self,
-        attr1: Union[str, Dict[str, Any]],
-        attr2: Optional[Any] = None,
+        arg1: Union[str, Dict[str, Any]],
+        arg2: Optional[Any] = None,
         /,
     ) -> Union[Dict[str, Any], None]:
-        if isinstance(attr1, str):  # attr1: key, attr2: value
+        if isinstance(arg1, str):  # arg1: key, arg2: value
             for e in self._data:
-                if attr1 in e and e[attr1] == attr2:
+                if arg1 in e and e[arg1] == arg2:
                     return e
 
-        else:  # attr1: queries: Dict[key, value]
+        else:  # arg1: queries: Dict[key, value]
             for e in self._data:
-                if all(k in e and e[k] == v for k, v in attr1.items()):
+                if all(k in e and e[k] == v for k, v in arg1.items()):
                     return e
 
     def get_data(
         self,
-        attr1: Optional[Union[str, Dict[str, Any]]] = None,
-        attr2: Optional[Any] = None,
+        arg1: Optional[Union[str, Dict[str, Any]]] = None,
+        arg2: Optional[Any] = None,
         /,
     ) -> List[Dict[str, Any]]:
-        if isinstance(attr1, str):  # attr1: key, attr2: value
-            return [e for e in self._data if attr1 in e and e[attr1] == attr2]
+        if isinstance(arg1, str):  # arg1: key, arg2: value
+            return [e for e in self._data if arg1 in e and e[arg1] == arg2]
 
-        elif isinstance(attr1, dict):  # attr1: queries: Dict[str, Any]
+        elif isinstance(arg1, dict):  # arg1: queries: Dict[str, Any]
             return [
                 e
                 for e in self._data
-                if all(k in e and e[k] == v for k, v in attr1.items())
+                if all(k in e and e[k] == v for k, v in arg1.items())
             ]
 
         else:
