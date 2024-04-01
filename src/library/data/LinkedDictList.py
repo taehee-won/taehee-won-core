@@ -5,55 +5,54 @@ from ..lib.Trace import Trace
 from .DictList import DictList
 
 
-class Node:
-    def __init__(
-        self,
-        data: DictList,
-        handles: List[Callable[[Dict, Dict], Optional[Dict]]],
-    ) -> None:
-        self._data = data
-        self._handles = handles
-
-        self._handled = 0
-        self._pipe = {}
-
-    def __str__(self) -> str:
-        attrs = KWARGS_STR(
-            len=len(self._data),
-            handles=len(self._handles),
-            handled=self._handled,
-        )
-        return f"{self.__class__.__name__}({attrs})"
-
-    @property
-    def data(self):
-        return self._data
-
-    @property
-    def handles(self):
-        return self._handles
-
-    @property
-    def handled(self):
-        return self._handled
-
-    def count(self, count: int = 1):
-        self._handled += count
-
-    @property
-    def pipe(self):
-        return self._pipe
-
-    @pipe.setter
-    def pipe(self, pipe):
-        self._pipe = pipe
-
-
 class LinkedDictList:
+    class Node:
+        def __init__(
+            self,
+            data: DictList,
+            handles: List[Callable[[Dict, Dict], Optional[Dict]]],
+        ) -> None:
+            self._data = data
+            self._handles = handles
+
+            self._handled = 0
+            self._pipe = {}
+
+        def __str__(self) -> str:
+            attrs = KWARGS_STR(
+                len=len(self._data),
+                handles=len(self._handles),
+                handled=self._handled,
+            )
+            return f"{self.__class__.__name__}({attrs})"
+
+        @property
+        def data(self):
+            return self._data
+
+        @property
+        def handles(self):
+            return self._handles
+
+        @property
+        def handled(self):
+            return self._handled
+
+        def count(self, count: int = 1):
+            self._handled += count
+
+        @property
+        def pipe(self):
+            return self._pipe
+
+        @pipe.setter
+        def pipe(self, pipe):
+            self._pipe = pipe
+
     def __init__(
         self,
         key: str,
-        nodes: List[Node],
+        nodes: List["LinkedDictList.Node"],
         handles: Optional[List[Callable[[Dict, Dict], Optional[Dict]]]] = None,
         name: Optional[str] = None,
     ):
@@ -66,7 +65,7 @@ class LinkedDictList:
     def __len__(self) -> int:
         return len(self._nodes)
 
-    def __getitem__(self, index: int) -> Node:
+    def __getitem__(self, index: int) -> "LinkedDictList.Node":
         return self._nodes[index]
 
     def __str__(self) -> str:

@@ -1,7 +1,7 @@
 from .src.library.data.DictList import DictList
 from .src.library.data.OrderedDictList import OrderedDictList
 from .src.library.data.HandledDictList import HandledDictList
-from .src.library.data.LinkedDictList import Node, LinkedDictList
+from .src.library.data.LinkedDictList import LinkedDictList
 from .src.library.database.MongoDB import SortOrder, MongoDB
 from .src.library.lib.Lib import Lib
 from .src.library.lib.Math import Math
@@ -18,8 +18,7 @@ from .src.framework.Component import Component
 from .src.framework.main import FrontEnd, main
 
 __all__ = []
-__all__.extend(["DictList", "OrderedDictList", "HandledDictList"])
-__all__.extend(["Node", "LinkedDictList"])
+__all__.extend(["DictList", "OrderedDictList", "HandledDictList", "LinkedDictList"])
 __all__.extend(["SortOrder", "MongoDB"])
 __all__.extend(["Lib", "Math", "OS", "Interface", "Interval"])
 __all__.extend(["Bundle", "Process"])

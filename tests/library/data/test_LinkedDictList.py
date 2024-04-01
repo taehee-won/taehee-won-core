@@ -3,7 +3,7 @@ from datetime import datetime
 
 from src.library.lib.Trace import TraceLevel, Trace
 from src.library.data.DictList import DictList
-from src.library.data.LinkedDictList import Node, LinkedDictList
+from src.library.data.LinkedDictList import LinkedDictList
 
 
 class TestLinkedDictList(TestCase):
@@ -23,9 +23,9 @@ class TestLinkedDictList(TestCase):
         data = LinkedDictList(
             "datetime",
             [
-                Node(DictList(), []),
-                Node(DictList(), []),
-                Node(DictList(), []),
+                LinkedDictList.Node(DictList(), []),
+                LinkedDictList.Node(DictList(), []),
+                LinkedDictList.Node(DictList(), []),
             ],
         )
         self.assertEqual(len(data), 3)
@@ -34,9 +34,9 @@ class TestLinkedDictList(TestCase):
         data = LinkedDictList(
             "datetime",
             [
-                Node(DictList(name="first"), []),
-                Node(DictList(name="second"), []),
-                Node(DictList(name="third"), []),
+                LinkedDictList.Node(DictList(name="first"), []),
+                LinkedDictList.Node(DictList(name="second"), []),
+                LinkedDictList.Node(DictList(name="third"), []),
             ],
         )
         self.assertIn("name:first", str(data[0].data))
@@ -47,9 +47,9 @@ class TestLinkedDictList(TestCase):
         data = LinkedDictList(
             "datetime",
             [
-                Node(DictList(name="first"), []),
-                Node(DictList(name="second"), []),
-                Node(DictList(name="third"), []),
+                LinkedDictList.Node(DictList(name="first"), []),
+                LinkedDictList.Node(DictList(name="second"), []),
+                LinkedDictList.Node(DictList(name="third"), []),
             ],
         )
         self.assertIsInstance(str(data), str)
@@ -62,8 +62,8 @@ class TestLinkedDictList(TestCase):
         data = LinkedDictList(
             "datetime",
             [
-                Node(DictList(name="first"), []),
-                Node(DictList(name="second"), []),
+                LinkedDictList.Node(DictList(name="first"), []),
+                LinkedDictList.Node(DictList(name="second"), []),
             ],
             [lambda e, p: p],
             name="TestLinkedDictList",
@@ -80,7 +80,7 @@ class TestLinkedDictList(TestCase):
         count = 0
 
         first = DictList(name="first")
-        data = LinkedDictList("datetime", [Node(first, [_count])])
+        data = LinkedDictList("datetime", [LinkedDictList.Node(first, [_count])])
 
         first.append({"datetime": datetime(2021, 1, 1)})
         first.append({"datetime": datetime(2021, 1, 2)})
@@ -99,8 +99,8 @@ class TestLinkedDictList(TestCase):
         data = LinkedDictList(
             "datetime",
             [
-                Node(first, [_count]),
-                Node(second, [_count]),
+                LinkedDictList.Node(first, [_count]),
+                LinkedDictList.Node(second, [_count]),
             ],
         )
 
@@ -126,9 +126,9 @@ class TestLinkedDictList(TestCase):
         data = LinkedDictList(
             "datetime",
             [
-                Node(first, [_count]),
-                Node(second, [_count]),
-                Node(third, [_count]),
+                LinkedDictList.Node(first, [_count]),
+                LinkedDictList.Node(second, [_count]),
+                LinkedDictList.Node(third, [_count]),
             ],
         )
 
