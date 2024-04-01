@@ -11,18 +11,16 @@ from ..lib.Trace import Trace
 from ..lib.OS import OS
 
 
-class DictListFile(Enum):
-    DICTLIST = "DictList"
-    CSV = "csv"
-    JSON = "json"
-
-
 class DictList:
+    class FileType(Enum):
+        DICTLIST = "DictList"
+        CSV = "csv"
+        JSON = "json"
+
     def __init__(
         self,
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
-        type: Optional[Union[DictListFile, str]] = None,
-        encoding: Optional[str] = None,
+        file_type: Optional[Union["DictList.FileType", str]] = None,
         name: Optional[str] = None,
     ) -> None:
         self._name = name
@@ -33,7 +31,7 @@ class DictList:
 
         elif isinstance(default, str):
             self._data = []
-            self.read(default, **KWARGS(type=type, encoding=encoding))
+            self.read(default, **KWARGS(file_type=file_type))
 
         else:
             self._data = default
@@ -170,24 +168,23 @@ class DictList:
     def read(
         self,
         file: str,
-        type: Optional[Union[DictListFile, str]] = None,
-        encoding: str = "UTF-8-sig",
+        file_type: Optional[Union["DictList.FileType", str]] = None,
     ) -> None:
-        if type is None:
-            type = DictListFile(OS.get_extension(file))
+        if file_type is None:
+            file_type = self.FileType(OS.get_extension(file))
 
-        elif isinstance(type, str):
-            type = DictListFile(type)
+        elif isinstance(file_type, str):
+            file_type = self.FileType(file_type)
 
         if not OS.is_exist(file):
             return
 
-        if type == DictListFile.DICTLIST:
+        if file_type == self.FileType.DICTLIST:
             with open(file, "rb") as f:
                 self.extend(load_pickle(f))
 
-        elif type == DictListFile.CSV:
-            with open(file, "r", encoding=encoding) as f:
+        elif file_type == self.FileType.CSV:
+            with open(file, "r", encoding="UTF-8-sig") as f:
                 if len((rows := [l for l in read_csv(f)])) >= 2:
                     keys = [key for key in rows[0]]
                     data = [
@@ -195,33 +192,32 @@ class DictList:
                     ]
                     self.extend(data)
 
-        elif type == DictListFile.JSON:
-            with open(file, "r", encoding=encoding) as f:
+        elif file_type == self.FileType.JSON:
+            with open(file, "r", encoding="UTF-8-sig") as f:
                 self.extend(load_json(f))
 
     def write(
         self,
         file: str,
-        type: Optional[Union[DictListFile, str]] = None,
-        encoding: str = "UTF-8-sig",
+        file_type: Optional[Union["DictList.FileType", str]] = None,
     ) -> None:
-        if type is None:
-            type = DictListFile(OS.get_extension(file))
+        if file_type is None:
+            file_type = self.FileType(OS.get_extension(file))
 
-        elif isinstance(type, str):
-            type = DictListFile(type)
+        elif isinstance(file_type, str):
+            file_type = self.FileType(file_type)
 
         if not len(self._data):
             return
 
         OS.make_dir(OS.get_dir(file))
 
-        if type == DictListFile.DICTLIST:
+        if file_type == self.FileType.DICTLIST:
             with open(file, "wb") as f:
                 dump_pickle(self._data, f)
 
-        elif type == DictListFile.CSV:
-            with open(file, "w", encoding=encoding, newline="\n") as f:
+        elif file_type == self.FileType.CSV:
+            with open(file, "w", encoding="UTF-8-sig", newline="\n") as f:
                 keys = reduce(
                     lambda keys, element: list(
                         OrderedDict.fromkeys(keys + list(element.keys()))
@@ -233,6 +229,6 @@ class DictList:
                 csv_writer.writeheader()
                 csv_writer.writerows(self._data)
 
-        elif type == DictListFile.JSON:
-            with open(file, "w", encoding=encoding) as f:
+        elif file_type == self.FileType.JSON:
+            with open(file, "w", encoding="UTF-8-sig") as f:
                 dump_json(self._data, f, ensure_ascii=False, indent="\t")

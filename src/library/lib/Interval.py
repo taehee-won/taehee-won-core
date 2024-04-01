@@ -1,7 +1,7 @@
 from typing import Optional, Union, Dict
 from time import time, sleep
 
-from ..data.DictList import DictListFile, DictList
+from ..data.DictList import DictList
 from .macro import ATTR, KWARGS_STR, LOOP
 from .Trace import Trace
 
@@ -22,7 +22,7 @@ class Interval:
         self._values: DictList = DictList(name=f"{self.__class__.__name__}({attrs})")
 
         if self._file is not None:
-            self._values.read(self._file, DictListFile.DICTLIST)
+            self._values.read(self._file, DictList.FileType.DICTLIST)
 
         if not self._values:
             self._values.extend(
@@ -83,6 +83,6 @@ class Interval:
         LOOP(v["records"].append(now) for v in self._values)
 
         if self._file is not None:
-            self._values.write(self._file, DictListFile.DICTLIST)
+            self._values.write(self._file, DictList.FileType.DICTLIST)
 
         return max(moment, 0)

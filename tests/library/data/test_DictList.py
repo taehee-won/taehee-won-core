@@ -5,7 +5,7 @@ from os import remove
 from os.path import join, abspath, dirname
 from tempfile import mktemp
 
-from src.library.data.DictList import DictListFile, DictList
+from src.library.data.DictList import DictList
 
 
 D_TEST_FILE_DIR = join(dirname(abspath(__file__)), "DictList")
@@ -28,11 +28,11 @@ class TestDictList(TestCase):
         self.data = DictList(deepcopy(self.source))
 
     # def test_prepare_TestDictList(self):
-    #     self.data.write(F_DICTLIST_DICTLIST, DictListFile.DICTLIST)
-    #     self.data.write(F_CSV_CSV, DictListFile.CSV)
-    #     self.data.write(F_JSON_JSON, DictListFile.JSON)
-    #     self.data.write(F_DICTLIST_CSV, DictListFile.DICTLIST)
-    #     self.data.write(F_DICTLIST, DictListFile.DICTLIST)
+    #     self.data.write(F_DICTLIST_DICTLIST, DictList.FileType.DICTLIST)
+    #     self.data.write(F_CSV_CSV, DictList.FileType.CSV)
+    #     self.data.write(F_JSON_JSON, DictList.FileType.JSON)
+    #     self.data.write(F_DICTLIST_CSV, DictList.FileType.DICTLIST)
+    #     self.data.write(F_DICTLIST, DictList.FileType.DICTLIST)
 
     def test_init(self):
         self.assertIsInstance(self.data, DictList)
@@ -42,7 +42,7 @@ class TestDictList(TestCase):
         for index, element in enumerate(data):
             self.assertEqual(element, self.source[index])
 
-        data = DictList(F_DICTLIST_CSV, DictListFile.DICTLIST)
+        data = DictList(F_DICTLIST_CSV, DictList.FileType.DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source[index])
 
@@ -229,12 +229,12 @@ class TestDictList(TestCase):
             self.assertEqual(element, self.source[index])
 
         data = DictList()
-        data.read(F_DICTLIST_CSV, DictListFile.DICTLIST)
+        data.read(F_DICTLIST_CSV, DictList.FileType.DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source[index])
 
         data = DictList()
-        data.read(F_DICTLIST, DictListFile.DICTLIST)
+        data.read(F_DICTLIST, DictList.FileType.DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source[index])
 
@@ -251,17 +251,17 @@ class TestDictList(TestCase):
 
     def test_write(self):
         file = mktemp()
-        self.data.write(file, DictListFile.DICTLIST)
+        self.data.write(file, DictList.FileType.DICTLIST)
         self.assertTrue(_compare(file, F_DICTLIST_DICTLIST))
         remove(file)
 
         file = mktemp()
-        self.data.write(file, DictListFile.CSV)
+        self.data.write(file, DictList.FileType.CSV)
         self.assertTrue(_compare(file, F_CSV_CSV))
         remove(file)
 
         file = mktemp()
-        self.data.write(file, DictListFile.JSON)
+        self.data.write(file, DictList.FileType.JSON)
         self.assertTrue(_compare(file, F_JSON_JSON))
         remove(file)
 

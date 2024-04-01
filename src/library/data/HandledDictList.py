@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Union, Any, Callable
 
 from ..lib.macro import KWARGS, KWARGS_STR
-from .DictList import DictListFile, DictList
+from .DictList import DictList
 
 
 class HandledDictList(DictList):
@@ -9,15 +9,14 @@ class HandledDictList(DictList):
         self,
         handles: List[Callable[[Dict, Dict], Optional[Dict]]],
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
-        type: Optional[Union[DictListFile, str]] = None,
-        encoding: Optional[str] = None,
+        file_type: Optional[Union["HandledDictList.FileType", str]] = None,
         name: Optional[str] = None,
     ):
         self._handles = handles
         self._handled = 0
 
         super().__init__(
-            **KWARGS(default=default, type=type, encoding=encoding, name=name),
+            **KWARGS(default=default, file_type=file_type, name=name),
         )
         self._handle()
 
@@ -69,8 +68,7 @@ class HandledDictList(DictList):
     def read(
         self,
         file: str,
-        type: Optional[Union[DictListFile, str]] = None,
-        encoding: Optional[str] = None,
+        file_type: Optional[Union["HandledDictList.FileType", str]] = None,
     ) -> None:
-        super().read(file, **KWARGS(type=type, encoding=encoding))
+        super().read(file, **KWARGS(file_type=file_type))
         self._handle()

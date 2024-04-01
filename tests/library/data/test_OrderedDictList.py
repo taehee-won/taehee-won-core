@@ -6,7 +6,7 @@ from os.path import join, abspath, dirname
 from tempfile import mktemp
 
 from src.library.lib.Trace import TraceLevel, Trace
-from src.library.data.OrderedDictList import DictListFile, OrderedDictList
+from src.library.data.OrderedDictList import OrderedDictList
 from .test_DictList import (
     F_DICTLIST_DICTLIST,
     F_CSV_CSV,
@@ -54,10 +54,10 @@ class TestOrderedDictList(TestCase):
 
     # def test_prepare_TestOrderedDictList(self):
     #     self.data_name_sorted.write(
-    #         F_DICTLIST_DICTLIST_NAME_SORTED, DictListFile.DICTLIST
+    #         F_DICTLIST_DICTLIST_NAME_SORTED, OrderedDictList.FileType.DICTLIST
     #     )
-    #     self.data_name_sorted.write(F_CSV_CSV_NAME_SORTED, DictListFile.CSV)
-    #     self.data_name_sorted.write(F_JSON_JSON_NAME_SORTED, DictListFile.JSON)
+    #     self.data_name_sorted.write(F_CSV_CSV_NAME_SORTED, OrderedDictList.FileType.CSV)
+    #     self.data_name_sorted.write(F_JSON_JSON_NAME_SORTED, OrderedDictList.FileType.JSON)
 
     def test_init(self):
         self.assertIsInstance(self.data_name_sorted, OrderedDictList)
@@ -67,7 +67,9 @@ class TestOrderedDictList(TestCase):
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_name_sorted[index])
 
-        data = OrderedDictList("age", F_DICTLIST_CSV, type=DictListFile.DICTLIST)
+        data = OrderedDictList(
+            "age", F_DICTLIST_CSV, file_type=OrderedDictList.FileType.DICTLIST
+        )
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_age_sorted[index])
 
@@ -341,12 +343,12 @@ class TestOrderedDictList(TestCase):
             self.assertEqual(element, self.source_name_sorted[index])
 
         data = OrderedDictList("name")
-        data.read(F_DICTLIST_CSV, DictListFile.DICTLIST)
+        data.read(F_DICTLIST_CSV, OrderedDictList.FileType.DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_name_sorted[index])
 
         data = OrderedDictList("age")
-        data.read(F_DICTLIST, DictListFile.DICTLIST)
+        data.read(F_DICTLIST, OrderedDictList.FileType.DICTLIST)
         for index, element in enumerate(data):
             self.assertEqual(element, self.source_age_sorted[index])
 
@@ -363,17 +365,17 @@ class TestOrderedDictList(TestCase):
 
     def test_write(self):
         file = mktemp()
-        self.data_name_sorted.write(file, DictListFile.DICTLIST)
+        self.data_name_sorted.write(file, OrderedDictList.FileType.DICTLIST)
         self.assertTrue(_compare(file, F_DICTLIST_DICTLIST_NAME_SORTED))
         remove(file)
 
         file = mktemp()
-        self.data_name_sorted.write(file, DictListFile.CSV)
+        self.data_name_sorted.write(file, OrderedDictList.FileType.CSV)
         self.assertTrue(_compare(file, F_CSV_CSV_NAME_SORTED))
         remove(file)
 
         file = mktemp()
-        self.data_name_sorted.write(file, DictListFile.JSON)
+        self.data_name_sorted.write(file, OrderedDictList.FileType.JSON)
         self.assertTrue(_compare(file, F_JSON_JSON_NAME_SORTED))
         remove(file)
 

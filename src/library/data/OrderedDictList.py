@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union, Iterable, Iterator, overload
 
 from ..lib.macro import KWARGS, KWARGS_STR
-from .DictList import DictListFile, DictList
+from .DictList import DictList
 
 
 class OrderedDictList(DictList):
@@ -9,16 +9,13 @@ class OrderedDictList(DictList):
         self,
         key: str,
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
-        type: Optional[Union[DictListFile, str]] = None,
-        encoding: Optional[str] = None,
+        file_type: Optional[Union["OrderedDictList.FileType", str]] = None,
         name: Optional[str] = None,
     ):
         self._key: str = key
         self._sorted = False
 
-        super().__init__(
-            **KWARGS(default=default, type=type, encoding=encoding, name=name)
-        )
+        super().__init__(**KWARGS(default=default, file_type=file_type, name=name))
 
     def _sort(self) -> None:
         if not self._sorted:
@@ -133,17 +130,15 @@ class OrderedDictList(DictList):
     def read(
         self,
         file: str,
-        type: Optional[Union[DictListFile, str]] = None,
-        encoding: Optional[str] = None,
+        file_type: Optional[Union["OrderedDictList.FileType", str]] = None,
     ) -> None:
-        super().read(file, **KWARGS(type=type, encoding=encoding))
+        super().read(file, **KWARGS(file_type=file_type))
         self._sorted = False
 
     def write(
         self,
         file: str,
-        type: Optional[Union[DictListFile, str]] = None,
-        encoding: Optional[str] = None,
+        file_type: Optional[Union["OrderedDictList.FileType", str]] = None,
     ) -> None:
         self._sort()
-        super().write(file, **KWARGS(type=type, encoding=encoding))
+        super().write(file, **KWARGS(file_type=file_type))
