@@ -30,7 +30,7 @@ __all__.extend(["Main"])
 
 __author__ = "Taehee Won(taehee.won@gmail.com)"
 __url__ = "https://github.com/taehee-won/taehee-won-core"
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __description__ = """
 taehee-won-core is a versatile Python framework designed to streamline
 and enhance Python programming tasks.  It offers a wide range of utility functions
