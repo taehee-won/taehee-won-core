@@ -15,8 +15,7 @@ from .src.library.data.LinkedDictList import LinkedDictList
 from .src.library.database.MongoDB import MongoDB
 from .src.library.trade.KRX import KRX
 from .src.library.trade.Upbit import Upbit
-from .src.framework.Component import Component
-from .src.framework.main import FrontEnd, main
+from .src.framework.Main import Main
 
 __all__ = []
 __all__.extend(["KWARGS", "PARAMS", "ARGS_STR", "KWARGS_STR"])
@@ -26,7 +25,7 @@ __all__.extend(["Datetime"])
 __all__.extend(["DictList", "OrderedDictList", "HandledDictList", "LinkedDictList"])
 __all__.extend(["MongoDB"])
 __all__.extend(["KRX", "Upbit"])
-__all__.extend(["Component", "FrontEnd", "main"])
+__all__.extend(["Main"])
 
 
 __author__ = "Taehee Won(taehee.won@gmail.com)"

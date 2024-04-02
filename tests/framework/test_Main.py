@@ -2,8 +2,7 @@ from unittest import TestCase, skipIf
 from os import environ
 
 from src.library.lib.Trace import Trace
-from src.framework.Component import Component
-from src.framework.main import main, FrontEnd
+from src.framework.Main import Main
 
 
 class TestMain(TestCase):
@@ -27,7 +26,8 @@ class TestMain(TestCase):
         set_value = 30
         add_values = [20, 30, 40]
 
-        main([A, B])
+        main = Main([A, B])
+        main.start()
 
         self.assertEqual(value, 120)
 
@@ -42,7 +42,8 @@ class TestMain(TestCase):
         set_value = 20
         add_values = [10, 20, 30]
 
-        main([A, B], FrontEnd.CLI)
+        main = Main([A, B])
+        main.start(Main.FrontEnd.CLI)
 
         self.assertEqual(value, 80)
 
@@ -53,7 +54,7 @@ set_value = 0
 add_values = []
 
 
-class A(Component):
+class A(Main.Component):
     def initialize(self) -> None:
         global cli
         self.register("test", self.test)
@@ -74,7 +75,7 @@ class A(Component):
         value = self.execute("get")
 
 
-class B(Component):
+class B(Main.Component):
     def initialize(self) -> None:
         self._value = 0
 
