@@ -4,16 +4,15 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 
-class Period(Enum):
-    YEAR = "year"
-    MONTH = "month"
-    WEEK = "week"
-    DAY = "day"
-    HOUR = "hour"
-    MINUTE = "minute"
-
-
 class Datetime:
+    class Period(Enum):
+        YEAR = "year"
+        MONTH = "month"
+        WEEK = "week"
+        DAY = "day"
+        HOUR = "hour"
+        MINUTE = "minute"
+
     def __init__(self, dt: datetime) -> None:
         self._dt = dt
 
@@ -161,7 +160,7 @@ class Datetime:
         return Datetime(dt)
 
     def get_quarter_end(self, quarters: int = 0) -> "Datetime":
-        return self.get_quarter_start(quarters + 1).get_before(Period.MINUTE, 1)
+        return self.get_quarter_start(quarters + 1).get_before(self.Period.MINUTE, 1)
 
     def get_slice(self, period: Union[Period, str] = Period.DAY) -> "Datetime":
         return Datetime(self._get_slice(self._dt, period))
@@ -201,41 +200,46 @@ class Datetime:
     def set_slice(self, period: Union[Period, str] = Period.DAY) -> None:
         self._dt = self._get_slice(self._dt, period)
 
-    @staticmethod
+    @classmethod
     def _get_delta(
+        cls,
         period: Union[Period, str],
         interval: int,
     ) -> Union[timedelta, relativedelta]:
-        period = Period(period)
+        period = cls.Period(period)
 
         return {
-            Period.DAY: timedelta(days=interval),
-            Period.HOUR: timedelta(hours=interval),
-            Period.MINUTE: timedelta(minutes=interval),
-            Period.WEEK: timedelta(weeks=interval),
-            Period.MONTH: relativedelta(months=interval),
-            Period.YEAR: relativedelta(years=interval),
+            cls.Period.DAY: timedelta(days=interval),
+            cls.Period.HOUR: timedelta(hours=interval),
+            cls.Period.MINUTE: timedelta(minutes=interval),
+            cls.Period.WEEK: timedelta(weeks=interval),
+            cls.Period.MONTH: relativedelta(months=interval),
+            cls.Period.YEAR: relativedelta(years=interval),
         }.get(period, timedelta(days=interval))
 
     @staticmethod
     def _get_quarter_start(dt: datetime) -> datetime:
         return datetime(dt.year, (dt.month - 1) // 3 * 3 + 1, 1)
 
-    @staticmethod
-    def _get_slice(dt: datetime, period: Union[Period, str] = Period.DAY) -> datetime:
-        period = Period(period)
+    @classmethod
+    def _get_slice(
+        cls,
+        dt: datetime,
+        period: Union[Period, str] = Period.DAY,
+    ) -> datetime:
+        period = cls.Period(period)
 
-        if period == Period.WEEK:
+        if period == cls.Period.WEEK:
             err = f"Invalid period: {period}"
             raise TypeError(err)
 
         fmt = "%Y%m%d%H%M"[
             : {
-                Period.YEAR: 2,
-                Period.MONTH: 4,
-                Period.DAY: 6,
-                Period.HOUR: 8,
-                Period.MINUTE: 10,
+                cls.Period.YEAR: 2,
+                cls.Period.MONTH: 4,
+                cls.Period.DAY: 6,
+                cls.Period.HOUR: 8,
+                cls.Period.MINUTE: 10,
             }[period]
         ]
 

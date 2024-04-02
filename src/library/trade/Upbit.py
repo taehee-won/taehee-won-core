@@ -1,14 +1,21 @@
 from typing import Optional, List, Dict, Union, Any
+from enum import Enum
 from requests import request
 from datetime import datetime
 
 from ..lib.macro import ATTR, KWARGS
 from ..lib.Trace import Trace
 from ..lib.Interval import Interval
-from ..lib.Datetime import Datetime, Period
+from ..lib.Datetime import Datetime
 
 
 class Upbit:
+    class Period(Enum):
+        MONTH = "month"
+        WEEK = "week"
+        DAY = "day"
+        MINUTE = "minute"
+
     # reference: https://docs.upbit.com/reference/마켓-코드-조회
     # url      : https://api.upbit.com/v1/market/all
     # method   : GET
@@ -74,14 +81,9 @@ class Upbit:
     ) -> List[Dict[str, Any]]:
         trace = ATTR(cls, "trace", lambda: Trace("core"))
 
-        period = Period(period)
+        period = cls.Period(period)
 
-        if period not in [Period.MONTH, Period.WEEK, Period.DAY, Period.MINUTE]:
-            err = f"Invalid period: {period}"
-            trace.critical(err)
-            raise TypeError(err)
-
-        if (period != Period.MINUTE and unit != 1) or (
+        if (period != cls.Period.MINUTE and unit != 1) or (
             unit not in [1, 3, 5, 15, 10, 30, 60, 240]
         ):
             err = f"Invalid unit: {unit} for {period}"
@@ -89,7 +91,7 @@ class Upbit:
             raise TypeError(err)
 
         url = f"https://api.upbit.com/v1/candles/{period.value}s"
-        if period == Period.MINUTE:
+        if period == cls.Period.MINUTE:
             url += f"/{unit}"
 
         method = "GET"
@@ -98,8 +100,8 @@ class Upbit:
             "count": 200,
             "to": (
                 (Datetime(end) if isinstance(end, datetime) else end)
-                .get_before(Period.HOUR, 9)
-                .get_after(Period.MINUTE, 1)
+                .get_before(Datetime.Period.HOUR, 9)
+                .get_after(Datetime.Period.MINUTE, 1)
                 .to_str("%Y-%m-%d %H:%M:%S")
                 if end
                 else None
@@ -138,7 +140,7 @@ class Upbit:
 
             params["to"] = (
                 Datetime(candles[-1]["datetime"])
-                .get_before(Period.HOUR, 9)
+                .get_before(Datetime.Period.HOUR, 9)
                 .to_str("%Y-%m-%d %H:%M:%S")
             )
             response = cls._request(url, method, params)
@@ -146,7 +148,8 @@ class Upbit:
         candles.reverse()
         if (
             candles
-            and start_datetime.get_before(period, unit) < candles[-1]["datetime"]
+            and start_datetime.get_before(Datetime.Period(period.value), unit)
+            < candles[-1]["datetime"]
         ):
             candles.pop()
 
@@ -180,7 +183,7 @@ class Upbit:
             response.headers["date"],
             "%a, %d %b %Y %H:%M:%S GMT",
         )
-        datetime.set_after(Period.HOUR, 9)
+        datetime.set_after(Datetime.Period.HOUR, 9)
 
         response = _Response(datetime, data)
         trace.debug(f"request {method}({url}) response {response}")

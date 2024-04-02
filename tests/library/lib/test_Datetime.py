@@ -1,7 +1,7 @@
 from unittest import TestCase
 from datetime import datetime, timedelta
 
-from src.library.lib.Datetime import Period, Datetime
+from src.library.lib.Datetime import Datetime
 
 
 class TestDatetime(TestCase):
@@ -136,21 +136,29 @@ class TestDatetime(TestCase):
 
     def test_get_before(self):
         self.assertEqual(
-            Datetime.from_values(2011, 3, 4).get_before(Period.DAY, 17).to_datetime(),
+            Datetime.from_values(2011, 3, 4)
+            .get_before(Datetime.Period.DAY, 17)
+            .to_datetime(),
             datetime(2011, 2, 15),
         )
         self.assertEqual(
-            Datetime.from_values(2001, 4, 7).get_before(Period.MONTH, 9).to_datetime(),
+            Datetime.from_values(2001, 4, 7)
+            .get_before(Datetime.Period.MONTH, 9)
+            .to_datetime(),
             datetime(2000, 7, 7),
         )
 
     def test_get_after(self):
         self.assertEqual(
-            Datetime.from_values(2011, 3, 4).get_after(Period.DAY, 17).to_datetime(),
+            Datetime.from_values(2011, 3, 4)
+            .get_after(Datetime.Period.DAY, 17)
+            .to_datetime(),
             datetime(2011, 3, 21),
         )
         self.assertEqual(
-            Datetime.from_values(2001, 4, 7).get_after(Period.MONTH, 9).to_datetime(),
+            Datetime.from_values(2001, 4, 7)
+            .get_after(Datetime.Period.MONTH, 9)
+            .to_datetime(),
             datetime(2002, 1, 7),
         )
 
@@ -185,34 +193,37 @@ class TestDatetime(TestCase):
     def test_get_slice(self):
         dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
 
-        self.assertEqual(dt.get_slice(Period.YEAR), datetime(2020, 1, 1))
-        self.assertEqual(dt.get_slice(Period.MONTH), datetime(2020, 3, 1))
-        self.assertEqual(dt.get_slice(Period.DAY), datetime(2020, 3, 15))
-        self.assertEqual(dt.get_slice(Period.HOUR), datetime(2020, 3, 15, 12))
-        self.assertEqual(dt.get_slice(Period.MINUTE), datetime(2020, 3, 15, 12, 30))
+        self.assertEqual(dt.get_slice(Datetime.Period.YEAR), datetime(2020, 1, 1))
+        self.assertEqual(dt.get_slice(Datetime.Period.MONTH), datetime(2020, 3, 1))
+        self.assertEqual(dt.get_slice(Datetime.Period.DAY), datetime(2020, 3, 15))
+        self.assertEqual(dt.get_slice(Datetime.Period.HOUR), datetime(2020, 3, 15, 12))
+        self.assertEqual(
+            dt.get_slice(Datetime.Period.MINUTE),
+            datetime(2020, 3, 15, 12, 30),
+        )
 
         with self.assertRaises(TypeError):
             self.assertEqual(
-                dt.get_slice(Period.WEEK),
+                dt.get_slice(Datetime.Period.WEEK),
                 datetime(2020, 3, 15, 12, 30, 44),
             )
 
     def test_set_before(self):
         dt = Datetime.from_values(2020, 1, 15)
-        dt.set_before(Period.DAY, 10)
+        dt.set_before(Datetime.Period.DAY, 10)
         self.assertEqual(dt.to_datetime(), datetime(2020, 1, 5))
 
         dt = Datetime.from_values(2020, 1, 15)
-        dt.set_before(Period.MONTH, 1)
+        dt.set_before(Datetime.Period.MONTH, 1)
         self.assertEqual(dt.to_datetime(), datetime(2019, 12, 15))
 
     def test_set_after(self):
         dt = Datetime.from_values(2020, 1, 15)
-        dt.set_after(Period.DAY, 10)
+        dt.set_after(Datetime.Period.DAY, 10)
         self.assertEqual(dt.to_datetime(), datetime(2020, 1, 25))
 
         dt = Datetime.from_values(2020, 1, 15)
-        dt.set_after(Period.MONTH, 1)
+        dt.set_after(Datetime.Period.MONTH, 1)
         self.assertEqual(dt.to_datetime(), datetime(2020, 2, 15))
 
     def test_set_quarter_start(self):
@@ -227,25 +238,25 @@ class TestDatetime(TestCase):
 
     def test_set_slice(self):
         dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
-        dt.set_slice(Period.YEAR)
+        dt.set_slice(Datetime.Period.YEAR)
         self.assertEqual(dt.to_datetime(), datetime(2020, 1, 1))
 
         dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
-        dt.set_slice(Period.MONTH)
+        dt.set_slice(Datetime.Period.MONTH)
         self.assertEqual(dt.to_datetime(), datetime(2020, 3, 1))
 
         with self.assertRaises(TypeError):
             dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
-            dt.set_slice(Period.WEEK)
+            dt.set_slice(Datetime.Period.WEEK)
 
         dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
-        dt.set_slice(Period.DAY)
+        dt.set_slice(Datetime.Period.DAY)
         self.assertEqual(dt.to_datetime(), datetime(2020, 3, 15))
 
         dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
-        dt.set_slice(Period.HOUR)
+        dt.set_slice(Datetime.Period.HOUR)
         self.assertEqual(dt.to_datetime(), datetime(2020, 3, 15, 12))
 
         dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
-        dt.set_slice(Period.MINUTE)
+        dt.set_slice(Datetime.Period.MINUTE)
         self.assertEqual(dt.to_datetime(), datetime(2020, 3, 15, 12, 30))

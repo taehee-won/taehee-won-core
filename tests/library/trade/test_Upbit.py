@@ -2,7 +2,7 @@ from unittest import TestCase, skipIf
 from os import environ
 
 from src.library.lib.Trace import Trace
-from src.library.lib.Datetime import Period, Datetime
+from src.library.lib.Datetime import Datetime
 from src.library.trade.Upbit import Upbit
 
 
@@ -39,15 +39,15 @@ class TestUpbit(TestCase):
         basic = Datetime.from_values(2021, 1, 1, 9)
         candles = Upbit.get_candles(
             "KRW-BTC",
-            Period.MONTH,
+            Upbit.Period.MONTH,
             start=basic.to_datetime(),
-            end=basic.get_after(Period.MONTH, 11),
+            end=basic.get_after(Datetime.Period.MONTH, 11),
         )
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 12)
         self.assertTrue(
-            basic.get_after(Period.MONTH, index) == candles[index]["datetime"]
+            basic.get_after(Datetime.Period.MONTH, index) == candles[index]["datetime"]
             for index in range(12)
         )
         self.assertTrue(
@@ -62,15 +62,15 @@ class TestUpbit(TestCase):
         basic = Datetime.from_values(2021, 1, 4, 9)
         candles = Upbit.get_candles(
             "KRW-BTC",
-            Period.WEEK,
+            Upbit.Period.WEEK,
             start=basic,
-            end=basic.get_after(Period.WEEK, 51).to_datetime(),
+            end=basic.get_after(Datetime.Period.WEEK, 51).to_datetime(),
         )
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 52)
         self.assertTrue(
-            basic.get_after(Period.WEEK, index) == candles[index]["datetime"]
+            basic.get_after(Datetime.Period.WEEK, index) == candles[index]["datetime"]
             for index in range(52)
         )
         self.assertTrue(
@@ -85,15 +85,15 @@ class TestUpbit(TestCase):
         basic = Datetime.from_values(2021, 1, 1, 9)
         candles = Upbit.get_candles(
             "KRW-BTC",
-            Period.DAY,
+            Upbit.Period.DAY,
             start=basic,
-            end=basic.get_after(Period.DAY, 364),
+            end=basic.get_after(Datetime.Period.DAY, 364),
         )
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 365)
         self.assertTrue(
-            basic.get_after(Period.DAY, index) == candles[index]["datetime"]
+            basic.get_after(Datetime.Period.DAY, index) == candles[index]["datetime"]
             for index in range(365)
         )
         self.assertTrue(
@@ -108,15 +108,15 @@ class TestUpbit(TestCase):
         basic = Datetime.from_values(2021, 1, 1, 9)
         candles = Upbit.get_candles(
             "KRW-BTC",
-            Period.MINUTE,
+            Upbit.Period.MINUTE,
             start=basic,
-            end=basic.get_after(Period.MINUTE, 199),
+            end=basic.get_after(Datetime.Period.MINUTE, 199),
         )
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 200)
         self.assertTrue(
-            basic.get_after(Period.MINUTE, index) == candles[index]["datetime"]
+            basic.get_after(Datetime.Period.MINUTE, index) == candles[index]["datetime"]
             for index in range(200)
         )
         self.assertTrue(
@@ -131,16 +131,17 @@ class TestUpbit(TestCase):
         basic = Datetime.from_values(2021, 1, 1, 9)
         candles = Upbit.get_candles(
             "KRW-BTC",
-            Period.MINUTE,
+            Upbit.Period.MINUTE,
             60,
             start=basic,
-            end=basic.get_after(Period.MINUTE, 60 * 399),
+            end=basic.get_after(Datetime.Period.MINUTE, 60 * 399),
         )
 
         self.assertIsInstance(candles, list)
         self.assertEqual(len(candles), 400)
         self.assertTrue(
-            basic.get_after(Period.MINUTE, 60 * index) == candles[index]["datetime"]
+            basic.get_after(Datetime.Period.MINUTE, 60 * index)
+            == candles[index]["datetime"]
             for index in range(400)
         )
         self.assertTrue(
@@ -153,22 +154,16 @@ class TestUpbit(TestCase):
 
     def test_get_candles_exception(self):
         with self.assertRaises(TypeError):
-            Upbit.get_candles("KRW-BTC", Period.YEAR)
+            Upbit.get_candles("KRW-BTC", Upbit.Period.MONTH, 2)
 
         with self.assertRaises(TypeError):
-            Upbit.get_candles("KRW-BTC", Period.MONTH, 2)
+            Upbit.get_candles("KRW-BTC", Upbit.Period.WEEK, 2)
 
         with self.assertRaises(TypeError):
-            Upbit.get_candles("KRW-BTC", Period.WEEK, 2)
+            Upbit.get_candles("KRW-BTC", Upbit.Period.DAY, 2)
 
         with self.assertRaises(TypeError):
-            Upbit.get_candles("KRW-BTC", Period.DAY, 2)
+            Upbit.get_candles("KRW-BTC", Upbit.Period.MINUTE, 45)
 
         with self.assertRaises(TypeError):
-            Upbit.get_candles("KRW-BTC", Period.HOUR)
-
-        with self.assertRaises(TypeError):
-            Upbit.get_candles("KRW-BTC", Period.MINUTE, 45)
-
-        with self.assertRaises(TypeError):
-            Upbit.get_candles("KRW-BTC", Period.MINUTE, 120)
+            Upbit.get_candles("KRW-BTC", Upbit.Period.MINUTE, 120)

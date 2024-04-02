@@ -5,7 +5,7 @@ from datetime import datetime
 from ..lib.macro import ATTR, KWARGS_STR, PARAMS
 from ..lib.Trace import Trace
 from ..lib.Interval import Interval
-from ..lib.Datetime import Datetime, Period
+from ..lib.Datetime import Datetime
 from ..data.OrderedDictList import OrderedDictList
 
 
@@ -166,8 +166,8 @@ class KRX:
                 "end": (
                     now
                     if (now := Datetime.from_now()).hour >= 17
-                    else now.get_before(Period.DAY)
-                ).get_slice(Period.DAY),
+                    else now.get_before(Datetime.Period.DAY)
+                ).get_slice(Datetime.Period.DAY),
             },
         )
 
@@ -243,13 +243,13 @@ class KRX:
         periods = []
 
         while s <= e:
-            c = s.get_after(Period.YEAR, 2).get_before(Period.DAY, 1)
+            c = s.get_after(Datetime.Period.YEAR, 2).get_before(Datetime.Period.DAY, 1)
             if e <= c:
                 periods.append([s, e])
                 break
 
             periods.append([s, c])
-            s = s.get_after(Period.YEAR, 2)
+            s = s.get_after(Datetime.Period.YEAR, 2)
 
         return periods
 
