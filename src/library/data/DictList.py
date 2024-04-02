@@ -20,7 +20,7 @@ class DictList:
     def __init__(
         self,
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
-        file_type: Optional[Union["DictList.FileType", str]] = None,
+        file_type: Optional[Union[FileType, str]] = None,
         name: Optional[str] = None,
     ) -> None:
         self._name = name
@@ -168,7 +168,7 @@ class DictList:
     def read(
         self,
         file: str,
-        file_type: Optional[Union["DictList.FileType", str]] = None,
+        file_type: Optional[Union[FileType, str]] = None,
     ) -> None:
         if file_type is None:
             file_type = self.FileType(OS.get_extension(file))
@@ -199,7 +199,7 @@ class DictList:
     def write(
         self,
         file: str,
-        file_type: Optional[Union["DictList.FileType", str]] = None,
+        file_type: Optional[Union[FileType, str]] = None,
     ) -> None:
         if file_type is None:
             file_type = self.FileType(OS.get_extension(file))

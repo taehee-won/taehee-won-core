@@ -9,7 +9,7 @@ class OrderedDictList(DictList):
         self,
         key: str,
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
-        file_type: Optional[Union["OrderedDictList.FileType", str]] = None,
+        file_type: Optional[Union[DictList.FileType, str]] = None,
         name: Optional[str] = None,
     ):
         self._key: str = key
@@ -130,7 +130,7 @@ class OrderedDictList(DictList):
     def read(
         self,
         file: str,
-        file_type: Optional[Union["OrderedDictList.FileType", str]] = None,
+        file_type: Optional[Union[DictList.FileType, str]] = None,
     ) -> None:
         super().read(file, **KWARGS(file_type=file_type))
         self._sorted = False
@@ -138,7 +138,7 @@ class OrderedDictList(DictList):
     def write(
         self,
         file: str,
-        file_type: Optional[Union["OrderedDictList.FileType", str]] = None,
+        file_type: Optional[Union[DictList.FileType, str]] = None,
     ) -> None:
         self._sort()
         super().write(file, **KWARGS(file_type=file_type))

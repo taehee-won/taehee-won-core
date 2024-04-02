@@ -52,7 +52,7 @@ class LinkedDictList:
     def __init__(
         self,
         key: str,
-        nodes: List["LinkedDictList.Node"],
+        nodes: List[Node],
         handles: Optional[List[Callable[[Dict, Dict], Optional[Dict]]]] = None,
         name: Optional[str] = None,
     ):
@@ -65,7 +65,7 @@ class LinkedDictList:
     def __len__(self) -> int:
         return len(self._nodes)
 
-    def __getitem__(self, index: int) -> "LinkedDictList.Node":
+    def __getitem__(self, index: int) -> Node:
         return self._nodes[index]
 
     def __str__(self) -> str:

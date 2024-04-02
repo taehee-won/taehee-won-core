@@ -65,7 +65,7 @@ class Process:
     def execute(
         self,
         target: Callable,
-        bundles: List["Process.Bundle"],
+        bundles: List[Bundle],
         unit: int = 100,
         silent: bool = False,
     ) -> List:

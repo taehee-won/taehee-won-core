@@ -9,7 +9,7 @@ class HandledDictList(DictList):
         self,
         handles: List[Callable[[Dict, Dict], Optional[Dict]]],
         default: Optional[Union[str, List[Dict[str, Any]]]] = None,
-        file_type: Optional[Union["HandledDictList.FileType", str]] = None,
+        file_type: Optional[Union[DictList.FileType, str]] = None,
         name: Optional[str] = None,
     ):
         self._handles = handles
@@ -68,7 +68,7 @@ class HandledDictList(DictList):
     def read(
         self,
         file: str,
-        file_type: Optional[Union["HandledDictList.FileType", str]] = None,
+        file_type: Optional[Union[DictList.FileType, str]] = None,
     ) -> None:
         super().read(file, **KWARGS(file_type=file_type))
         self._handle()
