@@ -8,16 +8,15 @@ from .macro import ATTR
 from .OS import OS
 
 
-class TraceLevel:
-    CRITICAL = CRITICAL
-    ERROR = ERROR
-    WARNING = WARNING
-    INFO = INFO
-    DEBUG = DEBUG
-    NOTSET = NOTSET
-
-
 class Trace:
+    class Level:
+        CRITICAL = CRITICAL
+        ERROR = ERROR
+        WARNING = WARNING
+        INFO = INFO
+        DEBUG = DEBUG
+        NOTSET = NOTSET
+
     @classmethod
     def _get_attrs(cls) -> Dict:
         return ATTR(
@@ -29,7 +28,10 @@ class Trace:
                     _ConfigLevel.PRIMARY: _Config(),
                     _ConfigLevel.DEDICATED: {},
                     _ConfigLevel.INSTANCE: {},
-                    _ConfigLevel.DEFAULT: _Config(TraceLevel.INFO, TraceLevel.NOTSET),
+                    _ConfigLevel.DEFAULT: _Config(
+                        cls.Level.INFO,
+                        cls.Level.NOTSET,
+                    ),
                 },
                 "formatter": Formatter(
                     "[%(asctime)s][%(name)-10s][%(levelname)-8s] %(message)s"
@@ -92,7 +94,7 @@ class Trace:
 
             self._logger = getLogger(name)
             self._logger.addHandler(NullHandler())
-            self._logger.setLevel(TraceLevel.DEBUG)
+            self._logger.setLevel(self.Level.DEBUG)
 
             self._stream = None
             self._file = None
@@ -120,7 +122,7 @@ class Trace:
         attrs = cls._get_attrs()
 
         configs = attrs["configs"]
-        is_trace = lambda level: level != TraceLevel.NOTSET and level != "NOTSET"
+        is_trace = lambda level: level != cls.Level.NOTSET and level != "NOTSET"
 
         for trace in attrs["traces"]:
             stream = next(

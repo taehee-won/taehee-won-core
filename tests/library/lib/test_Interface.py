@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 from src.library.lib.Interface import Interface
 
 
 class TestInterface(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set_levels(TraceLevel.NOTSET)
+        Trace.set_levels(Trace.Level.NOTSET)
 
     @classmethod
     def tearDownClass(cls) -> None:

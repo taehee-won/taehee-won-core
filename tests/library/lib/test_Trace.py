@@ -7,7 +7,7 @@ from string import ascii_letters, digits
 from random import choice
 from inspect import currentframe
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 
 
 class TestTrace(TestCase):
@@ -118,9 +118,9 @@ class TestTrace(TestCase):
             frame.f_code.co_name if (frame := currentframe()) else "", "ERROR", "INFO"
         )
 
-        Trace.set_levels(TraceLevel.ERROR, TraceLevel.INFO)
-        Trace.set_levels(TraceLevel.INFO, TraceLevel.DEBUG, name)
-        trace = Trace(name, TraceLevel.DEBUG, TraceLevel.DEBUG)
+        Trace.set_levels(Trace.Level.ERROR, Trace.Level.INFO)
+        Trace.set_levels(Trace.Level.INFO, Trace.Level.DEBUG, name)
+        trace = Trace(name, Trace.Level.DEBUG, Trace.Level.DEBUG)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -131,9 +131,9 @@ class TestTrace(TestCase):
             file="DEBUG",
         )
 
-        Trace.set_levels(TraceLevel.NOTSET, TraceLevel.DEBUG)
-        Trace.set_levels(TraceLevel.INFO, TraceLevel.DEBUG, name)
-        trace = Trace(name, TraceLevel.DEBUG, TraceLevel.DEBUG)
+        Trace.set_levels(Trace.Level.NOTSET, Trace.Level.DEBUG)
+        Trace.set_levels(Trace.Level.INFO, Trace.Level.DEBUG, name)
+        trace = Trace(name, Trace.Level.DEBUG, Trace.Level.DEBUG)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -145,8 +145,8 @@ class TestTrace(TestCase):
             file="DEBUG",
         )
 
-        Trace.set_levels(TraceLevel.INFO, TraceLevel.DEBUG, name)
-        trace = Trace(name, TraceLevel.ERROR, TraceLevel.WARNING)
+        Trace.set_levels(Trace.Level.INFO, Trace.Level.DEBUG, name)
+        trace = Trace(name, Trace.Level.ERROR, Trace.Level.WARNING)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -157,8 +157,8 @@ class TestTrace(TestCase):
             file="INFO",
         )
 
-        Trace.set_levels(TraceLevel.DEBUG, TraceLevel.INFO, name)
-        trace = Trace(name, TraceLevel.ERROR, TraceLevel.WARNING)
+        Trace.set_levels(Trace.Level.DEBUG, Trace.Level.INFO, name)
+        trace = Trace(name, Trace.Level.ERROR, Trace.Level.WARNING)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -170,7 +170,7 @@ class TestTrace(TestCase):
             file="WARNING",
         )
 
-        trace = Trace(name, TraceLevel.ERROR, TraceLevel.WARNING)
+        trace = Trace(name, Trace.Level.ERROR, Trace.Level.WARNING)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)
@@ -181,7 +181,7 @@ class TestTrace(TestCase):
             file="NOTSET",
         )
 
-        trace = Trace(name, stream=TraceLevel.DEBUG, file=TraceLevel.NOTSET)
+        trace = Trace(name, stream=Trace.Level.DEBUG, file=Trace.Level.NOTSET)
 
         self._trace(trace, msgs)
         self._evaluate(evaluations)

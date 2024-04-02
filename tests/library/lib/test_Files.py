@@ -1,7 +1,7 @@
 from unittest import TestCase
 from os.path import join, dirname, abspath
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 from src.library.lib.Files import Files
 
 
@@ -11,7 +11,7 @@ D_FILES = join(dirname(abspath(__file__)), "Files")
 class TestFiles(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set_levels(TraceLevel.NOTSET)
+        Trace.set_levels(Trace.Level.NOTSET)
 
     @classmethod
     def tearDownClass(cls) -> None:

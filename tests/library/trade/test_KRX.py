@@ -2,7 +2,7 @@ from unittest import TestCase, skipIf
 from os import environ
 from datetime import datetime, timedelta
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 from src.library.trade.KRX import KRX
 
 
@@ -13,7 +13,7 @@ from src.library.trade.KRX import KRX
 class TestKRX(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set_levels(TraceLevel.NOTSET)
+        Trace.set_levels(Trace.Level.NOTSET)
 
     @classmethod
     def tearDownClass(cls) -> None:

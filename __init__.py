@@ -7,7 +7,7 @@ from .src.library.lib.Interface import Interface
 from .src.library.lib.Interval import Interval
 from .src.library.lib.Process import Process
 from .src.library.lib.Datetime import Period, Datetime
-from .src.library.lib.Trace import TraceLevel, Trace
+from .src.library.lib.Trace import Trace
 from .src.library.data.DictList import DictList
 from .src.library.data.OrderedDictList import OrderedDictList
 from .src.library.data.HandledDictList import HandledDictList
@@ -22,8 +22,7 @@ __all__ = []
 __all__.extend(["KWARGS", "PARAMS", "ARGS_STR", "KWARGS_STR"])
 __all__.extend(["ATTR", "LOOP", "CALL", "RAISE"])
 __all__.extend(["Lib", "Math", "OS", "Interface", "Interval", "Process"])
-__all__.extend(["Period", "Datetime"])
-__all__.extend(["TraceLevel", "Trace"])
+__all__.extend(["Period", "Datetime", "Trace"])
 __all__.extend(["DictList", "OrderedDictList", "HandledDictList", "LinkedDictList"])
 __all__.extend(["MongoDB"])
 __all__.extend(["KRX", "Upbit"])

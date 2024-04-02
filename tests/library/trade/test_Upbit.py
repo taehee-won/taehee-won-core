@@ -1,7 +1,7 @@
 from unittest import TestCase, skipIf
 from os import environ
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 from src.library.lib.Datetime import Period, Datetime
 from src.library.trade.Upbit import Upbit
 
@@ -13,7 +13,7 @@ from src.library.trade.Upbit import Upbit
 class TestUpbit(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set_levels(TraceLevel.NOTSET)
+        Trace.set_levels(Trace.Level.NOTSET)
 
     @classmethod
     def tearDownClass(cls) -> None:

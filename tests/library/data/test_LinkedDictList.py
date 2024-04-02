@@ -1,7 +1,7 @@
 from unittest import TestCase
 from datetime import datetime
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 from src.library.data.DictList import DictList
 from src.library.data.LinkedDictList import LinkedDictList
 
@@ -9,7 +9,7 @@ from src.library.data.LinkedDictList import LinkedDictList
 class TestLinkedDictList(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set_levels(TraceLevel.NOTSET)
+        Trace.set_levels(Trace.Level.NOTSET)
 
     @classmethod
     def tearDownClass(cls) -> None:

@@ -2,14 +2,14 @@ from unittest import TestCase
 from multiprocessing import cpu_count
 from random import randint
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 from src.library.lib.Process import Process
 
 
 class TestProcess(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set_levels(TraceLevel.NOTSET)
+        Trace.set_levels(Trace.Level.NOTSET)
 
     @classmethod
     def tearDownClass(cls) -> None:

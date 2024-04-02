@@ -3,7 +3,7 @@ from os import environ
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import DuplicateKeyError
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 from src.library.database.MongoDB import MongoDB
 
 
@@ -18,7 +18,7 @@ TEST_COLLECTION = "TEST-COLLECTION"
 class TestMongoDB(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set_levels(TraceLevel.NOTSET)
+        Trace.set_levels(Trace.Level.NOTSET)
 
     @classmethod
     def tearDownClass(cls) -> None:

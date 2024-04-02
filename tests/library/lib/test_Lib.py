@@ -6,14 +6,14 @@ from shutil import rmtree
 from string import ascii_letters, digits
 from random import choice
 
-from src.library.lib.Trace import TraceLevel, Trace
+from src.library.lib.Trace import Trace
 from src.library.lib.Lib import Lib
 
 
 class TestLib(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        Trace.set_levels(TraceLevel.NOTSET)
+        Trace.set_levels(Trace.Level.NOTSET)
 
         cls.cache_dir_words = [
             "__pycache__",  # python cache
