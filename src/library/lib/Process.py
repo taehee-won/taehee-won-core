@@ -9,21 +9,20 @@ from .macro import ATTR, LOOP, KWARGS_STR
 from .Trace import Trace
 
 
-class Bundle:
-    def __init__(self, *args, **kwargs) -> None:
-        self._args = args
-        self._kwargs = kwargs
-
-    @property
-    def args(self):
-        return self._args
-
-    @property
-    def kwargs(self):
-        return self._kwargs
-
-
 class Process:
+    class Bundle:
+        def __init__(self, *args, **kwargs) -> None:
+            self._args = args
+            self._kwargs = kwargs
+
+        @property
+        def args(self):
+            return self._args
+
+        @property
+        def kwargs(self):
+            return self._kwargs
+
     def __init__(self, count: int = cpu_count(), name: Optional[str] = None):
         self._name = name
         self._trace = ATTR(Process, "trace", lambda: Trace("core"))
@@ -66,7 +65,7 @@ class Process:
     def execute(
         self,
         target: Callable,
-        bundles: List[Bundle],
+        bundles: List["Process.Bundle"],
         unit: int = 100,
         silent: bool = False,
     ) -> List:

@@ -3,7 +3,7 @@ from multiprocessing import cpu_count
 from random import randint
 
 from src.library.lib.Trace import TraceLevel, Trace
-from src.library.lib.Process import Bundle, Process
+from src.library.lib.Process import Process
 
 
 class TestProcess(TestCase):
@@ -51,7 +51,7 @@ class TestProcess(TestCase):
 
     def test_execute(self):
         bundles = [
-            Bundle(
+            Process.Bundle(
                 randint(0, 100),
                 randint(0, 100),
                 c=randint(0, 100),
