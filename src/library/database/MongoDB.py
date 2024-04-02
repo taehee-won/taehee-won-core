@@ -7,12 +7,11 @@ from ..lib.macro import KWARGS
 _SYSTEM_DATABASES: Final[List[str]] = ["admin", "config", "local"]
 
 
-class SortOrder:
-    ASCENDING = ASCENDING
-    DESCENDING = DESCENDING
-
-
 class MongoDB:
+    class SortOrder:
+        ASCENDING = ASCENDING
+        DESCENDING = DESCENDING
+
     def __init__(self):
         self._client = MongoClient(serverSelectionTimeoutMS=500, connectTimeoutMS=500)
 

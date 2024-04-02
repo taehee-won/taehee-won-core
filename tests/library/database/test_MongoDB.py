@@ -4,7 +4,7 @@ from pymongo import MongoClient, ASCENDING
 from pymongo.errors import DuplicateKeyError
 
 from src.library.lib.Trace import TraceLevel, Trace
-from src.library.database.MongoDB import SortOrder, MongoDB
+from src.library.database.MongoDB import MongoDB
 
 
 TEST_DATABASE = "TEST-DATABASE"
@@ -80,7 +80,12 @@ class TestMongoDB(TestCase):
         self.assertIn("name", self.db.get_indexes(TEST_DATABASE, TEST_COLLECTION))
 
     def test_set_index(self):
-        self.db.set_index(TEST_DATABASE, TEST_COLLECTION, "age", SortOrder.DESCENDING)
+        self.db.set_index(
+            TEST_DATABASE,
+            TEST_COLLECTION,
+            "age",
+            MongoDB.SortOrder.DESCENDING,
+        )
 
         names = [
             index["name"]
