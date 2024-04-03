@@ -16,6 +16,8 @@ from .src.library.database.MongoDB import MongoDB
 from .src.library.trade.KRX import KRX
 from .src.library.trade.Upbit import Upbit
 from .src.framework.Main import Main
+from .src.handle.Aggregate import Aggregate
+from .src.handle.Calculate import Calculate
 from .src.handle.Compare import Compare
 from .src.handle.Cross import Cross
 
@@ -28,7 +30,7 @@ __all__.extend(["DictList", "OrderedDictList", "HandledDictList", "LinkedDictLis
 __all__.extend(["MongoDB"])
 __all__.extend(["KRX", "Upbit"])
 __all__.extend(["Main"])
-__all__.extend(["Compare", "Cross"])
+__all__.extend(["Aggregate", "Calculate", "Compare", "Cross"])
 
 
 __author__ = "Taehee Won(taehee.won@gmail.com)"
