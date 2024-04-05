@@ -1,30 +1,23 @@
-from typing import Dict, Any, Union, Optional, Callable
+from typing import Dict, Any, Union, Optional
 from enum import Enum
 
+from .Handle import Handle
 
-class Cross:
+
+class Cross(Handle):
     class Method(Enum):
         Golden = "Golden"
         Dead = "Dead"
 
-    class Args(Enum):
-        KEY_CROSS_KEY = "K]K"
-        KEY_CROSS_VALUE = "K]V"
-        VALUE_CROSS_KEY = "V]K"
-
-    class Param(Enum):
-        ELEMENT = "element"
-        PIPE = "pipe"
-
     def __init__(
         self,
         method: Union[Method, str],
-        args: Union[Args, str],
+        args: Union[Handle.Args, str],
         arg1: Any,
         arg2: Any,
-        source: Union[Param, str] = Param.ELEMENT,
-        target: Union[Param, str] = Param.PIPE,
         key: Optional[str] = None,
+        source: Union[Handle.Param, str] = Handle.Param.ELEMENT,
+        target: Union[Handle.Param, str] = Handle.Param.PIPE,
     ):
         method = self.Method(method)
         if method == self.Method.Golden:
@@ -35,44 +28,27 @@ class Cross:
             self._cross_state = lambda value1, value2: value1 < value2
             self._release_state = lambda value1, value2: value1 > value2
 
-        args = self.Args(args)
-        if args == self.Args.KEY_CROSS_KEY:
-            self._cross = lambda v: self._cross_state(v[self._arg1], v[self._arg2])
-            self._release = lambda v: self._release_state(v[self._arg1], v[self._arg2])
-
-        elif args == self.Args.KEY_CROSS_VALUE:
-            self._cross = lambda v: self._cross_state(v[self._arg1], self._arg2)
-            self._release = lambda v: self._release_state(v[self._arg1], self._arg2)
-
-        else:  # args == self.Args.VALUE_CROSS_KEY
-            self._cross = lambda v: self._cross_state(self._arg1, v[self._arg2])
-            self._release = lambda v: self._release_state(self._arg1, v[self._arg2])
-
         self._arg1 = arg1
         self._arg2 = arg2
 
-        source = self.Param(source)
-        if source == self.Param.ELEMENT:
-            self._source = lambda element, pipe: element
+        args = self.Args(args)
+        if args == self.Args.KEY_AND_KEY:
+            self._cross = lambda v: self._cross_state(v[self._arg1], v[self._arg2])
+            self._release = lambda v: self._release_state(v[self._arg1], v[self._arg2])
 
-        else:
-            self._source = lambda element, pipe: pipe
+        elif args == self.Args.KEY_AND_VALUE:
+            self._cross = lambda v: self._cross_state(v[self._arg1], self._arg2)
+            self._release = lambda v: self._release_state(v[self._arg1], self._arg2)
 
-        target = self.Param(target)
-        if target == self.Param.ELEMENT:
-            self._target = lambda element, pipe: element
-
-        else:
-            self._target = lambda element, pipe: pipe
-
-        self._key = key if key is not None else method.value
+        else:  # args == self.Args.VALUE_AND_KEY
+            self._cross = lambda v: self._cross_state(self._arg1, v[self._arg2])
+            self._release = lambda v: self._release_state(self._arg1, v[self._arg2])
 
         self._crossed = True
 
-    def get_handle(self) -> Callable[[Dict, Dict], Optional[Dict]]:
-        return self._handle
+        super().__init__(key if key is not None else method.value, source, target)
 
-    def _handle(self, element: Dict, pipe: Dict) -> Optional[Dict]:
+    def handle(self, element: Dict, pipe: Dict) -> Optional[Dict]:
         source = self._source(element, pipe)
 
         cross = self._cross(source)

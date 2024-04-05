@@ -28,13 +28,13 @@ class TestCross(TestCase):
             {"value1": 46, "value2": 46},
         ]
 
-    def test_Cross_Golden_KEY_CROSS_KEY(self) -> None:
+    def test_Cross_Golden_KEY_AND_KEY(self) -> None:
         key = "Golden"
         data = HandledDictList(
             [
                 Cross(
                     Cross.Method.Golden,
-                    Cross.Args.KEY_CROSS_KEY,
+                    Cross.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
                     target=Cross.Param.ELEMENT,
@@ -50,17 +50,17 @@ class TestCross(TestCase):
             )
         )
 
-    def test_Cross_Golden_KEY_CROSS_VALUE(self) -> None:
+    def test_Cross_Golden_KEY_AND_VALUE(self) -> None:
         key = "test"
         data = HandledDictList(
             [
                 Cross(
                     Cross.Method.Golden,
-                    Cross.Args.KEY_CROSS_VALUE,
+                    Cross.Args.KEY_AND_VALUE,
                     "value1",
                     48,
-                    target=Cross.Param.ELEMENT,
                     key=key,
+                    target=Cross.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -73,13 +73,13 @@ class TestCross(TestCase):
             )
         )
 
-    def test_Cross_Golden_VALUE_CROSS_KEY(self) -> None:
+    def test_Cross_Golden_VALUE_AND_KEY(self) -> None:
         key = "Golden"
         data = HandledDictList(
             [
                 Cross(
                     Cross.Method.Golden,
-                    Cross.Args.VALUE_CROSS_KEY,
+                    Cross.Args.VALUE_AND_KEY,
                     48,
                     "value2",
                     target=Cross.Param.ELEMENT,
@@ -95,13 +95,13 @@ class TestCross(TestCase):
             )
         )
 
-    def test_Cross_Dead_KEY_CROSS_KEY(self) -> None:
+    def test_Cross_Dead_KEY_AND_KEY(self) -> None:
         key = "Dead"
         data = HandledDictList(
             [
                 Cross(
                     Cross.Method.Dead,
-                    Cross.Args.KEY_CROSS_KEY,
+                    Cross.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
                     target=Cross.Param.ELEMENT,
@@ -117,13 +117,13 @@ class TestCross(TestCase):
             )
         )
 
-    def test_Cross_Dead_KEY_CROSS_VALUE(self) -> None:
+    def test_Cross_Dead_KEY_AND_VALUE(self) -> None:
         key = "Dead"
         data = HandledDictList(
             [
                 Cross(
                     Cross.Method.Dead,
-                    Cross.Args.KEY_CROSS_VALUE,
+                    Cross.Args.KEY_AND_VALUE,
                     "value1",
                     48,
                     target=Cross.Param.ELEMENT,
@@ -139,17 +139,17 @@ class TestCross(TestCase):
             )
         )
 
-    def test_Cross_Dead_VALUE_CROSS_KEY(self) -> None:
+    def test_Cross_Dead_VALUE_AND_KEY(self) -> None:
         key = "test"
         data = HandledDictList(
             [
                 Cross(
                     Cross.Method.Dead,
-                    Cross.Args.VALUE_CROSS_KEY,
+                    Cross.Args.VALUE_AND_KEY,
                     48,
                     "value2",
-                    target=Cross.Param.ELEMENT,
                     key=key,
+                    target=Cross.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),

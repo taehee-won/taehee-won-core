@@ -22,13 +22,13 @@ class TestCompare(TestCase):
             {"value1": 32, "value2": 20},
         ]
 
-    def test_Compare_GT_KEY_COMPARE_KEY(self) -> None:
+    def test_Compare_GT_KEY_AND_KEY(self) -> None:
         key = "GT"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.GT,
-                    Compare.Args.KEY_COMPARE_KEY,
+                    Compare.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
                     target=Compare.Param.ELEMENT,
@@ -40,17 +40,17 @@ class TestCompare(TestCase):
         self.assertFalse(data[1][key])
         self.assertTrue(data[2][key])
 
-    def test_Compare_GT_KEY_COMPARE_VALUE(self) -> None:
+    def test_Compare_GT_KEY_AND_VALUE(self) -> None:
         key = "test"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.GT,
-                    Compare.Args.KEY_COMPARE_VALUE,
+                    Compare.Args.KEY_AND_VALUE,
                     "value1",
                     31,
-                    target=Compare.Param.ELEMENT,
                     key=key,
+                    target=Compare.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -59,13 +59,13 @@ class TestCompare(TestCase):
         self.assertFalse(data[1][key])
         self.assertTrue(data[2][key])
 
-    def test_Compare_GT_VALUE_COMPARE_KEY(self) -> None:
+    def test_Compare_GT_VALUE_AND_KEY(self) -> None:
         key = "GT"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.GT,
-                    Compare.Args.VALUE_COMPARE_KEY,
+                    Compare.Args.VALUE_AND_KEY,
                     30,
                     "value2",
                     target=Compare.Param.ELEMENT,
@@ -77,13 +77,13 @@ class TestCompare(TestCase):
         self.assertFalse(data[1][key])
         self.assertTrue(data[2][key])
 
-    def test_Compare_GTE_KEY_COMPARE_KEY(self) -> None:
+    def test_Compare_GTE_KEY_AND_KEY(self) -> None:
         key = "GTE"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.GTE,
-                    Compare.Args.KEY_COMPARE_KEY,
+                    Compare.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
                     target=Compare.Param.ELEMENT,
@@ -95,13 +95,13 @@ class TestCompare(TestCase):
         self.assertFalse(data[1][key])
         self.assertTrue(data[2][key])
 
-    def test_Compare_GTE_KEY_COMPARE_VALUE(self) -> None:
+    def test_Compare_GTE_KEY_AND_VALUE(self) -> None:
         key = "GTE"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.GTE,
-                    Compare.Args.KEY_COMPARE_VALUE,
+                    Compare.Args.KEY_AND_VALUE,
                     "value1",
                     31,
                     target=Compare.Param.ELEMENT,
@@ -113,17 +113,17 @@ class TestCompare(TestCase):
         self.assertTrue(data[1][key])
         self.assertTrue(data[2][key])
 
-    def test_Compare_GTE_VALUE_COMPARE_KEY(self) -> None:
+    def test_Compare_GTE_VALUE_AND_KEY(self) -> None:
         key = "t"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.GTE,
-                    Compare.Args.VALUE_COMPARE_KEY,
+                    Compare.Args.VALUE_AND_KEY,
                     30,
                     "value2",
-                    target=Compare.Param.ELEMENT,
                     key=key,
+                    target=Compare.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -132,17 +132,17 @@ class TestCompare(TestCase):
         self.assertFalse(data[1][key])
         self.assertTrue(data[2][key])
 
-    def test_Compare_LT_KEY_COMPARE_KEY(self) -> None:
+    def test_Compare_LT_KEY_AND_KEY(self) -> None:
         key = "test"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.LT,
-                    Compare.Args.KEY_COMPARE_KEY,
+                    Compare.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
-                    target=Compare.Param.ELEMENT,
                     key=key,
+                    target=Compare.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -151,13 +151,13 @@ class TestCompare(TestCase):
         self.assertTrue(data[1][key])
         self.assertFalse(data[2][key])
 
-    def test_Compare_LT_KEY_COMPARE_VALUE(self) -> None:
+    def test_Compare_LT_KEY_AND_VALUE(self) -> None:
         key = "LT"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.LT,
-                    Compare.Args.KEY_COMPARE_VALUE,
+                    Compare.Args.KEY_AND_VALUE,
                     "value1",
                     31,
                     target=Compare.Param.ELEMENT,
@@ -169,13 +169,13 @@ class TestCompare(TestCase):
         self.assertFalse(data[1][key])
         self.assertFalse(data[2][key])
 
-    def test_Compare_LT_VALUE_COMPARE_KEY(self) -> None:
+    def test_Compare_LT_VALUE_AND_KEY(self) -> None:
         key = "LT"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.LT,
-                    Compare.Args.VALUE_COMPARE_KEY,
+                    Compare.Args.VALUE_AND_KEY,
                     30,
                     "value2",
                     target=Compare.Param.ELEMENT,
@@ -187,13 +187,13 @@ class TestCompare(TestCase):
         self.assertTrue(data[1][key])
         self.assertFalse(data[2][key])
 
-    def test_Compare_LTE_KEY_COMPARE_KEY(self) -> None:
+    def test_Compare_LTE_KEY_AND_KEY(self) -> None:
         key = "LTE"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.LTE,
-                    Compare.Args.KEY_COMPARE_KEY,
+                    Compare.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
                     target=Compare.Param.ELEMENT,
@@ -205,17 +205,17 @@ class TestCompare(TestCase):
         self.assertTrue(data[1][key])
         self.assertFalse(data[2][key])
 
-    def test_Compare_LTE_KEY_COMPARE_VALUE(self) -> None:
+    def test_Compare_LTE_KEY_AND_VALUE(self) -> None:
         key = "t"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.LTE,
-                    Compare.Args.KEY_COMPARE_VALUE,
+                    Compare.Args.KEY_AND_VALUE,
                     "value1",
                     31,
-                    target=Compare.Param.ELEMENT,
                     key=key,
+                    target=Compare.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -224,13 +224,13 @@ class TestCompare(TestCase):
         self.assertTrue(data[1][key])
         self.assertFalse(data[2][key])
 
-    def test_Compare_LTE_VALUE_COMPARE_KEY(self) -> None:
+    def test_Compare_LTE_VALUE_AND_KEY(self) -> None:
         key = "LTE"
         data = HandledDictList(
             [
                 Compare(
                     Compare.Method.LTE,
-                    Compare.Args.VALUE_COMPARE_KEY,
+                    Compare.Args.VALUE_AND_KEY,
                     30,
                     "value2",
                     target=Compare.Param.ELEMENT,

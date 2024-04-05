@@ -1,32 +1,25 @@
-from typing import Dict, Any, Union, Optional, Callable
+from typing import Dict, Any, Union, Optional
 from enum import Enum
 
+from .Handle import Handle
 
-class Compare:
+
+class Compare(Handle):
     class Method(Enum):
         GT = "GT"
         GTE = "GTE"
         LT = "LT"
         LTE = "LTE"
 
-    class Args(Enum):
-        KEY_COMPARE_KEY = "KvK"
-        KEY_COMPARE_VALUE = "KvV"
-        VALUE_COMPARE_KEY = "VvK"
-
-    class Param(Enum):
-        ELEMENT = "element"
-        PIPE = "pipe"
-
     def __init__(
         self,
         method: Union[Method, str],
-        args: Union[Args, str],
+        args: Union[Handle.Args, str],
         arg1: Any,
         arg2: Any,
-        source: Union[Param, str] = Param.ELEMENT,
-        target: Union[Param, str] = Param.PIPE,
         key: Optional[str] = None,
+        source: Union[Handle.Param, str] = Handle.Param.ELEMENT,
+        target: Union[Handle.Param, str] = Handle.Param.PIPE,
     ):
         method = self.Method(method)
         if method == self.Method.GT:
@@ -41,39 +34,22 @@ class Compare:
         else:  # method == self.Method.LTE
             self._state = lambda value1, value2: value1 <= value2
 
-        args = self.Args(args)
-        if args == self.Args.KEY_COMPARE_KEY:
-            self._compare = lambda v: self._state(v[self._arg1], v[self._arg2])
-
-        elif args == self.Args.KEY_COMPARE_VALUE:
-            self._compare = lambda v: self._state(v[self._arg1], self._arg2)
-
-        else:  # args == self.Args.VALUE_COMPARE_KEY
-            self._compare = lambda v: self._state(self._arg1, v[self._arg2])
-
         self._arg1 = arg1
         self._arg2 = arg2
 
-        source = self.Param(source)
-        if source == self.Param.ELEMENT:
-            self._source = lambda element, pipe: element
+        args = self.Args(args)
+        if args == self.Args.KEY_AND_KEY:
+            self._compare = lambda v: self._state(v[self._arg1], v[self._arg2])
 
-        else:
-            self._source = lambda element, pipe: pipe
+        elif args == self.Args.KEY_AND_VALUE:
+            self._compare = lambda v: self._state(v[self._arg1], self._arg2)
 
-        target = self.Param(target)
-        if target == self.Param.ELEMENT:
-            self._target = lambda element, pipe: element
+        else:  # args == self.Args.VALUE_AND_KEY
+            self._compare = lambda v: self._state(self._arg1, v[self._arg2])
 
-        else:
-            self._target = lambda element, pipe: pipe
+        super().__init__(key if key is not None else method.value, source, target)
 
-        self._key = key if key is not None else method.value
-
-    def get_handle(self) -> Callable[[Dict, Dict], Optional[Dict]]:
-        return self._handle
-
-    def _handle(self, element: Dict, pipe: Dict) -> Optional[Dict]:
+    def handle(self, element: Dict, pipe: Dict) -> Optional[Dict]:
         self._target(element, pipe).update(
             {self._key: self._compare(self._source(element, pipe))}
         )

@@ -54,8 +54,8 @@ class TestAggregate(TestCase):
                 Aggregate(
                     Aggregate.Method.ALL,
                     ["value1", "value2", "value3"],
-                    target=Aggregate.Param.ELEMENT,
                     key=key,
+                    target=Aggregate.Param.ELEMENT,
                 ).get_handle(),
             ],
             deepcopy(self.source),
@@ -95,8 +95,8 @@ class TestAggregate(TestCase):
                 Aggregate(
                     Aggregate.Method.ANY,
                     ["value1", "value2", "value3"],
-                    target=Aggregate.Param.ELEMENT,
                     key=key,
+                    target=Aggregate.Param.ELEMENT,
                 ).get_handle(),
             ],
             deepcopy(self.source),

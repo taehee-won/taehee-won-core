@@ -23,13 +23,13 @@ class TestCalculate(TestCase):
             {"value1": 4, "value2": -2},
         ]
 
-    def test_Calculate_ADD_KEY_CALCULATE_KEY(self) -> None:
+    def test_Calculate_ADD_KEY_AND_KEY(self) -> None:
         key = "ADD"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.ADD,
-                    Calculate.Args.KEY_CALCULATE_KEY,
+                    Calculate.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
                     target=Calculate.Param.ELEMENT,
@@ -42,17 +42,17 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], 1)
         self.assertEqual(data[3][key], 2)
 
-    def test_Calculate_ADD_KEY_CALCULATE_VALUE(self) -> None:
+    def test_Calculate_ADD_KEY_AND_VALUE(self) -> None:
         key = "test"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.ADD,
-                    Calculate.Args.KEY_CALCULATE_VALUE,
+                    Calculate.Args.KEY_AND_VALUE,
                     "value1",
                     10,
-                    target=Calculate.Param.ELEMENT,
                     key=key,
+                    target=Calculate.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -62,13 +62,13 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], 19)
         self.assertEqual(data[3][key], 14)
 
-    def test_Calculate_ADD_VALUE_CALCULATE_KEY(self) -> None:
+    def test_Calculate_ADD_VALUE_AND_KEY(self) -> None:
         key = "ADD"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.ADD,
-                    Calculate.Args.VALUE_CALCULATE_KEY,
+                    Calculate.Args.VALUE_AND_KEY,
                     10,
                     "value2",
                     target=Calculate.Param.ELEMENT,
@@ -81,17 +81,17 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], 2)
         self.assertEqual(data[3][key], 8)
 
-    def test_Calculate_SUB_KEY_CALCULATE_KEY(self) -> None:
+    def test_Calculate_SUB_KEY_AND_KEY(self) -> None:
         key = "t"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.SUB,
-                    Calculate.Args.KEY_CALCULATE_KEY,
+                    Calculate.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
-                    target=Calculate.Param.ELEMENT,
                     key=key,
+                    target=Calculate.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -101,13 +101,13 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], 17)
         self.assertEqual(data[3][key], 6)
 
-    def test_Calculate_SUB_KEY_CALCULATE_VALUE(self) -> None:
+    def test_Calculate_SUB_KEY_AND_VALUE(self) -> None:
         key = "SUB"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.SUB,
-                    Calculate.Args.KEY_CALCULATE_VALUE,
+                    Calculate.Args.KEY_AND_VALUE,
                     "value1",
                     10,
                     target=Calculate.Param.ELEMENT,
@@ -120,13 +120,13 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], -1)
         self.assertEqual(data[3][key], -6)
 
-    def test_Calculate_SUB_VALUE_CALCULATE_KEY(self) -> None:
+    def test_Calculate_SUB_VALUE_AND_KEY(self) -> None:
         key = "SUB"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.SUB,
-                    Calculate.Args.VALUE_CALCULATE_KEY,
+                    Calculate.Args.VALUE_AND_KEY,
                     10,
                     "value2",
                     target=Calculate.Param.ELEMENT,
@@ -139,13 +139,13 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], 18)
         self.assertEqual(data[3][key], 12)
 
-    def test_Calculate_MUL_KEY_CALCULATE_KEY(self) -> None:
+    def test_Calculate_MUL_KEY_AND_KEY(self) -> None:
         key = "MUL"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.MUL,
-                    Calculate.Args.KEY_CALCULATE_KEY,
+                    Calculate.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
                     target=Calculate.Param.ELEMENT,
@@ -158,13 +158,13 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], -72)
         self.assertEqual(data[3][key], -8)
 
-    def test_Calculate_MUL_KEY_CALCULATE_VALUE(self) -> None:
+    def test_Calculate_MUL_KEY_AND_VALUE(self) -> None:
         key = "MUL"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.MUL,
-                    Calculate.Args.KEY_CALCULATE_VALUE,
+                    Calculate.Args.KEY_AND_VALUE,
                     "value1",
                     10,
                     target=Calculate.Param.ELEMENT,
@@ -177,17 +177,17 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], 90)
         self.assertEqual(data[3][key], 40)
 
-    def test_Calculate_MUL_VALUE_CALCULATE_KEY(self) -> None:
+    def test_Calculate_MUL_VALUE_AND_KEY(self) -> None:
         key = "test"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.MUL,
-                    Calculate.Args.VALUE_CALCULATE_KEY,
+                    Calculate.Args.VALUE_AND_KEY,
                     10,
                     "value2",
-                    target=Calculate.Param.ELEMENT,
                     key=key,
+                    target=Calculate.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -197,13 +197,13 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], -80)
         self.assertEqual(data[3][key], -20)
 
-    def test_Calculate_DIV_KEY_CALCULATE_KEY(self) -> None:
+    def test_Calculate_DIV_KEY_AND_KEY(self) -> None:
         key = "DIV"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.DIV,
-                    Calculate.Args.KEY_CALCULATE_KEY,
+                    Calculate.Args.KEY_AND_KEY,
                     "value1",
                     "value2",
                     target=Calculate.Param.ELEMENT,
@@ -216,17 +216,17 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], 9 / -8)
         self.assertEqual(data[3][key], 4 / -2)
 
-    def test_Calculate_DIV_KEY_CALCULATE_VALUE(self) -> None:
+    def test_Calculate_DIV_KEY_AND_VALUE(self) -> None:
         key = "t"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.DIV,
-                    Calculate.Args.KEY_CALCULATE_VALUE,
+                    Calculate.Args.KEY_AND_VALUE,
                     "value1",
                     10,
-                    target=Calculate.Param.ELEMENT,
                     key=key,
+                    target=Calculate.Param.ELEMENT,
                 ).get_handle()
             ],
             deepcopy(self.source),
@@ -236,13 +236,13 @@ class TestCalculate(TestCase):
         self.assertEqual(data[2][key], 9 / 10)
         self.assertEqual(data[3][key], 4 / 10)
 
-    def test_Calculate_DIV_VALUE_CALCULATE_KEY(self) -> None:
+    def test_Calculate_DIV_VALUE_AND_KEY(self) -> None:
         key = "DIV"
         data = HandledDictList(
             [
                 Calculate(
                     Calculate.Method.DIV,
-                    Calculate.Args.VALUE_CALCULATE_KEY,
+                    Calculate.Args.VALUE_AND_KEY,
                     10,
                     "value2",
                     target=Calculate.Param.ELEMENT,
