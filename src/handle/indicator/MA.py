@@ -2,19 +2,15 @@ from typing import Dict, Union, Optional
 from enum import Enum
 
 from ..Handle import Handle
+from .Indicator import Indicator
 
 
-class MA(Handle):  # Moving Average
-    class Average(Enum):
-        SIMPLE = "Simple"
-        EXPONENTIAL = "Exponential"
-        SMOOTHED = "Smoothed"
-
+class MA(Handle, Indicator):  # Moving Average
     def __init__(
         self,
         period: int = 20,
         source_key: str = "close",
-        average: Union[Average, str] = Average.EXPONENTIAL,
+        average: Union[Indicator.Average, str] = Indicator.Average.EXPONENTIAL,
         key: Optional[str] = None,
         source: Union[Handle.Param, str] = Handle.Param.ELEMENT,
         target: Union[Handle.Param, str] = Handle.Param.PIPE,
