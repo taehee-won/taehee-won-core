@@ -22,6 +22,7 @@
         "tqdm",
         "TRDVAL",
         "TRDVOL",
-        "Upbit"
+        "Upbit",
+        "urandom"
     ]
 }

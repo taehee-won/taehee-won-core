@@ -4,10 +4,10 @@ from threading import Thread
 from queue import Queue
 from cmd import Cmd
 
-from ..library.lib.macro import KWARGS, ATTR, KWARGS_STR, ARGS_STR, LOOP
-from ..library.lib.Trace import Trace
-from ..library.lib.Interface import Interface
-from ..library.lib.Lib import Lib
+from ..library.macro import KWARGS, ATTR, KWARGS_STR, ARGS_STR, LOOP
+from ..library.Trace import Trace
+from ..library.Interface import Interface
+from ..library.Lib import Lib
 
 
 class Main:
