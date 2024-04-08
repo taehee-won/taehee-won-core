@@ -1,9 +1,7 @@
 from unittest import TestCase
 from copy import deepcopy
 
-from src.library.Trace import Trace
-from src.data.HandledDictList import HandledDictList
-from src.data.handle.Cross import Cross
+from core import Trace, HandledDictList, Cross
 
 
 class TestCross(TestCase):

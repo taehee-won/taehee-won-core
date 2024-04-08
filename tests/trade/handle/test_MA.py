@@ -1,9 +1,7 @@
 from unittest import TestCase
 from copy import deepcopy
 
-from src.library.Trace import Trace
-from src.data.HandledDictList import HandledDictList
-from src.trade.handle.MA import MA
+from core import Trace, HandledDictList, MA
 
 
 class TestMA(TestCase):

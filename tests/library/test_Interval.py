@@ -3,7 +3,7 @@ from time import time, sleep
 from tempfile import mktemp
 from os import remove
 
-from src.library.Interval import Interval
+from core import Interval
 
 
 class TestInterval(TestCase):

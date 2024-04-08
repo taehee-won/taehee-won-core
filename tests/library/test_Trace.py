@@ -7,7 +7,7 @@ from string import ascii_letters, digits
 from random import choice
 from inspect import currentframe
 
-from src.library.Trace import Trace
+from core import Trace
 
 
 class TestTrace(TestCase):

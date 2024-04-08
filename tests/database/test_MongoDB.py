@@ -3,8 +3,7 @@ from os import environ
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import DuplicateKeyError
 
-from src.library.Trace import Trace
-from src.database.MongoDB import MongoDB
+from core import Trace, MongoDB
 
 
 TEST_DATABASE = "TEST-DATABASE"

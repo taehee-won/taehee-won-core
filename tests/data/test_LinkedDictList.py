@@ -1,9 +1,7 @@
 from unittest import TestCase
 from datetime import datetime
 
-from src.library.Trace import Trace
-from src.data.DictList import DictList
-from src.data.LinkedDictList import LinkedDictList
+from core import Trace, DictList, LinkedDictList
 
 
 class TestLinkedDictList(TestCase):

@@ -5,6 +5,11 @@ __pycache__/
 *.pyd
 .pytest_cache/
 
+# Python package cahce
+build/
+dist/
+taehee_won_core.egg-info/
+
 # Temporary files created by code editors
 tempCodeRunnerFile.py
 

@@ -1,9 +1,7 @@
 from unittest import TestCase
 from copy import deepcopy
 
-from src.library.Trace import Trace
-from src.data.HandledDictList import HandledDictList
-from src.data.handle.Calculate import Calculate
+from core import Trace, HandledDictList, Calculate
 
 
 class TestCalculate(TestCase):

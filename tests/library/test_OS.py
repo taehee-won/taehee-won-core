@@ -3,7 +3,7 @@ from tempfile import mkdtemp, mktemp, NamedTemporaryFile
 from os import remove, rmdir, getcwd, urandom
 from os.path import exists, join, isabs, basename, isdir
 
-from src.library.OS import OS
+from core import OS
 
 
 class TestOS(TestCase):

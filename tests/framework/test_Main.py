@@ -1,8 +1,7 @@
 from unittest import TestCase, skipIf
 from os import environ
 
-from src.library.Trace import Trace
-from src.framework.Main import Main
+from core import Trace, Main
 
 
 class TestMain(TestCase):

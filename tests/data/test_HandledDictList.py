@@ -6,8 +6,8 @@ from os import remove
 from os.path import join, abspath, dirname
 from tempfile import mktemp
 
-from src.library.Trace import Trace
-from src.data.HandledDictList import HandledDictList
+from core import Trace, HandledDictList
+
 from .test_DictList import (
     F_DICTLIST_DICTLIST,
     F_JSON_JSON,

@@ -1,7 +1,6 @@
 from unittest import TestCase
 
-from src.library.macro import KWARGS, PARAMS, ATTR, LOOP, CALL, RAISE
-from src.library.macro import ARGS_STR, KWARGS_STR
+from core import KWARGS, PARAMS, ATTR, LOOP, CALL, RAISE, ARGS_STR, KWARGS_STR
 
 
 class TestMacro(TestCase):

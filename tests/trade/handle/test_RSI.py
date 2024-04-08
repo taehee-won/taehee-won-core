@@ -1,9 +1,7 @@
 from unittest import TestCase
 from copy import deepcopy
 
-from src.library.Trace import Trace
-from src.data.HandledDictList import HandledDictList
-from src.trade.handle.RSI import RSI
+from core import Trace, HandledDictList, RSI
 
 
 class TestRSI(TestCase):

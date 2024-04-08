@@ -1,9 +1,7 @@
 from unittest import TestCase, skipIf
 from os import environ
 
-from src.library.Trace import Trace
-from src.library.Datetime import Datetime
-from src.trade.Upbit import Upbit
+from core import Trace, Datetime, Upbit
 
 
 @skipIf(

@@ -1,8 +1,7 @@
 from unittest import TestCase
 from os.path import join, dirname, abspath
 
-from src.library.Trace import Trace
-from src.library.Files import Files
+from core import Trace, Files
 
 
 D_FILES = join(dirname(abspath(__file__)), "Files")

@@ -5,7 +5,7 @@ from os import remove
 from os.path import join, abspath, dirname
 from tempfile import mktemp
 
-from src.data.DictList import DictList
+from core import DictList
 
 
 D_TEST_FILE_DIR = join(dirname(abspath(__file__)), "DictList")

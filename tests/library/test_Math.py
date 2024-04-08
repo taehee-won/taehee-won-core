@@ -1,7 +1,7 @@
 from unittest import TestCase
 from math import sqrt
 
-from src.library.Math import Math
+from core import Math
 
 
 class TestMath(TestCase):

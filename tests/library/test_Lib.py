@@ -6,8 +6,7 @@ from shutil import rmtree
 from string import ascii_letters, digits
 from random import choice
 
-from src.library.Trace import Trace
-from src.library.Lib import Lib
+from core import Trace, Lib
 
 
 class TestLib(TestCase):

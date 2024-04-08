@@ -2,8 +2,7 @@ from unittest import TestCase, skipIf
 from os import environ
 from datetime import datetime, timedelta
 
-from src.library.Trace import Trace
-from src.trade.KRX import KRX
+from core import Trace, KRX
 
 
 @skipIf(

@@ -1,7 +1,6 @@
 from unittest import TestCase
 
-from src.library.Trace import Trace
-from src.library.Interface import Interface
+from core import Trace, Interface
 
 
 class TestInterface(TestCase):

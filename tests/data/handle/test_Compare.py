@@ -1,9 +1,7 @@
 from unittest import TestCase
 from copy import deepcopy
 
-from src.library.Trace import Trace
-from src.data.HandledDictList import HandledDictList
-from src.data.handle.Compare import Compare
+from core import Trace, HandledDictList, Compare
 
 
 class TestCompare(TestCase):

@@ -1,7 +1,7 @@
 from unittest import TestCase
 from datetime import datetime, timedelta
 
-from src.library.Datetime import Datetime
+from core.library.Datetime import Datetime
 
 
 class TestDatetime(TestCase):

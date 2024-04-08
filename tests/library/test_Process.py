@@ -2,8 +2,7 @@ from unittest import TestCase
 from multiprocessing import cpu_count
 from random import randint
 
-from src.library.Trace import Trace
-from src.library.Process import Process
+from core import Trace, Process
 
 
 class TestProcess(TestCase):

@@ -1,9 +1,7 @@
 from unittest import TestCase
 from copy import deepcopy
 
-from src.library.Trace import Trace
-from src.data.HandledDictList import HandledDictList
-from src.data.handle.Aggregate import Aggregate
+from core import Trace, HandledDictList, Aggregate
 
 
 class TestAggregate(TestCase):
