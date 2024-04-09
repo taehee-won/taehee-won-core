@@ -57,19 +57,19 @@ class TestFiles(TestCase):
         self.assertEqual(files[0], "Files.interface")
         self.assertEqual(files[1], "Files.json")
 
-    def test_execute(self):
-        self.assertEqual(self.files.execute("Files.interface", "add", 1, 2), 3)
-        self.assertEqual(self.files.execute("Files.interface", "sub", 1, 2), -1)
+    def test_get_module(self):
+        self.assertEqual(self.files.get_module("Files.interface", "add")(1, 2), 3)
+        self.assertEqual(self.files.get_module("Files.interface", "sub")(1, 2), -1)
 
         with self.assertRaises(AttributeError):
-            self.files.execute("Files.json", "add")
+            self.files.get_module("Files.json", "add")
 
-    def test_load(self):
+    def test_read(self):
         with self.assertRaises(ValueError):
-            self.files.load("Files.interface")
+            self.files.read("Files.interface")
 
         self.assertListEqual(
-            self.files.load("Files.json"),
+            self.files.read("Files.json"),
             [
                 {"name": "John", "age": 30},
                 {"name": "Jane", "age": 25},
@@ -78,4 +78,4 @@ class TestFiles(TestCase):
         )
 
         with self.assertRaises(TypeError):
-            self.files.load("Files.non_exist")
+            self.files.read("Files.non_exist.json")

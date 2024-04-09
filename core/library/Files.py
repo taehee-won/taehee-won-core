@@ -1,4 +1,5 @@
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, Callable
+from enum import Enum
 from importlib import import_module
 from json5 import load as load_json
 
@@ -9,6 +10,9 @@ from .OS import OS
 
 
 class Files:
+    class FileType(Enum):
+        JSON = "json"
+
     def __init__(self, dirs: Optional[List[str]] = None, name: Optional[str] = None):
         self._name = name
         self._trace = ATTR(Files, "trace", lambda: Trace("core"))
@@ -87,7 +91,7 @@ class Files:
                         {
                             "file": file,
                             "path": path,
-                            "module": module,
+                            "modules": module,
                             "dir": dir,
                         }
                     )
@@ -100,23 +104,25 @@ class Files:
     def get_files(self) -> List[str]:
         return self._files.get_values()
 
-    def execute(
-        self,
-        file: str,
-        module: str,
-        *args,
-        **kwargs,
-    ) -> Optional[Union[None, Any]]:
+    def get_module(self, file: str, module: str) -> Callable:
         if file_ := self._files.get_element(file):
-            return getattr(file_["module"], module)(*args, **kwargs)
+            return getattr(file_["modules"], module)
 
         err = f"Invalid file: {file}"
         self._trace.critical(err)
         raise TypeError(err)
 
-    def load(self, file: str, encoding: str = "UTF-8-sig") -> Any:
+    def read(
+        self,
+        file: str,
+        file_type: Optional[Union[FileType, str]] = None,
+    ) -> Any:
+        if file_type is None:
+            file_type = self.FileType(OS.get_extension(file))
+
         if file_ := self._files.get_element(file):
-            with open(file_["path"], "r", encoding=encoding) as f:
+            # file_type == self.FileType.JSON
+            with open(file_["path"], "r", encoding="UTF-8-sig") as f:
                 return load_json(f)
 
         err = f"Invalid file: {file}"
