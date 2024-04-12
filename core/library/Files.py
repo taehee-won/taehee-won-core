@@ -62,39 +62,44 @@ class Files:
         modules = OS.get_cwd() in parent
 
         for top, _, files in OS.get_tree(parent):
+            if not top[: len(target)] == target or "__pycache__" in top:
+                continue
+
             for file in files:
-                if top[: len(target)] == target and "__pycache__" not in top:
-                    path = OS.get_path(top, file)
+                path = OS.get_path(top, file)
 
-                    file = path.replace(parent, "")[1:]
-                    if ex := OS.get_extension(file):
-                        file = file.replace("." + ex, "")
+                file = path.replace(parent, "")[1:]
+                if ex := OS.get_extension(file):
+                    file = file.replace("." + ex, "")
 
-                    file = OS.replace_sep(file, ".")
+                file = OS.replace_sep(file, ".")
 
-                    if self._files.get_element(file) is not None:
-                        err = f"Already registered file: {file}"
-                        self._trace.critical(err)
-                        raise TypeError(err)
+                if self._files.get_element(file) is not None:
+                    err = f"Already registered file: {file}"
+                    self._trace.critical(err)
+                    raise TypeError(err)
 
-                    if modules and OS.get_extension(path) == "py":
-                        name = OS.replace_sep(
-                            path.replace(OS.get_cwd(), "")[1:][:-3],
-                            ".",
-                        )
-                        module = import_module(name)
-
-                    else:
-                        module = None
-
-                    self._files.append(
-                        {
-                            "file": file,
-                            "path": path,
-                            "modules": module,
-                            "dir": dir,
-                        }
+                if modules and OS.get_extension(path) == "py":
+                    name = OS.replace_sep(
+                        path.replace(OS.get_cwd(), "")[1:][:-3],
+                        ".",
                     )
+                    module = import_module(name)
+
+                else:
+                    module = None
+
+                if "__init__" == file.split(".")[-1]:
+                    file = file[:-9]
+
+                self._files.append(
+                    {
+                        "file": file,
+                        "path": path,
+                        "modules": module,
+                        "dir": dir,
+                    }
+                )
 
         return True
 
