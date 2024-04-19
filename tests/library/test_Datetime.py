@@ -213,36 +213,75 @@ class TestDatetime(TestCase):
         dt.set_before(Datetime.Period.DAY, 10)
         self.assertEqual(dt.to_datetime(), datetime(2020, 1, 5))
 
-        dt = Datetime.from_values(2020, 1, 15)
-        dt.set_before(Datetime.Period.MONTH, 1)
+        dt = Datetime.from_values(2020, 1, 15).set_before(Datetime.Period.MONTH, 1)
         self.assertEqual(dt.to_datetime(), datetime(2019, 12, 15))
+
+        dt = Datetime.from_values(2020, 1, 15)
+        dt.set_before(Datetime.Period.DAY, 10)
+        self.assertEqual(
+            Datetime.from_values(2020, 1, 15)
+            .set_before(Datetime.Period.DAY, 10)
+            .set_before(Datetime.Period.MONTH, 1)
+            .to_datetime(),
+            datetime(2019, 12, 5),
+        )
 
     def test_set_after(self):
         dt = Datetime.from_values(2020, 1, 15)
         dt.set_after(Datetime.Period.DAY, 10)
         self.assertEqual(dt.to_datetime(), datetime(2020, 1, 25))
 
-        dt = Datetime.from_values(2020, 1, 15)
-        dt.set_after(Datetime.Period.MONTH, 1)
+        dt = Datetime.from_values(2020, 1, 15).set_after(Datetime.Period.MONTH, 1)
         self.assertEqual(dt.to_datetime(), datetime(2020, 2, 15))
+
+        self.assertEqual(
+            Datetime.from_values(2020, 1, 15)
+            .set_after(Datetime.Period.DAY, 10)
+            .set_after(Datetime.Period.MONTH, 1)
+            .to_datetime(),
+            datetime(2020, 2, 25),
+        )
 
     def test_set_quarter_start(self):
         dt = Datetime.from_values(2020, 5, 15)
         dt.set_quarter_start()
         self.assertEqual(dt.to_datetime(), datetime(2020, 4, 1))
 
+        dt = Datetime.from_values(2020, 5, 15).set_quarter_start()
+        self.assertEqual(dt.to_datetime(), datetime(2020, 4, 1))
+
+        self.assertEqual(
+            Datetime.from_values(2020, 5, 15)
+            .set_quarter_start()
+            .set_quarter_start(1)
+            .to_datetime(),
+            datetime(2020, 7, 1),
+        )
+
     def test_set_quarter_end(self):
         dt = Datetime.from_values(2020, 5, 15)
         dt.set_quarter_end()
         self.assertEqual(dt.to_datetime(), datetime(2020, 6, 30, 23, 59))
+
+        dt = Datetime.from_values(2020, 5, 15).set_quarter_end()
+        self.assertEqual(dt.to_datetime(), datetime(2020, 6, 30, 23, 59))
+
+        self.assertEqual(
+            Datetime.from_values(2020, 5, 15)
+            .set_quarter_end()
+            .set_quarter_end(2)
+            .to_datetime(),
+            datetime(2020, 12, 31, 23, 59),
+        )
 
     def test_set_slice(self):
         dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
         dt.set_slice(Datetime.Period.YEAR)
         self.assertEqual(dt.to_datetime(), datetime(2020, 1, 1))
 
-        dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
-        dt.set_slice(Datetime.Period.MONTH)
+        dt = Datetime.from_values(2020, 3, 15, 12, 30, 44).set_slice(
+            Datetime.Period.MONTH
+        )
         self.assertEqual(dt.to_datetime(), datetime(2020, 3, 1))
 
         with self.assertRaises(TypeError):
@@ -253,10 +292,19 @@ class TestDatetime(TestCase):
         dt.set_slice(Datetime.Period.DAY)
         self.assertEqual(dt.to_datetime(), datetime(2020, 3, 15))
 
-        dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
-        dt.set_slice(Datetime.Period.HOUR)
+        dt = Datetime.from_values(2020, 3, 15, 12, 30, 44).set_slice(
+            Datetime.Period.HOUR
+        )
         self.assertEqual(dt.to_datetime(), datetime(2020, 3, 15, 12))
 
         dt = Datetime.from_values(2020, 3, 15, 12, 30, 44)
         dt.set_slice(Datetime.Period.MINUTE)
         self.assertEqual(dt.to_datetime(), datetime(2020, 3, 15, 12, 30))
+
+        self.assertEqual(
+            Datetime.from_values(2020, 3, 15, 12, 30, 44)
+            .set_slice(Datetime.Period.MINUTE)
+            .set_slice(Datetime.Period.DAY)
+            .to_datetime(),
+            datetime(2020, 3, 15),
+        )

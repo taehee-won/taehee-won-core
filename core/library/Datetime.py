@@ -169,17 +169,21 @@ class Datetime:
         self,
         period: Union[Period, str] = Period.DAY,
         interval: int = 1,
-    ) -> None:
+    ) -> "Datetime":
         self._dt -= self._get_delta(period, interval)
+
+        return self
 
     def set_after(
         self,
         period: Union[Period, str] = Period.DAY,
         interval: int = 1,
-    ) -> None:
+    ) -> "Datetime":
         self._dt += self._get_delta(period, interval)
 
-    def set_quarter_start(self, quarters: int = 0) -> None:
+        return self
+
+    def set_quarter_start(self, quarters: int = 0) -> "Datetime":
         self._dt = self._get_quarter_start(self._dt)
 
         while quarters:
@@ -193,12 +197,18 @@ class Datetime:
 
             self._dt = self._get_quarter_start(self._dt)
 
-    def set_quarter_end(self, quarters: int = 0) -> None:
+        return self
+
+    def set_quarter_end(self, quarters: int = 0) -> "Datetime":
         self.set_quarter_start(quarters + 1)
         self._dt -= timedelta(minutes=1)
 
-    def set_slice(self, period: Union[Period, str] = Period.DAY) -> None:
+        return self
+
+    def set_slice(self, period: Union[Period, str] = Period.DAY) -> "Datetime":
         self._dt = self._get_slice(self._dt, period)
+
+        return self
 
     @classmethod
     def _get_delta(

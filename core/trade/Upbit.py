@@ -140,7 +140,7 @@ class Upbit:
 
             params["to"] = (
                 Datetime(candles[-1]["datetime"])
-                .get_before(Datetime.Period.HOUR, 9)
+                .set_before(Datetime.Period.HOUR, 9)
                 .to_str("%Y-%m-%d %H:%M:%S")
             )
             response = cls._request(url, method, params)
@@ -182,8 +182,7 @@ class Upbit:
         datetime = Datetime.from_str(
             response.headers["date"],
             "%a, %d %b %Y %H:%M:%S GMT",
-        )
-        datetime.set_after(Datetime.Period.HOUR, 9)
+        ).set_after(Datetime.Period.HOUR, 9)
 
         response = _Response(datetime, data)
         trace.debug(f"request {method}({url}) response {response}")
