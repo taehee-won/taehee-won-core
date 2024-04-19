@@ -59,8 +59,6 @@ class Files:
         target = OS.get_abspath(dir)
         parent = OS.get_abspath(OS.get_pardir(dir))
 
-        modules = OS.get_cwd() in parent
-
         for top, _, files in OS.get_tree(parent):
             if not top[: len(target)] == target or "__pycache__" in top:
                 continue
@@ -79,16 +77,6 @@ class Files:
                     self._trace.critical(err)
                     raise TypeError(err)
 
-                if modules and OS.get_extension(path) == "py":
-                    name = OS.replace_sep(
-                        path.replace(OS.get_cwd(), "")[1:][:-3],
-                        ".",
-                    )
-                    module = import_module(name)
-
-                else:
-                    module = None
-
                 if "__init__" == file.split(".")[-1]:
                     file = file[:-9]
 
@@ -96,7 +84,6 @@ class Files:
                     {
                         "file": file,
                         "path": path,
-                        "modules": module,
                         "dir": dir,
                     }
                 )
@@ -111,6 +98,26 @@ class Files:
 
     def get_module(self, file: str, module: str) -> Callable:
         if file_ := self._files.get_element(file):
+            if "modules" not in file_:
+                file_["modules"] = import_module(
+                    OS.replace_sep(
+                        file_["path"].replace(
+                            (
+                                cwd
+                                if (cwd := OS.get_cwd())
+                                in (
+                                    parent := OS.get_abspath(
+                                        OS.get_pardir(file_["dir"])
+                                    )
+                                )
+                                else parent
+                            ),
+                            "",
+                        )[1:][:-3],
+                        ".",
+                    )
+                )
+
             return getattr(file_["modules"], module)
 
         err = f"Invalid file: {file}"
