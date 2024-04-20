@@ -1,11 +1,12 @@
 from typing import Any, Dict, Union, Optional
 from enum import Enum
+from os.path import join, abspath, dirname, exists
+from os import makedirs
+from datetime import datetime
 from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
 from logging import getLogger, StreamHandler, FileHandler, NullHandler, Formatter
 
-from .Datetime import Datetime
 from .macro import ATTR
-from .OS import OS
 
 
 class Trace:
@@ -38,11 +39,11 @@ class Trace:
                 ),
                 "stream": StreamHandler,
                 "file": FileHandler,
-                "path": OS.get_path(
+                "path": join(
                     "files",
                     "traces",
-                    Datetime.from_now().to_str("%Y-%m-%d"),
-                    Datetime.from_now().to_str("%H-%M-%S.trace"),
+                    datetime.now().strftime("%Y-%m-%d"),
+                    datetime.now().strftime("%H-%M-%S.trace"),
                 ),
             },
         )
@@ -162,7 +163,9 @@ class Trace:
 
             if is_trace(file):
                 if trace._file is None:
-                    OS.make_dir(OS.get_dir(attrs["path"]))
+                    if not exists(dir := dirname(abspath(attrs["path"]))):
+                        makedirs(dir)
+
                     trace._file = attrs["file"](attrs["path"])
                     trace._file.setFormatter(attrs["formatter"])
                     trace._logger.addHandler(trace._file)
