@@ -5,7 +5,7 @@ from multiprocessing import Process as Process_
 from queue import Empty
 from tqdm import tqdm
 
-from .macro import ATTR, LOOP, KWARGS_STR
+from .macro import LOOP, KWARGS_STR, RAISE
 from .Trace import Trace
 
 
@@ -25,7 +25,7 @@ class Process:
 
     def __init__(self, count: int = cpu_count(), name: Optional[str] = None):
         self._name = name
-        self._trace = ATTR(Process, "trace", lambda: Trace("core"))
+        self._trace = Trace(name="core.Process")
 
         self._processes = [_Process() for _ in range(count)]
 
@@ -43,10 +43,8 @@ class Process:
             all(process.close() for process in self._processes)
             and all(process.join() for process in self._processes)
         ):
-            err = "Destruct failed"
-            self._trace.critical(err)
-            self.print(critical=True)
-            raise ValueError(err)
+            self._trace_exception()
+            RAISE(ValueError, "Destruct failed")
 
     def __len__(self) -> int:
         return len(self._processes)
@@ -55,12 +53,12 @@ class Process:
         attrs = KWARGS_STR(len=len(self._processes), name=self._name)
         return f"{self.__class__.__name__}({attrs})"
 
-    def print(self, critical: bool = False) -> None:
-        trace = self._trace.critical if critical else self._trace.info
+    def print(self) -> None:
+        info = self._trace.info
 
-        trace(f"{self}")
+        info(f"{self}")
 
-        LOOP(trace(f"    {process}") for process in self._processes)
+        LOOP(info(f"    {process}") for process in self._processes)
 
     def execute(
         self,
@@ -93,10 +91,8 @@ class Process:
                     portions,
                 ):
                     if not process.execute(target, portion):
-                        err = "Execute failed"
-                        self._trace.critical(err)
-                        self.print(critical=True)
-                        raise ValueError(err)
+                        self._trace_exception()
+                        RAISE(ValueError, "Execute failed")
 
                     portions.remove(portion)
 
@@ -105,16 +101,21 @@ class Process:
                 ]:
                     data = process.get()
                     if data is None:
-                        err = "Execute failed"
-                        self._trace.critical(err)
-                        self.print(critical=True)
-                        raise ValueError(err)
+                        self._trace_exception()
+                        RAISE(ValueError, "Execute failed")
 
                     if data:
                         results.extend(data)
                         progress.update(len(data))
 
         return results
+
+    def _trace_exception(self) -> None:
+        critical = self._trace.critical
+
+        critical(f"{self}")
+
+        LOOP(critical(f"    {process}") for process in self._processes)
 
 
 class _Process:

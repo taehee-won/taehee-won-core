@@ -4,7 +4,7 @@ from importlib import import_module
 from json5 import load as load_json
 
 from ..data.OrderedDictList import OrderedDictList
-from .macro import ATTR, KWARGS_STR, LOOP
+from .macro import KWARGS_STR, LOOP, RAISE
 from .Trace import Trace
 from .OS import OS
 
@@ -15,7 +15,7 @@ class Files:
 
     def __init__(self, dirs: Optional[List[str]] = None, name: Optional[str] = None):
         self._name = name
-        self._trace = ATTR(Files, "trace", lambda: Trace("core"))
+        self._trace = Trace(name=f"core.Files")
 
         self._dirs = []
         self._files = OrderedDictList(
@@ -73,9 +73,7 @@ class Files:
                 file = OS.replace_sep(file, ".")
 
                 if self._files.get_element(file) is not None:
-                    err = f"Already registered file: {file}"
-                    self._trace.critical(err)
-                    raise TypeError(err)
+                    RAISE(TypeError, f"Already registered file: {file}")
 
                 if "__init__" == file.split(".")[-1]:
                     file = file[:-9]
@@ -120,9 +118,7 @@ class Files:
 
             return getattr(file_["modules"], module)
 
-        err = f"Invalid file: {file}"
-        self._trace.critical(err)
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid file: {file}")
 
     def read(
         self,
@@ -137,6 +133,4 @@ class Files:
             with open(file_["path"], "r", encoding="UTF-8-sig") as f:
                 return load_json(f)
 
-        err = f"Invalid file: {file}"
-        self._trace.critical(err)
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid file: {file}")

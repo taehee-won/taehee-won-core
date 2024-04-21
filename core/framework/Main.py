@@ -4,7 +4,7 @@ from threading import Thread
 from queue import Queue
 from cmd import Cmd
 
-from ..library.macro import KWARGS, ATTR, KWARGS_STR, ARGS_STR, LOOP
+from ..library.macro import KWARGS, KWARGS_STR, ARGS_STR, LOOP, RAISE
 from ..library.Trace import Trace
 from ..library.Interface import Interface
 from ..library.Lib import Lib
@@ -15,7 +15,7 @@ class Main:
         def __init__(self, interface: Interface):
             self._interface = interface
 
-            trace = Trace(type(self).__name__)
+            trace = Trace(name=type(self).__name__)
 
             self.critical = trace.critical
             self.error = trace.error
@@ -55,8 +55,8 @@ class Main:
     def __init__(self, components: List[Type[Component]]) -> None:
         self._components = components
 
-        self._trace = ATTR(Main, "trace", lambda: Trace("main"))
-        self._interface = Interface(name="main")
+        self._trace = Trace(name="core.Main")
+        self._interface = Interface(name="core.Main")
         self._interface._trace = self._trace
 
     def start(self, frontend: Union[FrontEnd, str] = FrontEnd.MAIN) -> None:
@@ -85,9 +85,7 @@ class Main:
                 target = prompt.cmdloop
 
             else:
-                err = f"Invalid frontend: {frontend}"
-                self._trace.critical(err)
-                raise TypeError(err)
+                RAISE(TypeError, f"Invalid frontend: {frontend}")
 
             debug(f"start {frontend}")
             Thread(target=target).start()

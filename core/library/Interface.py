@@ -1,14 +1,14 @@
 from typing import Any, Callable, Optional, List
 
 from ..data.OrderedDictList import OrderedDictList
-from .macro import ATTR, KWARGS_STR, LOOP
+from .macro import KWARGS_STR, LOOP, RAISE
 from .Trace import Trace
 
 
 class Interface:
     def __init__(self, name: Optional[str] = None):
         self._name = name
-        self._trace = ATTR(Interface, "trace", lambda: Trace("core"))
+        self._trace = Trace(name=f"core.Interface")
 
         attrs = KWARGS_STR(name=self._name)
         self._interfaces = OrderedDictList("command", name=f"Interface({attrs})")
@@ -81,9 +81,7 @@ class Interface:
         if interface := self._interfaces.get_element(command):
             return interface["func"](*args, **kwargs)
 
-        err = f"Invalid command: {command}"
-        self._trace.critical(err)
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid command: {command}")
 
     def get_commands(self, public: Optional[bool] = None) -> List[str]:
         return [

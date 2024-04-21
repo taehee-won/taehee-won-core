@@ -1,10 +1,18 @@
 from unittest import TestCase
 from datetime import datetime, timedelta
 
-from core.library.Datetime import Datetime
+from core import Trace, Datetime
 
 
 class TestDatetime(TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        Trace.set_levels(Trace.Level.NOTSET)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        Trace.set_levels()
+
     def test_str(self):
         dt = Datetime.from_values(2020, 1, 15, 12, 30, 16)
 

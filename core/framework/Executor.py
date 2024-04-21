@@ -1,10 +1,9 @@
-from typing import Union, Any, Tuple, List, Dict, Optional
+from typing import Any, Tuple, List, Dict, Optional
 from enum import Enum
 from functools import reduce
 
-from ..library.macro import KWARGS, ATTR
+from ..library.macro import KWARGS, RAISE
 from ..library.Datetime import Datetime
-from ..library.Trace import Trace
 from ..library.Files import Files
 
 
@@ -110,27 +109,25 @@ class _Arg:
 
         if self._type == self.Type.KWARG:
             if not kwargs:
-                err = f"Invalid kwargs: kwargs({kwargs})"
-                ATTR(Executor, "trace", lambda: Trace("Executor")).critical(err)
-                raise ValueError(err)
+                RAISE(ValueError, f"Invalid kwargs: not exist")
 
             elif self._value not in kwargs:
-                err = f"Invalid key: key({self._value}), kwargs({kwargs.keys()})"
-                ATTR(Executor, "trace", lambda: Trace("Executor")).critical(err)
-                raise ValueError(err)
+                RAISE(
+                    ValueError,
+                    f"Invalid key: key({self._value}) not in kwargs({kwargs.keys()})",
+                )
 
             return kwargs[self._value]
 
         elif self._type == self.Type.PIPE and pipe:
             if not pipe:
-                err = f"Invalid pipe: pipe({pipe})"
-                ATTR(Executor, "trace", lambda: Trace("Executor")).critical(err)
-                raise ValueError(err)
+                RAISE(ValueError, "Invalid pipe: not exist")
 
             elif self._value not in pipe:
-                err = f"Invalid key: key({self._value}), pipe({pipe.keys()})"
-                ATTR(Executor, "trace", lambda: Trace("Executor")).critical(err)
-                raise ValueError(err)
+                RAISE(
+                    ValueError,
+                    f"Invalid key: key({self._value}) not in pipe({pipe.keys()})",
+                )
 
             return pipe[self._value]
 
@@ -157,8 +154,6 @@ class _Arg:
 
         else:  # self._type  == self.Type.EXECUTOR_CONFIGS
             if not files:
-                err = f"Invalid files: files({files})"
-                ATTR(Executor, "trace", lambda: Trace("Executor")).critical(err)
-                raise ValueError(err)
+                RAISE(ValueError, "Invalid files: not exist")
 
             return Executor(self._value).execute(files, **KWARGS(kwargs=kwargs))

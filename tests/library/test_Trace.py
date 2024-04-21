@@ -47,11 +47,11 @@ class TestTrace(TestCase):
 
     @staticmethod
     def _format(name: str, level: str, msg: str) -> str:
-        return f"[{name:10s}][{level.upper():8s}] {msg}"
+        return f"[{name:14s}][{level.upper():8s}] {msg}"
 
     @classmethod
     def _prepare(cls, test: str, stream: str, file: str):
-        name = "".join(choice(ascii_letters + digits) for _ in range(10))
+        name = "".join(choice(ascii_letters + digits) for _ in range(14))
         levels = cls._levels()
         msgs = {level: f"{level} {test}" for level in levels}
 

@@ -1,7 +1,7 @@
 from typing import List
 from sys import exc_info
 
-from .macro import LOOP, ATTR
+from .macro import LOOP, RAISE
 from .Trace import Trace
 from .OS import OS
 
@@ -32,7 +32,7 @@ class Lib:
                 if any(word in file for word in words)
             ]
 
-        debug = ATTR(cls, "trace", lambda: Trace("core")).debug
+        debug = Trace(name="core.Lib").debug
         debug(f"clear caches from {len(words)} words")
 
         debug(f"{len(cache_dirs)} cache dirs:")
@@ -45,14 +45,12 @@ class Lib:
 
     @classmethod
     def trace_exception(cls) -> None:
-        critical = ATTR(cls, "trace", lambda: Trace("core")).critical
+        critical = Trace(name="core.Lib").critical
 
         exc_type, exc_value, exc_traceback = exc_info()
 
         if exc_type is None or exc_value is None:
-            err = "Invalid exception"
-            critical(err)
-            raise ValueError(err)
+            RAISE(ValueError, "Invalid exception")
 
         traces = []
         while exc_traceback is not None:

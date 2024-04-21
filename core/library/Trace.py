@@ -6,8 +6,6 @@ from datetime import datetime
 from logging import CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
 from logging import getLogger, StreamHandler, FileHandler, NullHandler, Formatter
 
-from .macro import ATTR
-
 
 class Trace:
     class Level:
@@ -17,36 +15,6 @@ class Trace:
         INFO = INFO
         DEBUG = DEBUG
         NOTSET = NOTSET
-
-    @classmethod
-    def _get_attrs(cls) -> Dict:
-        return ATTR(
-            cls,
-            "attrs",
-            lambda: {
-                "traces": [],
-                "configs": {
-                    _ConfigLevel.PRIMARY: _Config(),
-                    _ConfigLevel.DEDICATED: {},
-                    _ConfigLevel.INSTANCE: {},
-                    _ConfigLevel.DEFAULT: _Config(
-                        cls.Level.INFO,
-                        cls.Level.NOTSET,
-                    ),
-                },
-                "formatter": Formatter(
-                    "[%(asctime)s][%(name)-10s][%(levelname)-8s] %(message)s"
-                ),
-                "stream": StreamHandler,
-                "file": FileHandler,
-                "path": join(
-                    "files",
-                    "traces",
-                    datetime.now().strftime("%Y-%m-%d"),
-                    datetime.now().strftime("%H-%M-%S.trace"),
-                ),
-            },
-        )
 
     @classmethod
     def set_levels(
@@ -117,6 +85,39 @@ class Trace:
 
     def debug(self, *msgs: Any, sep: str = " ") -> None:
         self._logger.debug(sep.join((str(msg) for msg in msgs)))
+
+    @classmethod
+    def _get_attrs(cls) -> Dict:
+        if not hasattr(cls, "attrs"):
+            setattr(
+                cls,
+                "attrs",
+                {
+                    "traces": [],
+                    "configs": {
+                        _ConfigLevel.PRIMARY: _Config(),
+                        _ConfigLevel.DEDICATED: {},
+                        _ConfigLevel.INSTANCE: {},
+                        _ConfigLevel.DEFAULT: _Config(
+                            cls.Level.INFO,
+                            cls.Level.NOTSET,
+                        ),
+                    },
+                    "formatter": Formatter(
+                        "[%(asctime)s][%(name)-14s][%(levelname)-8s] %(message)s"
+                    ),
+                    "stream": StreamHandler,
+                    "file": FileHandler,
+                    "path": join(
+                        "files",
+                        "traces",
+                        datetime.now().strftime("%Y-%m-%d"),
+                        datetime.now().strftime("%H-%M-%S.trace"),
+                    ),
+                },
+            )
+
+        return getattr(cls, "attrs")
 
     @classmethod
     def _set_traces(cls) -> None:

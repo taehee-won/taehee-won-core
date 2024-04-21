@@ -2,7 +2,7 @@ from typing import List, Dict, Optional, Union
 from requests import request
 from datetime import datetime
 
-from ..library.macro import ATTR, KWARGS_STR, PARAMS
+from ..library.macro import ATTR, KWARGS_STR, PARAMS, RAISE
 from ..library.Trace import Trace
 from ..library.Interval import Interval
 from ..library.Datetime import Datetime
@@ -79,11 +79,13 @@ class KRX:
     ) -> List:
         days = cls.get_days()
 
-        d = (Datetime(date) if isinstance(date, datetime) else date) if date else Datetime(days[-1])  # type: ignore
+        d = (
+            (Datetime(date) if isinstance(date, datetime) else date)
+            if date
+            else Datetime(days[-1])
+        )
         if d not in days:
-            err = f"Invalid date: {d}"
-            ATTR(cls, "trace", lambda: Trace("core")).critical(err)
-            raise ValueError(err)
+            RAISE(ValueError, f"Invalid date: {d}")
 
         return [
             {
@@ -120,15 +122,14 @@ class KRX:
             or (not days[0] <= s <= days[-1])
             or (not days[0] <= e <= days[-1])
         ):
-            err = f"Invalid period: start({s.to_str('%Y%m%d')}), end({e.to_str('%Y%m%d')})"
-            ATTR(cls, "trace", lambda: Trace("core")).critical(err)
-            raise ValueError(err)
+            RAISE(
+                ValueError,
+                f"Invalid period: start({s.to_str('%Y%m%d')}), end({e.to_str('%Y%m%d')})",
+            )
 
         asset = cls._get_assets().get_element(code)
         if asset is None:
-            err = f"Invalid code: {code}"
-            ATTR(cls, "trace", lambda: Trace("core")).critical(err)
-            raise ValueError(err)
+            RAISE(ValueError, f"Invalid code: {code}")
 
         return sorted(
             [
@@ -207,8 +208,6 @@ class KRX:
 
     @classmethod
     def _request(cls, key: str, **kwargs) -> List:
-        trace = ATTR(cls, "trace", lambda: Trace("core"))
-
         ATTR(cls, "interval", lambda: Interval(1, name="core.KRX")).wait()
 
         url = "http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd"
@@ -216,15 +215,13 @@ class KRX:
         response = request(method, url, data=kwargs)
 
         if response.status_code != 200:
-            err = (
-                f"Request failed: {response.status_code}"
-                + f" for {method}({url})({kwargs})"
+            RAISE(
+                ValueError,
+                f"Request failed: {response.status_code} for {method}({url})({kwargs})",
             )
-            trace.critical(err)
-            raise ValueError(err)
 
         data = response.json()[key]
-        trace.debug(
+        Trace(name="core.KRX").debug(
             f"request {method}(url)({KWARGS_STR(**kwargs)}) response"
             + f" {key} {len(data)} data"
         )
@@ -234,9 +231,7 @@ class KRX:
     @classmethod
     def _split_period(cls, start: Datetime, end: Datetime) -> List:
         if not start <= end:
-            err = f"Invalid period: start({start}), end({end})"
-            ATTR(cls, "trace", lambda: Trace("core")).critical(err)
-            raise ValueError(err)
+            RAISE(ValueError, f"Invalid period: start({start}), end({end})")
 
         s = start
         e = end

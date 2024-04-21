@@ -3,6 +3,8 @@ from enum import Enum
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
+from .macro import RAISE
+
 
 class Datetime:
     class Period(Enum):
@@ -46,8 +48,7 @@ class Datetime:
         elif isinstance(value, Datetime):
             return self._dt == value._dt
 
-        err = f"Invalid type: {type(value)}"
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __ne__(self, value: object) -> bool:
         if isinstance(value, datetime):
@@ -56,8 +57,7 @@ class Datetime:
         elif isinstance(value, Datetime):
             return self._dt != value._dt
 
-        err = f"Invalid type: {type(value)}"
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __lt__(self, value: object) -> bool:
         if isinstance(value, datetime):
@@ -66,8 +66,7 @@ class Datetime:
         elif isinstance(value, Datetime):
             return self._dt < value._dt
 
-        err = f"Invalid type: {type(value)}"
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __le__(self, value: object) -> bool:
         if isinstance(value, datetime):
@@ -76,8 +75,7 @@ class Datetime:
         elif isinstance(value, Datetime):
             return self._dt <= value._dt
 
-        err = f"Invalid type: {type(value)}"
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __gt__(self, value: object) -> bool:
         if isinstance(value, datetime):
@@ -86,8 +84,7 @@ class Datetime:
         elif isinstance(value, Datetime):
             return self._dt > value._dt
 
-        err = f"Invalid type: {type(value)}"
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __ge__(self, value: object) -> bool:
         if isinstance(value, datetime):
@@ -96,8 +93,7 @@ class Datetime:
         elif isinstance(value, Datetime):
             return self._dt >= value._dt
 
-        err = f"Invalid type: {type(value)}"
-        raise TypeError(err)
+        RAISE(TypeError, f"Invalid type: {type(value)}")
 
     @classmethod
     def from_values(
@@ -240,8 +236,7 @@ class Datetime:
         period = cls.Period(period)
 
         if period == cls.Period.WEEK:
-            err = f"Invalid period: {period}"
-            raise TypeError(err)
+            RAISE(TypeError, f"Invalid period: {period}")
 
         fmt = "%Y%m%d%H%M"[
             : {

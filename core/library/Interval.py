@@ -2,7 +2,7 @@ from typing import Optional, Union, Dict
 from time import time, sleep
 
 from ..data.DictList import DictList
-from .macro import ATTR, KWARGS_STR, LOOP
+from .macro import KWARGS_STR, LOOP
 from .Trace import Trace
 
 
@@ -16,7 +16,7 @@ class Interval:
     ):
         self._file: Union[str, None] = file
         self._name: Union[str, None] = name
-        self._trace = ATTR(Interval, "trace", lambda: Trace("core"))
+        self._trace = Trace(name="core.Interval")
 
         attrs = KWARGS_STR(file=self._file, name=self._name)
         self._values: DictList = DictList(name=f"{self.__class__.__name__}({attrs})")

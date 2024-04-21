@@ -1,4 +1,6 @@
-from typing import Any, Callable, Dict, Iterable, Optional, Type
+from typing import Any, Callable, Dict, Iterable, Optional, Type, NoReturn
+
+from .Trace import Trace
 
 
 def KWARGS(**kwargs: Any) -> Dict[str, Any]:
@@ -43,5 +45,7 @@ def CALL(
         return None
 
 
-def RAISE(exception: Type[BaseException], message: str):
+def RAISE(exception: Type[BaseException], message: str) -> NoReturn:
+    Trace(name="core").critical(message)
+
     raise exception(message)

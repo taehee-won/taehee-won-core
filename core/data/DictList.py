@@ -6,7 +6,7 @@ from pickle import load as load_pickle, dump as dump_pickle
 from json import load as load_json, dump as dump_json
 from csv import reader as read_csv, DictWriter
 
-from ..library.macro import ATTR, KWARGS, KWARGS_STR, LOOP
+from ..library.macro import KWARGS, KWARGS_STR, LOOP
 from ..library.Trace import Trace
 from ..library.OS import OS
 
@@ -24,7 +24,7 @@ class DictList:
         name: Optional[str] = None,
     ) -> None:
         self._name = name
-        self._trace = ATTR(DictList, "trace", lambda: Trace("core"))
+        self._trace = Trace(name=f"core.DictList")
 
         if default is None:
             self._data = []

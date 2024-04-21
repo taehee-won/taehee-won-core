@@ -3,7 +3,7 @@ from enum import Enum
 from requests import request
 from datetime import datetime
 
-from ..library.macro import ATTR, KWARGS
+from ..library.macro import ATTR, KWARGS, RAISE
 from ..library.Trace import Trace
 from ..library.Interval import Interval
 from ..library.Datetime import Datetime
@@ -79,16 +79,12 @@ class Upbit:
         start: Optional[Union[datetime, Datetime]] = None,
         end: Optional[Union[datetime, Datetime]] = None,
     ) -> List[Dict[str, Any]]:
-        trace = ATTR(cls, "trace", lambda: Trace("core"))
-
         period = cls.Period(period)
 
         if (period != cls.Period.MINUTE and unit != 1) or (
             unit not in [1, 3, 5, 15, 10, 30, 60, 240]
         ):
-            err = f"Invalid unit: {unit} for {period}"
-            trace.critical(err)
-            raise TypeError(err)
+            RAISE(TypeError, f"Invalid unit: {unit} for {period}")
 
         url = f"https://api.upbit.com/v1/candles/{period.value}s"
         if period == cls.Period.MINUTE:
@@ -166,17 +162,16 @@ class Upbit:
         method: str,
         params: Optional[Dict] = None,
     ) -> "_Response":
-        trace = ATTR(cls, "trace", lambda: Trace("core"))
-
         ATTR(cls, "interval", lambda: Interval({1: 9}, name="core.Upbit")).wait()
 
         headers = {"accept": "application/json"}
         response = request(method, url, headers=headers, **KWARGS(params=params))
 
         if response.status_code != 200:
-            err = f"Request failed: {response.status_code} for {method}({url})"
-            trace.critical(err)
-            raise ValueError(err)
+            RAISE(
+                ValueError,
+                f"Request failed: {response.status_code} for {method}({url})",
+            )
 
         data = response.json()
         datetime = Datetime.from_str(
@@ -185,7 +180,7 @@ class Upbit:
         ).set_after(Datetime.Period.HOUR, 9)
 
         response = _Response(datetime, data)
-        trace.debug(f"request {method}({url}) response {response}")
+        Trace("core.Upbit").debug(f"request {method}({url}) response {response}")
 
         return response
 

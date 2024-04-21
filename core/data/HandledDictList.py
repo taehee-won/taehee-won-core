@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Union, Any, Callable
 
-from ..library.macro import KWARGS, KWARGS_STR
+from ..library.macro import KWARGS, KWARGS_STR, RAISE
 from .DictList import DictList
 
 
@@ -46,24 +46,16 @@ class HandledDictList(DictList):
         self._handle()
 
     def insert(self, element: Dict[str, Any], *, index: int = 0) -> None:
-        err = "HandledDictList does not support insert operation"
-        self._trace.critical(err)
-        raise TypeError(err)
+        RAISE(TypeError, "Not support: insert")
 
     def remove(self, element: Dict[str, Any]) -> None:
-        err = "HandledDictList does not support remove operation"
-        self._trace.critical(err)
-        raise TypeError(err)
+        RAISE(TypeError, "Not support: remove")
 
     def pop(self, index: int = 0) -> Dict[str, Any]:
-        err = "HandledDictList does not support pop operation"
-        self._trace.critical(err)
-        raise TypeError(err)
+        RAISE(TypeError, "Not support: pop")
 
     def clear(self) -> None:
-        err = "HandledDictList does not support clear operation"
-        self._trace.critical(err)
-        raise TypeError(err)
+        RAISE(TypeError, "Not support: clear")
 
     def read(
         self,

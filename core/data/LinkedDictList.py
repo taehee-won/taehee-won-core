@@ -1,6 +1,6 @@
 from typing import Callable, Dict, Optional, List
 
-from ..library.macro import ATTR, KWARGS_STR, LOOP
+from ..library.macro import KWARGS_STR, LOOP
 from ..library.Trace import Trace
 from .DictList import DictList
 
@@ -60,7 +60,7 @@ class LinkedDictList:
         self._nodes = nodes
         self._handles = handles
         self._name = name
-        self._trace = ATTR(DictList, "trace", lambda: Trace("core"))
+        self._trace = Trace(name=f"core.DictList")
 
     def __len__(self) -> int:
         return len(self._nodes)
