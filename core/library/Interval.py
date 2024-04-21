@@ -36,6 +36,9 @@ class Interval:
                 ]
             )
 
+    def __call__(self) -> Union[int, float]:
+        return self.wait()
+
     def _moment(self) -> Union[int, float]:
         now = time()
         moments = [0] + [

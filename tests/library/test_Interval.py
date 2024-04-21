@@ -45,7 +45,7 @@ class TestInterval(TestCase):
         self.assertTrue(0 < time() - start < 0.02)
         self.assertEqual(wait, 0)
 
-        wait = interval.wait()
+        wait = interval()
         self.assertTrue(0.05 < time() - start < 0.07)
         self.assertTrue(0.03 < wait < 0.05)
 
@@ -65,7 +65,7 @@ class TestInterval(TestCase):
         self.assertEqual(wait, 0)
 
         interval = Interval({0.05: 1}, file)
-        wait = interval.wait()
+        wait = interval()
         self.assertTrue(0.05 < time() - start < 0.07)
         self.assertTrue(0.03 < wait < 0.05)
 
@@ -93,7 +93,7 @@ class TestInterval(TestCase):
         self.assertTrue(0 < time() - start < 0.02)
         self.assertEqual(wait, 0)
 
-        wait = interval.wait()
+        wait = interval()
         self.assertTrue(0.1 < time() - start < 0.12)
         self.assertTrue(0.08 < wait < 0.1)
 
