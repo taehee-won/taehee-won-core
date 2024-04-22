@@ -1,6 +1,6 @@
-from typing import Union
+from typing import Union, Self
 from enum import Enum
-from datetime import datetime, timedelta
+from datetime import datetime as dt, timedelta
 from dateutil.relativedelta import relativedelta
 
 from .macro import RAISE
@@ -15,8 +15,12 @@ class Datetime:
         HOUR = "hour"
         MINUTE = "minute"
 
-    def __init__(self, dt: datetime) -> None:
-        self._dt = dt
+    def __init__(self, obj: dt) -> None:
+        self._dt = obj
+
+    @property
+    def datetime(self) -> dt:
+        return self._dt
 
     @property
     def year(self) -> int:
@@ -39,10 +43,10 @@ class Datetime:
         return self._dt.minute
 
     def __str__(self) -> str:
-        return self.to_str("%Y/%m/%d %H:%M:%S")
+        return self.to_str()
 
     def __eq__(self, value: object) -> bool:
-        if isinstance(value, datetime):
+        if isinstance(value, dt):
             return self._dt == value
 
         elif isinstance(value, Datetime):
@@ -51,7 +55,7 @@ class Datetime:
         RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __ne__(self, value: object) -> bool:
-        if isinstance(value, datetime):
+        if isinstance(value, dt):
             return self._dt != value
 
         elif isinstance(value, Datetime):
@@ -60,7 +64,7 @@ class Datetime:
         RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __lt__(self, value: object) -> bool:
-        if isinstance(value, datetime):
+        if isinstance(value, dt):
             return self._dt < value
 
         elif isinstance(value, Datetime):
@@ -69,7 +73,7 @@ class Datetime:
         RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __le__(self, value: object) -> bool:
-        if isinstance(value, datetime):
+        if isinstance(value, dt):
             return self._dt <= value
 
         elif isinstance(value, Datetime):
@@ -78,7 +82,7 @@ class Datetime:
         RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __gt__(self, value: object) -> bool:
-        if isinstance(value, datetime):
+        if isinstance(value, dt):
             return self._dt > value
 
         elif isinstance(value, Datetime):
@@ -87,7 +91,7 @@ class Datetime:
         RAISE(TypeError, f"Invalid type: {type(value)}")
 
     def __ge__(self, value: object) -> bool:
-        if isinstance(value, datetime):
+        if isinstance(value, dt):
             return self._dt >= value
 
         elif isinstance(value, Datetime):
@@ -105,24 +109,21 @@ class Datetime:
         minute: int = 0,
         second: int = 0,
     ) -> "Datetime":
-        return cls(datetime(year, month, day, hour, minute, second))
+        return cls(dt(year, month, day, hour, minute, second))
 
     @classmethod
     def from_now(cls) -> "Datetime":
-        return cls(datetime.now())
+        return cls(dt.now())
 
     @classmethod
     def from_str(cls, string: str, fmt: str) -> "Datetime":
-        return cls(datetime.strptime(string, fmt))
+        return cls(dt.strptime(string, fmt))
 
     @classmethod
     def from_timestamp(cls, timestamp: float) -> "Datetime":
-        return cls(datetime.fromtimestamp(timestamp))
+        return cls(dt.fromtimestamp(timestamp))
 
-    def to_datetime(self) -> datetime:
-        return self._dt
-
-    def to_str(self, fmt: str) -> str:
+    def to_str(self, fmt: str = "%Y/%m/%d %H:%M:%S") -> str:
         return self._dt.strftime(fmt)
 
     def get_before(
@@ -140,20 +141,20 @@ class Datetime:
         return Datetime(self._dt + self._get_delta(period, interval))
 
     def get_quarter_start(self, quarters: int = 0) -> "Datetime":
-        dt = self._get_quarter_start(self._dt)
+        obj = self._get_quarter_start(self._dt)
 
         while quarters:
             if quarters > 0:
-                dt += relativedelta(months=3)
+                obj += relativedelta(months=3)
                 quarters -= 1
 
             else:
-                dt -= timedelta(minutes=1)
+                obj -= timedelta(minutes=1)
                 quarters += 1
 
-            dt = self._get_quarter_start(dt)
+            obj = self._get_quarter_start(obj)
 
-        return Datetime(dt)
+        return Datetime(obj)
 
     def get_quarter_end(self, quarters: int = 0) -> "Datetime":
         return self.get_quarter_start(quarters + 1).get_before(self.Period.MINUTE, 1)
@@ -165,7 +166,7 @@ class Datetime:
         self,
         period: Union[Period, str] = Period.DAY,
         interval: int = 1,
-    ) -> "Datetime":
+    ) -> Self:
         self._dt -= self._get_delta(period, interval)
 
         return self
@@ -174,12 +175,12 @@ class Datetime:
         self,
         period: Union[Period, str] = Period.DAY,
         interval: int = 1,
-    ) -> "Datetime":
+    ) -> Self:
         self._dt += self._get_delta(period, interval)
 
         return self
 
-    def set_quarter_start(self, quarters: int = 0) -> "Datetime":
+    def set_quarter_start(self, quarters: int = 0) -> Self:
         self._dt = self._get_quarter_start(self._dt)
 
         while quarters:
@@ -195,13 +196,13 @@ class Datetime:
 
         return self
 
-    def set_quarter_end(self, quarters: int = 0) -> "Datetime":
+    def set_quarter_end(self, quarters: int = 0) -> Self:
         self.set_quarter_start(quarters + 1)
         self._dt -= timedelta(minutes=1)
 
         return self
 
-    def set_slice(self, period: Union[Period, str] = Period.DAY) -> "Datetime":
+    def set_slice(self, period: Union[Period, str] = Period.DAY) -> Self:
         self._dt = self._get_slice(self._dt, period)
 
         return self
@@ -224,15 +225,15 @@ class Datetime:
         }.get(period, timedelta(days=interval))
 
     @staticmethod
-    def _get_quarter_start(dt: datetime) -> datetime:
-        return datetime(dt.year, (dt.month - 1) // 3 * 3 + 1, 1)
+    def _get_quarter_start(obj: dt) -> dt:
+        return dt(obj.year, (obj.month - 1) // 3 * 3 + 1, 1)
 
     @classmethod
     def _get_slice(
         cls,
-        dt: datetime,
+        obj: dt,
         period: Union[Period, str] = Period.DAY,
-    ) -> datetime:
+    ) -> dt:
         period = cls.Period(period)
 
         if period == cls.Period.WEEK:
@@ -248,4 +249,4 @@ class Datetime:
             }[period]
         ]
 
-        return datetime.strptime(dt.strftime(fmt), fmt)
+        return dt.strptime(obj.strftime(fmt), fmt)

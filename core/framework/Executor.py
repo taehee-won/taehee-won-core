@@ -150,7 +150,7 @@ class _Arg:
                     minute=int(self._value[10:12]) if len(self._value) >= 12 else None,
                     second=int(self._value[12:14]) if len(self._value) >= 14 else None,
                 )
-            ).to_datetime()
+            ).datetime
 
         else:  # self._type  == self.Type.EXECUTOR_CONFIGS
             if not files:

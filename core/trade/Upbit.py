@@ -113,7 +113,7 @@ class Upbit:
                     "datetime": Datetime.from_str(
                         candle["candle_date_time_kst"],
                         "%Y-%m-%dT%H:%M:%S",
-                    ).to_datetime(),
+                    ).datetime,
                     **{
                         key: candle[field]
                         for field, key in {

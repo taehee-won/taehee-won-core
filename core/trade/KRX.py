@@ -55,7 +55,7 @@ class KRX:
             "days",
             lambda: sorted(
                 [
-                    Datetime.from_str(index["TRD_DD"], "%Y/%m/%d").to_datetime()
+                    Datetime.from_str(index["TRD_DD"], "%Y/%m/%d").datetime
                     for start, end in cls._split_period(
                         cls._get_attrs()["start"], cls._get_attrs()["end"]
                     )
@@ -137,7 +137,7 @@ class KRX:
                     "datetime": Datetime.from_str(
                         candle["TRD_DD"],
                         "%Y/%m/%d",
-                    ).to_datetime(),
+                    ).datetime,
                     **cls._convert_candle(candle),
                 }
                 for candle in cls._request(

@@ -38,7 +38,7 @@ class TestUpbit(TestCase):
         candles = Upbit.get_candles(
             "KRW-BTC",
             Upbit.Period.MONTH,
-            start=basic.to_datetime(),
+            start=basic.datetime,
             end=basic.get_after(Datetime.Period.MONTH, 11),
         )
 
@@ -62,7 +62,7 @@ class TestUpbit(TestCase):
             "KRW-BTC",
             Upbit.Period.WEEK,
             start=basic,
-            end=basic.get_after(Datetime.Period.WEEK, 51).to_datetime(),
+            end=basic.get_after(Datetime.Period.WEEK, 51).datetime,
         )
 
         self.assertIsInstance(candles, list)
