@@ -4,23 +4,23 @@ from functools import reduce
 
 from ..library.macro import KWARGS, RAISE
 from ..library.Datetime import Datetime
-from ..library.Files import Files
+from .Loader import Loader
 
 
 class Executor:
     def __init__(
         self,
-        # Dict[key, [file, module, List[[type, value]], Dict[key, [type, value]]]]
+        # Dict[key, [resource, module, List[[type, value]], Dict[key, [type, value]]]]
         config: Dict[str, Tuple[str, str, List, Dict]],
     ) -> None:
         self._config = config
 
-    def execute(self, files: Files, kwargs: Optional[Dict] = None) -> Any:
+    def execute(self, loader: Loader, kwargs: Optional[Dict] = None) -> Any:
         return reduce(
             lambda pipe, item: {
                 **pipe,
                 item[0]: _Executor(item[1]).execute(
-                    files,
+                    loader,
                     pipe=pipe,
                     **KWARGS(kwargs=kwargs),
                 ),
@@ -32,28 +32,28 @@ class Executor:
 
 class _Executor:
     class Index:
-        FILE = 0
+        RESOURCE = 0
         MODULE = 1
         ARG_CONFIGS = 2  # List[[type, value]]
         KWARG_CONFIGS = 3  # Dict[key, [type, value]]
 
     def __init__(
         self,
-        # [file, module, List[[type, value]], Dict[key, [type, value]]]
+        # [resource, module, List[[type, value]], Dict[key, [type, value]]]
         config: Tuple[str, str, List[Tuple[str, Any]], Dict[str, Tuple[str, Any]]],
     ) -> None:
-        self._file = config[self.Index.FILE]
+        self._resource = config[self.Index.RESOURCE]
         self._module = config[self.Index.MODULE]
         self._arg_configs = config[self.Index.ARG_CONFIGS]
         self._kwarg_configs = config[self.Index.KWARG_CONFIGS]
 
     def execute(
         self,
-        files: Files,
+        loader: Loader,
         kwargs: Optional[Dict] = None,
         pipe: Optional[Dict] = None,
     ) -> Any:
-        module = files.get_module(self._file)
+        module = loader.get_module(self._resource)
 
         if not hasattr(module, self._module):
             RAISE(ValueError, f"Invalid module: {self._module}")
@@ -63,7 +63,7 @@ class _Executor:
                 lambda a, arg_config: [
                     *a,
                     _Arg(arg_config).execute(
-                        files=files,
+                        loader=loader,
                         **KWARGS(kwargs=kwargs, pipe=pipe),
                     ),
                 ],
@@ -74,7 +74,7 @@ class _Executor:
                 lambda k, item: {
                     **k,
                     item[0]: _Arg(item[1]).execute(
-                        files=files,
+                        loader=loader,
                         **KWARGS(kwargs=kwargs, pipe=pipe),
                     ),
                 },
@@ -105,7 +105,7 @@ class _Arg:
 
     def execute(
         self,
-        files: Optional[Files] = None,
+        loader: Optional[Loader] = None,
         kwargs: Optional[Dict] = None,
         pipe: Optional[Dict] = None,
     ) -> Any:
@@ -158,7 +158,7 @@ class _Arg:
             ).datetime
 
         else:  # self._type  == self.Type.EXECUTOR_CONFIGS
-            if not files:
-                RAISE(ValueError, "Invalid files: not exist")
+            if not loader:
+                RAISE(ValueError, "Invalid loader: not exist")
 
-            return Executor(self._value).execute(files, **KWARGS(kwargs=kwargs))
+            return Executor(self._value).execute(loader, **KWARGS(kwargs=kwargs))
