@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Union, Callable
+from typing import Any, List, Optional, Union
 from enum import Enum
 from importlib import import_module
 from json5 import load as load_json
@@ -6,12 +6,14 @@ from json5 import load as load_json
 from ..data.OrderedDictList import OrderedDictList
 from .macro import KWARGS_STR, LOOP, RAISE
 from .Trace import Trace
-from .OS import OS
+from .Path import Path
+from .FileSystem import FileSystem
 
 
 class Files:
     class FileType(Enum):
         JSON = "json"
+        PYTHON = "py"
 
     def __init__(self, dirs: Optional[List[str]] = None, name: Optional[str] = None):
         self._name = name
@@ -19,7 +21,7 @@ class Files:
 
         self._dirs = []
         self._files = OrderedDictList(
-            "file",
+            "name",
             name=f"{self.__class__.__name__}({KWARGS_STR(name=self._name)})",
         )
 
@@ -56,31 +58,29 @@ class Files:
 
         self._dirs.append(dir)
 
-        target = OS.get_abspath(dir)
-        parent = OS.get_abspath(OS.get_pardir(dir))
+        target = Path(dir)
+        parent = Path(dir).set_pardir()
 
-        for top, _, files in OS.get_tree(parent):
+        for top, _, files in FileSystem.get_tree(parent):
             if not top[: len(target)] == target or "__pycache__" in top:
                 continue
 
             for file in files:
-                path = OS.get_path(top, file)
+                path = Path.from_tokens(top, file)
+                name = path.replace_sep(".")[len(parent) :][1:]
 
-                file = path.replace(parent, "")[1:]
-                if ex := OS.get_extension(file):
-                    file = file.replace("." + ex, "")
+                if path.extension:
+                    name = name[:-1][: -len(path.extension)]
 
-                file = OS.replace_sep(file, ".")
+                if self._files.get_element(name) is not None:
+                    RAISE(TypeError, f"Already registered name: {name}")
 
-                if self._files.get_element(file) is not None:
-                    RAISE(TypeError, f"Already registered file: {file}")
-
-                if "__init__" == file.split(".")[-1]:
-                    file = file[:-9]
+                if "__init__" == name.split(".")[-1]:
+                    name = name[:-9]
 
                 self._files.append(
                     {
-                        "file": file,
+                        "name": name,
                         "path": path,
                         "dir": dir,
                     }
@@ -94,43 +94,40 @@ class Files:
     def get_files(self) -> List[str]:
         return self._files.get_values()
 
-    def get_module(self, file: str, module: str) -> Callable:
-        if file_ := self._files.get_element(file):
-            if "modules" not in file_:
-                file_["modules"] = import_module(
-                    OS.replace_sep(
-                        file_["path"].replace(
-                            (
-                                cwd
-                                if (cwd := OS.get_cwd())
-                                in (
-                                    parent := OS.get_abspath(
-                                        OS.get_pardir(file_["dir"])
-                                    )
-                                )
-                                else parent
-                            ),
-                            "",
-                        )[1:][:-3],
-                        ".",
-                    )
+    def get_module(self, name: str) -> object:
+        if file := self._files.get_element(name):
+            if "module" not in file:
+                path = file["path"]
+                cwd = FileSystem.get_cwd()
+                file_type = self.FileType(path.extension)
+
+                if file_type != self.FileType.PYTHON:
+                    RAISE(TypeError, f"Invalid type: {file_type}")
+
+                if cwd not in path.path:
+                    RAISE(ValueError, f"Invalid path: {path}")
+
+                file["module"] = import_module(
+                    path.replace_sep(".")[len(cwd) :][1:][:-1][: -len(file_type.value)]
                 )
 
-            return getattr(file_["modules"], module)
+            return file["module"]
 
-        RAISE(TypeError, f"Invalid file: {file}")
+        RAISE(TypeError, f"Invalid name: {name}")
 
     def read(
         self,
-        file: str,
+        name: str,
         file_type: Optional[Union[FileType, str]] = None,
     ) -> Any:
-        if file_type is None:
-            file_type = self.FileType(OS.get_extension(file))
+        if file := self._files.get_element(name):
+            if file_type is None:
+                file_type = self.FileType(file["path"].extension)
 
-        if file_ := self._files.get_element(file):
-            # file_type == self.FileType.JSON
-            with open(file_["path"], "r", encoding="UTF-8-sig") as f:
-                return load_json(f)
+            if file_type == self.FileType.JSON:
+                with open(file["path"].path, "r", encoding="UTF-8-sig") as f:
+                    return load_json(f)
 
-        RAISE(TypeError, f"Invalid file: {file}")
+            RAISE(TypeError, f"Invalid type: {file_type}")
+
+        RAISE(TypeError, f"Invalid name: {name}")

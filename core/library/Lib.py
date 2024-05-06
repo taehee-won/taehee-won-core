@@ -1,16 +1,17 @@
-from typing import List
+from typing import List, Union, Optional
 from sys import exc_info
 
 from .macro import LOOP, RAISE
 from .Trace import Trace
-from .OS import OS
+from .Path import Path
+from .FileSystem import FileSystem
 
 
 class Lib:
     @classmethod
     def clear_cache(
         cls,
-        root: str = OS.get_cwd(),
+        root: Optional[Union[Path, str]] = None,
         words: List[str] = [
             "__pycache__",  # python cache
             ".pyc",  # python cache
@@ -18,16 +19,22 @@ class Lib:
             "tempCodeRunnerFile.py",  # vscode code-runner cache
         ],
     ) -> None:
+        if root is None:
+            root = Path.from_cwd()
+
+        if isinstance(root, str):
+            root = Path(root)
+
         cache_dirs = []
         cache_files = []
-        for top, dirs, files in OS.get_tree(root):
+        for top, dirs, files in FileSystem.get_tree(root):
             cache_dirs += [
-                OS.get_path(top, dir)
+                Path.from_tokens(top, dir)
                 for dir in dirs
                 if any(word in dir for word in words)
             ]
             cache_files += [
-                OS.get_path(top, file)
+                Path.from_tokens(top, file)
                 for file in files
                 if any(word in file for word in words)
             ]
@@ -37,11 +44,17 @@ class Lib:
 
         debug(f"{len(cache_dirs)} cache dirs:")
         LOOP(debug(f"    {dir}") for dir in cache_dirs)
-        LOOP(OS.remove_dir(dir) for dir in cache_dirs)
+        LOOP(
+            FileSystem.remove_dir(dir) for dir in cache_dirs if FileSystem.is_exist(dir)
+        )
 
         debug(f"{len(cache_files)} cache files:")
         LOOP(debug(f"    {file}") for file in cache_files)
-        LOOP(OS.remove_file(file) for file in cache_files)
+        LOOP(
+            FileSystem.remove_file(file)
+            for file in cache_files
+            if FileSystem.is_exist(file)
+        )
 
     @classmethod
     def trace_exception(cls) -> None:
@@ -60,7 +73,7 @@ class Lib:
         traces = [
             [
                 str(t.tb_frame.f_code.co_name),
-                OS.get_file(t.tb_frame.f_code.co_filename),
+                Path(t.tb_frame.f_code.co_filename).file,
                 str(t.tb_lineno),
             ]
             for t in reversed(traces)

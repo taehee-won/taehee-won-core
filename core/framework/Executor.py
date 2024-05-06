@@ -53,7 +53,12 @@ class _Executor:
         kwargs: Optional[Dict] = None,
         pipe: Optional[Dict] = None,
     ) -> Any:
-        return files.get_module(self._file, self._module)(
+        module = files.get_module(self._file)
+
+        if not hasattr(module, self._module):
+            RAISE(ValueError, f"Invalid module: {self._module}")
+
+        return getattr(module, self._module)(
             *reduce(
                 lambda a, arg_config: [
                     *a,

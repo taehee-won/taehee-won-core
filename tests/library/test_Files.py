@@ -58,14 +58,20 @@ class TestFiles(TestCase):
         self.assertEqual(files[1], "Files.json")
 
     def test_get_module(self):
-        self.assertEqual(self.files.get_module("Files.interface", "add")(1, 2), 3)
-        self.assertEqual(self.files.get_module("Files.interface", "sub")(1, 2), -1)
+        self.assertEqual(
+            getattr(self.files.get_module("Files.interface"), "add")(1, 2),
+            3,
+        )
+        self.assertEqual(
+            getattr(self.files.get_module("Files.interface"), "sub")(1, 2),
+            -1,
+        )
 
-        with self.assertRaises(ModuleNotFoundError):
-            self.files.get_module("Files.json", "add")
+        with self.assertRaises(TypeError):
+            self.files.get_module("Files.json")
 
     def test_read(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             self.files.read("Files.interface")
 
         self.assertListEqual(

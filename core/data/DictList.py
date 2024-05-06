@@ -8,7 +8,8 @@ from csv import reader as read_csv, DictWriter
 
 from ..library.macro import KWARGS, KWARGS_STR, LOOP
 from ..library.Trace import Trace
-from ..library.OS import OS
+from ..library.Path import Path
+from ..library.FileSystem import FileSystem
 
 
 class DictList:
@@ -171,12 +172,12 @@ class DictList:
         file_type: Optional[Union[FileType, str]] = None,
     ) -> None:
         if file_type is None:
-            file_type = self.FileType(OS.get_extension(file))
+            file_type = self.FileType(Path(file).extension)
 
         elif isinstance(file_type, str):
             file_type = self.FileType(file_type)
 
-        if not OS.is_exist(file):
+        if not FileSystem.is_exist(file):
             return
 
         if file_type == self.FileType.DICTLIST:
@@ -202,7 +203,7 @@ class DictList:
         file_type: Optional[Union[FileType, str]] = None,
     ) -> None:
         if file_type is None:
-            file_type = self.FileType(OS.get_extension(file))
+            file_type = self.FileType(Path(file).extension)
 
         elif isinstance(file_type, str):
             file_type = self.FileType(file_type)
@@ -210,7 +211,8 @@ class DictList:
         if not len(self._data):
             return
 
-        OS.make_dir(OS.get_dir(file))
+        if not FileSystem.is_exist((dir := Path(file).get_dir())):
+            FileSystem.make_dir(dir)
 
         if file_type == self.FileType.DICTLIST:
             with open(file, "wb") as f:

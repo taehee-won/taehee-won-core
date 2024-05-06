@@ -168,7 +168,6 @@ class Datetime:
         interval: int = 1,
     ) -> Self:
         self._dt -= self._get_delta(period, interval)
-
         return self
 
     def set_after(
@@ -177,7 +176,6 @@ class Datetime:
         interval: int = 1,
     ) -> Self:
         self._dt += self._get_delta(period, interval)
-
         return self
 
     def set_quarter_start(self, quarters: int = 0) -> Self:
@@ -199,12 +197,10 @@ class Datetime:
     def set_quarter_end(self, quarters: int = 0) -> Self:
         self.set_quarter_start(quarters + 1)
         self._dt -= timedelta(minutes=1)
-
         return self
 
     def set_slice(self, period: Union[Period, str] = Period.DAY) -> Self:
         self._dt = self._get_slice(self._dt, period)
-
         return self
 
     @classmethod

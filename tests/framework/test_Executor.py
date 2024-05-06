@@ -36,6 +36,11 @@ class TestExecutor(TestCase):
             7,
         )
 
+        with self.assertRaises(ValueError):
+            Executor(
+                {"=": ("Executor", "add_", [["I", 3], ["I", 4]], {})},
+            ).execute(self.files)
+
     def test_kwargs(self):
         executor = Executor({"=": ("Executor", "add", [["K", "a"], ["K", "b"]], {})})
 
