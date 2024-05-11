@@ -14,66 +14,137 @@ class TestPath(TestCase):
     def tearDownClass(cls) -> None:
         Trace.set_levels()
 
+    def test_init(self):
+        obj = Path("/path/to/file.txt")
+        self.assertIsInstance(obj, Path)
+        self.assertIsNot(obj, Path(obj))
+        self.assertEqual(obj, Path(obj))
+
     def test_str(self):
-        self.assertEqual(f"{Path('/path/to/file.txt')}", "/path/to/file.txt")
+        obj = Path("/path/to/file.txt")
+        self.assertIsInstance(str(obj), str)
+        self.assertEqual(str(obj), "/path/to/file.txt")
 
     def test_eq(self):
-        self.assertEqual(Path("/path/to/file.txt"), "/path/to/file.txt")
-        self.assertNotEqual(Path("/path/to/file.txt"), "/path/to/file.json")
-
-        self.assertEqual(Path("/path/to/file.txt"), Path("/path/to/file.txt"))
-        self.assertNotEqual(Path("/path/to/file.txt"), Path("/path/to/file.json"))
+        path = "/path/to/file.txt"
+        obj = Path(path)
+        self.assertEqual(obj, path)
+        self.assertNotEqual(obj, "/path/to/file.json")
+        self.assertEqual(obj, Path(path))
+        self.assertNotEqual(obj, Path("/path/to/file.json"))
 
         with self.assertRaises(TypeError):
-            eq = Path("/path/to/file.txt") == 3
+            eq = obj == 3
 
     def test_len(self):
-        self.assertEqual(len(Path("/path/to/file.txt")), 17)
+        obj = Path("/path/to/file.txt")
+        self.assertIsInstance(len(obj), int)
+        self.assertEqual(len(obj), 17)
 
     def test_path(self):
-        self.assertEqual(Path("/path/to/file.txt").path, "/path/to/file.txt")
+        obj = Path("/path/to/file.txt")
+        self.assertIsInstance(obj.path, str)
+        self.assertEqual(obj.path, "/path/to/file.txt")
 
     def test_relpath(self):
-        self.assertTrue(isabs("/path/to/dir"))
-        self.assertFalse(isabs(Path("/path/to/dir").relpath))
+        path = "/path/to/dir"
+        obj = Path(path)
+        self.assertTrue(isabs(path))
+        self.assertIsInstance(obj.relpath, str)
+        self.assertFalse(isabs(obj.relpath))
 
     def test_file(self):
-        self.assertEqual(Path("/path/to/file.txt").file, "file.txt")
+        obj = Path("/path/to/file.txt")
+        self.assertIsInstance(obj.file, str)
+        self.assertEqual(obj.file, "file.txt")
 
     def test_name(self):
-        self.assertEqual(Path("/path/to/file.txt").name, "file")
-        self.assertEqual(Path("/path/to/dir").name, "dir")
+        obj = Path("/path/to/file.txt")
+        self.assertIsInstance(obj.name, str)
+        self.assertEqual(obj.name, "file")
+
+        obj = Path("/path/to/dir")
+        self.assertIsInstance(obj.name, str)
+        self.assertEqual(obj.name, "dir")
 
     def test_extension(self):
-        self.assertEqual(Path("/path/to/file.txt").extension, "txt")
+        obj = Path("/path/to/file.txt")
+        self.assertIsInstance(obj.extension, str)
+        self.assertEqual(obj.extension, "txt")
 
     def test_from_cwd(self):
-        self.assertEqual(Path.from_cwd().path, getcwd())
+        obj = Path.from_cwd()
+        self.assertIsInstance(obj, Path)
+        self.assertEqual(obj, getcwd())
 
     def test_from_tokens(self):
-        path1 = "/path/to/dir"
-        path2 = "files"
-        path3 = "file.txt"
+        token1 = "/path/to/dir"
+        token2 = "files"
+        token3 = "file.txt"
+        obj = Path.from_tokens(token1, token2, token3)
+        self.assertIsInstance(obj.path, str)
+        self.assertEqual(obj, join(token1, token2, token3))
 
-        self.assertEqual(
-            Path.from_tokens(path1, path2, path3).path,
-            join(path1, path2, path3),
-        )
+    def test_is_pardir(self):
+        obj = Path("/path/to/dir1/dir2/dir3")
+        for dir, expect in [
+            ["/", True],
+            ["/path", True],
+            ["/path/to", True],
+            ["/path/to/dir1", True],
+            ["/path/to/dir1/dir2", True],
+            ["/path/to/dir1/dir2/dir3", False],
+            ["/path/to/dir1/dir2/dir3/dir4", False],
+            ["/invalid", False],
+            ["/invalid/to", False],
+        ]:
+            is_pardir = obj.is_pardir(dir)
+            self.assertIsInstance(is_pardir, bool)
+            self.assertTrue(is_pardir) if expect else self.assertFalse(is_pardir)
+
+            is_pardir = obj.is_pardir(Path(dir))
+            self.assertIsInstance(is_pardir, bool)
+            self.assertTrue(is_pardir) if expect else self.assertFalse(is_pardir)
 
     def test_get_dir(self):
-        self.assertEqual(Path("/path/to/file.txt").get_dir(), "/path/to")
+        obj = Path("/path/to/file.txt")
+        dir = obj.get_dir()
+        self.assertIsInstance(dir, Path)
+        self.assertEqual(dir, "/path/to")
 
     def test_get_pardir(self):
-        self.assertEqual(Path("/path/to/dir").get_pardir(), "/path/to")
-        self.assertEqual(Path("/path/to/dir").get_pardir(2), "/path")
+        obj = Path("/path/to/dir")
+        pardir1 = obj.get_pardir()
+        pardir2 = obj.get_pardir(2)
+        self.assertIsInstance(pardir1, Path)
+        self.assertIsInstance(pardir2, Path)
+        self.assertEqual(pardir1, "/path/to")
+        self.assertEqual(pardir2, "/path")
 
     def test_set_dir(self):
-        self.assertEqual(Path("/path/to/file.txt").set_dir().path, "/path/to")
+        obj = Path("/path/to/file.txt")
+        dir = obj.set_dir()
+        self.assertIs(dir, obj)
+        self.assertEqual(obj, "/path/to")
 
     def test_set_pardir(self):
-        self.assertEqual(Path("/path/to/dir").set_pardir().path, "/path/to")
-        self.assertEqual(Path("/path/to/dir").set_pardir(2).path, "/path")
+        obj = Path("/path/to/dir")
+        pardir = obj.set_pardir()
+        self.assertIs(pardir, obj)
+        self.assertEqual(obj, "/path/to")
+
+        obj = Path("/path/to/dir")
+        pardir = obj.set_pardir(2)
+        self.assertIs(pardir, obj)
+        self.assertEqual(obj, "/path")
 
     def test_replace_sep(self):
-        self.assertEqual(Path("/path/to/dir").replace_sep("\\"), "\\path\\to\\dir")
-        self.assertEqual(Path("/path/to/dir").replace_sep("."), ".path.to.dir")
+        obj = Path("/path/to/dir")
+
+        path = obj.replace_sep("\\")
+        self.assertIsInstance(path, str)
+        self.assertEqual(path, "\\path\\to\\dir")
+
+        path = obj.replace_sep(".")
+        self.assertIsInstance(path, str)
+        self.assertEqual(path, ".path.to.dir")

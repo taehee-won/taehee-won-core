@@ -27,7 +27,7 @@ class Lib:
 
         cache_dirs = []
         cache_files = []
-        for top, dirs, files in FileSystem.get_tree(root):
+        for top, dirs, files in FileSystem.walk(root):
             cache_dirs += [
                 Path.from_tokens(top, dir)
                 for dir in dirs

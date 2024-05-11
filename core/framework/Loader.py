@@ -63,7 +63,7 @@ class Loader:
         target = Path(dir)
         parent = Path(dir).set_pardir()
 
-        for top, _, files in FileSystem.get_tree(parent):
+        for top, _, files in FileSystem.walk(parent):
             if not top[: len(target)] == target or "__pycache__" in top:
                 continue
 
@@ -106,7 +106,7 @@ class Loader:
                 if file_type != self.FileType.PYTHON:
                     RAISE(TypeError, f"Invalid type: {file_type}")
 
-                if cwd not in path.path:
+                if not path.is_pardir(cwd):
                     RAISE(ValueError, f"Invalid path: {path}")
 
                 r["module"] = import_module(

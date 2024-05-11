@@ -23,7 +23,7 @@ class FileSystem:
         if not cls.is_exist(path):
             RAISE(ValueError, f"Invalid path: {path} is not exist")
 
-        return isfile(path)
+        return isfile(path) if not islink(path) else False
 
     @classmethod
     def is_dir(cls, path: Union[Path, str]) -> bool:
@@ -33,7 +33,7 @@ class FileSystem:
         if not cls.is_exist(path):
             RAISE(ValueError, f"Invalid path: {path} is not exist")
 
-        return isdir(path)
+        return isdir(path) if not islink(path) else False
 
     @classmethod
     def is_link(cls, path: Union[Path, str]) -> bool:
@@ -46,51 +46,38 @@ class FileSystem:
         return islink(path)
 
     @staticmethod
-    def get_cwd() -> str:
-        return getcwd()
+    def get_cwd() -> Path:
+        return Path(getcwd())
 
     @classmethod
-    def get_files(cls, path: Union[Path, str]) -> List[str]:
+    def get_files(cls, path: Union[Path, str]) -> List[Path]:
         if isinstance(path, Path):
             path = path.path
 
         if not cls.is_dir(path):
-            RAISE(ValueError, f"Invalid path: {path} is not directory")
+            RAISE(ValueError, f"Invalid path: {path} is not dir")
 
-        return [name for name in listdir(path) if isfile(join(path, name))]
+        return [Path(p) for name in listdir(path) if cls.is_file(p := join(path, name))]
 
     @classmethod
-    def get_dirs(cls, path: Union[Path, str]) -> List[str]:
+    def get_dirs(cls, path: Union[Path, str]) -> List[Path]:
         if isinstance(path, Path):
             path = path.path
 
         if not cls.is_dir(path):
-            RAISE(ValueError, f"Invalid path: {path} is not directory")
+            RAISE(ValueError, f"Invalid path: {path} is not dir")
 
-        return [name for name in listdir(path) if isdir(join(path, name))]
+        return [Path(p) for name in listdir(path) if cls.is_dir(p := join(path, name))]
 
     @classmethod
-    def get_links(cls, path: Union[Path, str]) -> List[str]:
+    def get_links(cls, path: Union[Path, str]) -> List[Path]:
         if isinstance(path, Path):
             path = path.path
 
         if not cls.is_dir(path):
-            RAISE(ValueError, f"Invalid path: {path} is not directory")
+            RAISE(ValueError, f"Invalid path: {path} is not dir")
 
-        return [name for name in listdir(path) if islink(join(path, name))]
-
-    @classmethod
-    def get_tree(
-        cls,
-        path: Union[Path, str],
-    ) -> Iterable[Tuple[str, List[str], List[str]]]:
-        if isinstance(path, Path):
-            path = path.path
-
-        if not cls.is_dir(path):
-            RAISE(ValueError, f"Invalid path: {path} is not directory")
-
-        return walk(path)
+        return [Path(p) for name in listdir(path) if cls.is_link(p := join(path, name))]
 
     @classmethod
     def get_file_size(cls, path: Union[Path, str]) -> int:
@@ -106,9 +93,9 @@ class FileSystem:
     def get_dir_size(cls, path: Union[Path, str]) -> int:
         return sum(
             getsize(p)
-            for dir, _, files in cls.get_tree(path)
+            for top, _, files in cls.walk(path)
             for file in files
-            if not islink(p := join(dir, file))
+            if cls.is_file(p := join(top, file))
         )
 
     @classmethod
@@ -139,9 +126,19 @@ class FileSystem:
             path = path.path
 
         if not cls.is_dir(path):
-            RAISE(ValueError, f"Invalid path: {path} is not directory")
+            RAISE(ValueError, f"Invalid path: {path} is not dir")
 
         rmtree(path)
+
+    @classmethod
+    def remove_link(cls, path: Union[Path, str]) -> None:
+        if isinstance(path, Path):
+            path = path.path
+
+        if not cls.is_link(path):
+            RAISE(ValueError, f"Invalid path: {path} is not link")
+
+        remove(path)
 
     @classmethod
     def copy(cls, src: Union[Path, str], dst: Union[Path, str]) -> Path:
@@ -178,3 +175,16 @@ class FileSystem:
         move(src, dst)
 
         return Path(dst)
+
+    @classmethod
+    def walk(
+        cls,
+        path: Union[Path, str],
+    ) -> Iterable[Tuple[str, List[str], List[str]]]:
+        if isinstance(path, Path):
+            path = path.path
+
+        if not cls.is_dir(path):
+            RAISE(ValueError, f"Invalid path: {path} is not dir")
+
+        return walk(path)

@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Self, Union
 from os import getcwd, pardir
 from os.path import basename, dirname, abspath, relpath, join, splitext, sep as sep_
 
@@ -6,7 +6,10 @@ from .macro import RAISE
 
 
 class Path:
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: Union["Path", str]) -> None:
+        if isinstance(path, Path):
+            path = path.path
+
         self._path = abspath(path)
 
     def __str__(self) -> str:
@@ -44,9 +47,6 @@ class Path:
     def extension(self) -> str:
         return splitext(self._path)[1][1:]
 
-    def get_dir(self) -> str:
-        return dirname(self._path)
-
     @classmethod
     def from_cwd(cls) -> "Path":
         return cls(getcwd())
@@ -55,12 +55,26 @@ class Path:
     def from_tokens(cls, *tokens: str) -> "Path":
         return cls(join(*tokens))
 
-    def get_pardir(self, upper: int = 1) -> str:
+    def is_pardir(self, path: Union["Path", str]) -> bool:
+        dir = Path(self._path)
+        while dir.set_pardir():
+            if dir == path:
+                return True
+
+            if sep_ == dir:
+                break
+
+        return False
+
+    def get_dir(self) -> "Path":
+        return Path(dirname(self._path))
+
+    def get_pardir(self, upper: int = 1) -> "Path":
         path = self._path
         for _ in range(upper):
             path = join(path, pardir)
 
-        return abspath(path)
+        return Path(abspath(path))
 
     def set_dir(self) -> Self:
         self._path = dirname(self._path)
